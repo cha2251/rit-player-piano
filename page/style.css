@@ -38,6 +38,7 @@
 body {
   background-image: url("../Images/space_sounds_1.jpg");
   background-color: rgb(184, 184, 184);
+  background-size: cover;
 }
 
 .text_description {
