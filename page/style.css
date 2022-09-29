@@ -1,0 +1,66 @@
+.topnav {
+  background-color: #333;
+  background-image: url(../Images/key_header.jpg);
+  background-position: 1px;
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color: orange;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 25px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  /* background-color: #ddd; */
+  color: black;
+}
+
+/* Add a color to the active/current link */
+.topnav a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.nav_title {
+  color: orange;
+  /* text-shadow: 1px 1px 1px black; */
+  text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+  padding-left: 20px;
+}
+
+/*Wrapper for all main content in a page */
+.page_content {
+  padding: 50px;
+}
+
+body {
+  background-image: url("../Images/space_sounds_1.jpg");
+  background-color: rgb(184, 184, 184);
+  background-size: cover;
+  margin: 0;
+}
+
+.text_description {
+  text-align: center;
+  padding: 20px;
+  color: white;
+  font-size: larger;
+  background-color: rgba(51, 51, 51, 0.8);
+  
+  /* background-image: url("../Images/milky_way_bg.jpg"); */
+}
+
+
+
+.chart {
+  align-content: center;
+  padding: 20px;
+  border: black;
+  border-width: 5px;
+}
