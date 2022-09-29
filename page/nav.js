@@ -4,5 +4,6 @@ $(document).ready(function(){
 						<a href="index.html">Home</a>
 						<a href="records.html">Records</a>
 						<a href="contact.html">Contact</a>
+						<a href="agenda.html">Agenda</a>
 					</div>`);
 });
