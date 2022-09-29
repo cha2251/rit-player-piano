@@ -39,14 +39,20 @@ body {
   background-image: url("../Images/space_sounds_1.jpg");
   background-color: rgb(184, 184, 184);
   background-size: cover;
+  margin: 0;
 }
 
 .text_description {
+  text-align: center;
   padding: 20px;
   color: white;
   font-size: larger;
-  background-image: url("../Images/milky_way_bg.jpg");
+  background-color: rgba(51, 51, 51, 0.8);
+  
+  /* background-image: url("../Images/milky_way_bg.jpg"); */
 }
+
+
 
 .chart {
   align-content: center;
