@@ -1,12 +1,7 @@
-
-
 $(document).ready(function(){
-	
-
 	$("#navbar").append(`<div class="topnav">
-						  <a class="active" href="#home">Home</a>
-						<a href="#news">News</a>
-						<a href="#contact">Contact</a>
-						<a href="#about">About</a>
+						<a href="index.html">Home</a>
+						<a href="records.html">Records</a>
+						<a href="contact.html">Contact</a>
 					</div>`);
 });
