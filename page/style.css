@@ -24,3 +24,32 @@
   background-color: #04AA6D;
   color: white;
 }
+
+.nav_title {
+  color: cornflowerblue;
+  padding-left: 20px;
+}
+
+/*Wrapper for all main content in a page */
+.page_content {
+  padding: 50px;
+}
+
+body {
+  background-image: url("../Images/space_sounds_1.jpg");
+  background-color: rgb(184, 184, 184);
+}
+
+.text_description {
+  padding: 20px;
+  color: white;
+  font-size: larger;
+  background-image: url("../Images/milky_way_bg.jpg");
+}
+
+.chart {
+  align-content: center;
+  padding: 20px;
+  border: black;
+  border-width: 5px;
+}
