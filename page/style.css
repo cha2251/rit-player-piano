@@ -1,21 +1,23 @@
 .topnav {
   background-color: #333;
+  background-image: url(../Images/key_header.jpg);
+  background-position: 1px;
   overflow: hidden;
 }
 
 /* Style the links inside the navigation bar */
 .topnav a {
   float: left;
-  color: #f2f2f2;
+  color: orange;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 25px;
 }
 
 /* Change the color of links on hover */
 .topnav a:hover {
-  background-color: #ddd;
+  /* background-color: #ddd; */
   color: black;
 }
 
@@ -26,7 +28,9 @@
 }
 
 .nav_title {
-  color: cornflowerblue;
+  color: orange;
+  /* text-shadow: 1px 1px 1px black; */
+  text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
   padding-left: 20px;
 }
 
