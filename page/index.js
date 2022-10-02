@@ -17,3 +17,37 @@ $(window).on("load",function() {
       });
     }).scroll(); //invoke scroll-handler on page-load
   });
+
+
+  $(document).ready(function(){
+    hideAllTeamRoles();
+    addHoverToRole();
+    
+  })
+
+
+  function hideAllTeamRoles() {
+    var names = ["davidPRole", "davidARole", "carterRole", "nickRole", "michaelRole"];
+    names.forEach(role => {
+      $(`#${role}`).hide();
+    });
+  }
+
+  function toggleTeamRole(name, action) {
+    if (action == "hide") {
+      $(`#${name}`).hide();
+    } else {
+      $(`#${name}`).show();
+    }
+  }
+
+  function addHoverToRole() {
+    var names = ["davidP", "davidA", "carter", "nick", "michael"];
+    names.forEach(name => {
+      $(`#${name}Name`).hover(function(){
+        toggleTeamRole(`${name}Role`, "show");
+      }, function(){
+        toggleTeamRole(`${name}Role`, "hide");
+    });
+    });
+  }
