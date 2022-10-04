@@ -2,7 +2,7 @@
 
 import os
 
-SEARCH_DIRECTORIES = ['page'] # What directories to recursively search
+SEARCH_DIRECTORIES = ['page', 'tools'] # What directories to recursively search
 CODE_FILE_WHITELIST = ['.py', '.js', '.html', '.css']
 
 def getNumberOfLinesInFile(filepath):
@@ -25,7 +25,8 @@ def countLinesOfCode():
     totalLinesOfCode = 0
 
     for dir in SEARCH_DIRECTORIES:
-        totalLinesOfCode += countLinesOfCodeInRoot(dir)
+        searchDir = os.path.join('..', dir)
+        totalLinesOfCode += countLinesOfCodeInRoot(searchDir)
 
     print('Total lines of code: {} ({} kLOC)'.format(totalLinesOfCode, totalLinesOfCode // 1000))
 
