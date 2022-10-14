@@ -1,8 +1,8 @@
-from src.mixing.mixing import Mixing
+from src.output_queue.output_queue import OutputQueue
 
 class TestIsEven:
     def test_even(self):
-        component = Mixing()
+        component = OutputQueue()
         evenVal = 2
 
         actual = component.is_even(evenVal)
@@ -11,7 +11,7 @@ class TestIsEven:
         assert actual is expected
 
     def test_odd(self):
-        component = Mixing()
+        component = OutputQueue()
         evenVal = 1
         
         actual = component.is_even(evenVal)
@@ -21,7 +21,7 @@ class TestIsEven:
 
 class TestInRange:
     def test_lower_bound(self):
-        component = Mixing()
+        component = OutputQueue()
         lower_val = 3
 
         actual = component.in_range(lower_val)
@@ -30,7 +30,7 @@ class TestInRange:
         assert actual is expected
     
     def test_upper_bound(self):
-        component = Mixing()
+        component = OutputQueue()
         upper_val = 8
 
         actual = component.in_range(upper_val)
@@ -39,7 +39,7 @@ class TestInRange:
         assert actual is expected
     
     def test_within_bounds(self):
-        component = Mixing()
+        component = OutputQueue()
         within_range_val = 5
 
         actual = component.in_range(within_range_val)
