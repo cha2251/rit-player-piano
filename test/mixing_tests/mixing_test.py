@@ -25,7 +25,7 @@ class TestInRange:
         lower_val = 3
 
         actual = component.in_range(lower_val)
-        expected = True
+        expected = False
         
         assert actual is expected
     
