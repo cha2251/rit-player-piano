@@ -14,3 +14,8 @@ https://cha2251.github.io/rit-player-piano/
 # Requirements
 - Install packages with `pip -r requirements.txt`
 - Export current environment configuration file with `pip freeze`
+
+# Running unit test
+- Run tests with `pytest` in top level directory
+- Follow test discovery syntax when creating new tests 
+ - https://docs.pytest.org/en/7.1.x/explanation/goodpractices.html#test-discovery
