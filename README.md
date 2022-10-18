@@ -3,16 +3,18 @@
 https://cha2251.github.io/rit-player-piano/
 
 # Python Virtual Environment
-- To keep package management and builds synced, use a python VM
+- To keep package management and builds synced, use a python venv
+- To create: 
+    - python3 -m venv venv
 - To activate:
     - On windows: .\venv\Scripts\activate.bat
-    - On Linux: TODO
-- To activate:
+    - On Linux: source venv/bin/activate
+- To deactivate:
     - On windows: .\venv\Scripts\deactivate.bat
-    - On Linux: TODO
+    - On Linux: Ctrl + D
 
 # Requirements
-- Install packages with `pip -r requirements.txt`
+- Install packages with `pip install -r requirements.txt`
 - Export current environment configuration file with `pip freeze`
 
 # Running unit test
