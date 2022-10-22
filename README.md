@@ -24,5 +24,8 @@ https://cha2251.github.io/rit-player-piano/
 
 # Building Executeable
 - Start virtual environment
-- In top level directory run: `pyinstaller.exe src\common\main.py --clean --onefile`
-    - Fix permission erros with: `chmod -R -c u+rwx .`
+- Windows:
+    - In top level directory run: `pyinstaller.exe src\common\main.py --clean --onefile`
+        - Fix permission erros with: `chmod -R -c u+rwx .`
+- Linux:
+    - In top level directory run: `pyinstaller src\common\main.py --clean --onefile`
