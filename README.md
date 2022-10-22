@@ -13,6 +13,9 @@ https://cha2251.github.io/rit-player-piano/
     - On windows: .\venv\Scripts\deactivate.bat
     - On Linux: Ctrl + D
 
+# Running Locally
+- Run with `python -m src.common.main` to prevent package errors
+
 # Requirements
 - Install packages with `pip install -r requirements.txt`
 - Export current environment configuration file with `pip freeze > requirements.txt`
