@@ -5,8 +5,37 @@ on:
     branches: [ main, cha2251/build-system ]
 
 jobs:
-  archive-build-artifacts:
+  archive-linux-artifact:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Build with Pyinstaller
+        run: |
+          pyinstaller src\common\main.py --clean --onefile
+      - name: Test with pytest
+        run: |
+          pytest
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with: 
+          name: linux-executable
+          path: dist/main.exe
+  
+  archive-windows-artifact:
+    runs-on: windows-latest
     strategy:
       matrix:
         python-version: ["3.8"]
@@ -31,5 +60,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with: 
-          name: executable
+          name: windows-executable
           path: dist/main.exe
