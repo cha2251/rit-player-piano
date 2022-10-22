@@ -2,7 +2,7 @@ name: Build Executeable
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, cha2251/build-system ]
 
 jobs:
   archive-build-artifacts:
