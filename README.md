@@ -32,3 +32,6 @@ https://cha2251.github.io/rit-player-piano/
         - Fix permission erros with: `chmod -R -c u+rwx .`
 - Linux:
     - In top level directory run: `pyinstaller src\common\main.py --clean --onefile`
+- Linux:
+    - In top level directory run: `pyinstaller src\common\main.py --clean --onefile`
+        - Fix permission errors with: `chmod -R -c u+rwx .`
