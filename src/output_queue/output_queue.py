@@ -1,6 +1,8 @@
 import mido
 import time
 
+from src.common.midi_event import MidiEvent
+
 class OutputQueue:
     def __init__(self):
         self._open_port = None
@@ -21,6 +23,48 @@ class OutputQueue:
             midiEvent = queue.get()
 
             self._open_port.send(midiEvent.event)
+
+    def play_test_tones(self, queue, delay=0.0):
+        if self._open_port == None:
+            raise Exception('There is no currently selected device')
+
+        now = time.time() + delay
+
+        for i in [0, 2, 4, 5, 7]:
+            queue.put(MidiEvent(mido.Message('note_on',note=60+i), now))
+            now += 0.2
+            queue.put(MidiEvent(mido.Message('note_off',note=60+i), now))
+            now += 0.05
+
+        for i in [5, 4, 2, 0]:
+            queue.put(MidiEvent(mido.Message('note_on',note=60+i), now))
+            now += 0.2
+            queue.put(MidiEvent(mido.Message('note_off',note=60+i), now))
+            now += 0.05
+
+        for i in [0, 4, 7]:
+           queue.put(MidiEvent(mido.Message('note_on',note=60+i), now))
+        now += 0.4
+
+        for i in [0, 4, 7]:
+            queue.put(MidiEvent(mido.Message('note_off',note=60+i), now))
+        now += 0.05
+
+        for i in [0, 5, 9]:
+            queue.put(MidiEvent(mido.Message('note_on',note=60+i), now))
+        now += 0.4
+
+        for i in [0, 5, 9]:
+            queue.put(MidiEvent(mido.Message('note_off',note=60+i), now))
+        now += 0.05
+
+        for i in [0, 4, 7]:
+            queue.put(MidiEvent(mido.Message('note_on',note=60+i), now))
+        now += 0.4
+
+        for i in [0, 4, 7]:
+            queue.put(MidiEvent(mido.Message('note_off',note=60+i), now))
+        now += 0.05
 
     # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
     def is_even(self, number):
