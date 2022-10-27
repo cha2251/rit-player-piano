@@ -1,12 +1,13 @@
 """
 Created by Michael Samodurov 10/22/2022
 """
+from operator import contains
 import mido
 
-def parse_midi_file(file_name):
+def parse_midi_file(file_name, track_string):
     file_queue = []
     # open midi file
-    file_location = '../MIDI_Files/{}'.format(file_name)
+    file_location = 'MIDI_Files/{}'.format(file_name)
     mid_fi = mido.MidiFile(file_location)
 
     # iterate over midi file
@@ -14,8 +15,10 @@ def parse_midi_file(file_name):
         print('Track {}: {}'.format(i, track.name))
 
         # iterate over messages in each track
-        for msg in track:
-            print(msg)
+        if track.name == track_string:
+            for msg in track:
+                print(msg.dict())
+            
 
 
     return file_queue
