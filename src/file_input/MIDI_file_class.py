@@ -3,6 +3,22 @@ Created by Michael Samodurov 10/22/2022
 """
 import mido
 
+def parse_midi_file(file_name):
+    file_queue = []
+    # open midi file
+    mid_fi = mido.MidiFile(file_name)
+
+    # iterate over midi file
+    for i, track in enumerate(mid_fi.tracks):
+        print('Track []: []'.format(i, track.name))
+
+        # iterate over messages in each track
+        for msg in track:
+            print(msg)
+
+
+    return file_queue
+
 
 class MIDIFileObject:
     """
