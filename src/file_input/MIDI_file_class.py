@@ -6,11 +6,12 @@ import mido
 def parse_midi_file(file_name):
     file_queue = []
     # open midi file
-    mid_fi = mido.MidiFile(file_name)
+    file_location = '../MIDI_Files/{}'.format(file_name)
+    mid_fi = mido.MidiFile(file_location)
 
     # iterate over midi file
     for i, track in enumerate(mid_fi.tracks):
-        print('Track []: []'.format(i, track.name))
+        print('Track {}: {}'.format(i, track.name))
 
         # iterate over messages in each track
         for msg in track:
