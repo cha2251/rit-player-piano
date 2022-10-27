@@ -1,20 +1,28 @@
+import queue
+from time import sleep
 import mido
 
+from src.common.shared_queues import SharedQueues
+
 class Mixing:
-    def read_ports(self):
-        file_port = mido.open_input('File_Input')
-        button_port = mido.open_input('Button_Input')
+    file_input_queue: queue.Queue = None
+    button_input_queue: queue.Queue = None
+    mixed_output_queue: queue.PriorityQueue = None
 
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def is_even(self, number):
-        if number % 2 == 0:
-            return True
-        return False
+    def __init__(self, shared_queues:SharedQueues):
+        self.file_input_queue = shared_queues.file_input_queue
+        self.button_input_queue = shared_queues.button_input_queue
+        self.mixed_output_queue = shared_queues.mixed_output_queue
 
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def in_range(self, number):
-        lower = 3
-        upper = 8
-        if number > lower and number < upper:
-            return True
-        return False
+    def startup(self):
+        self.copy_file_to_output()
+        self.main_loop()
+    
+    def main_loop(self):
+        while(True):
+            event = self.button_input_queue.get()
+            self.mixed_output_queue.put(event)
+
+    def copy_file_to_output(self):
+        while(self.file_input_queue.qsize() != 0):
+            self.mixed_output_queue.put(self.file_input_queue.get())
