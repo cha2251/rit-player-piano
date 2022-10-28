@@ -55,11 +55,11 @@ class MIDIFileObject:
     """
 
     def __init__(self, file_name, track_string):
-        """_summary_
+        """Constructor for MIDIFileObject class. Parses the given file and maintains the messages for the track.
 
         Args:
-            file_name (_type_): _description_
-            track_string (_type_): _description_
+            file_name (str): The MIDI file to be parsed. Must be in /MIDI_Files.
+            track_string (str): The string name for the track to play within the MIDI file.
         """
 
         self.file_name = file_name
@@ -69,19 +69,20 @@ class MIDIFileObject:
 
 
     def __str__(self):
-        """_summary_
+        """String representation of object
 
         Returns:
-            _type_: _description_
+            str: printable string
         """
         return f"{self.file_name}"
 
     
     def get_next_message(self):
-        """_summary_
+        """Iterate current position and get the next message.
+        This can be called iteratively.
 
         Returns:
-            _type_: _description_
+            dict: dictionary representation of next message
         """
         if self.curr_pos < len(self.messages):
             self.curr_pos += 1
@@ -90,4 +91,8 @@ class MIDIFileObject:
 
     
     def get_curr_message(self):
+        """
+        Returns:
+            dict: dictionary representation of next message
+        """
         return self.messages[self.curr_pos]
