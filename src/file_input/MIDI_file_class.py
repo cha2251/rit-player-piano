@@ -55,6 +55,12 @@ class MIDIFileObject:
     """
 
     def __init__(self, file_name, track_string):
+        """_summary_
+
+        Args:
+            file_name (_type_): _description_
+            track_string (_type_): _description_
+        """
 
         self.file_name = file_name
         self.track_name = track_string
@@ -63,10 +69,20 @@ class MIDIFileObject:
 
 
     def __str__(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         return f"{self.file_name}"
 
     
-    def get_next_note(self):
+    def get_next_message(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         if self.curr_pos < len(self.messages):
             self.curr_pos += 1
 
