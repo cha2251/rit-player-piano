@@ -41,3 +41,18 @@ class TestParse:
 
         assert actual == expected
 
+
+    def test_get_curr_message(self):
+        """
+        
+        {'type': 'track_name', 'name': 'Piano', 'time': 0}
+        
+        """
+        fileObject = MIDI_FC.MIDIFileObject('MIDI_sample.mid', 'Piano')
+
+        val = fileObject.get_curr_message()
+        expected = {'type': 'track_name', 'name': 'Piano', 'time': 0}
+        actual = val
+
+        assert actual == expected
+

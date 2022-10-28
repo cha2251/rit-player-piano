@@ -89,5 +89,5 @@ class MIDIFileObject:
         return self.messages[self.curr_pos]
 
     
-    def get_curr_pos(self):
-        return self.curr_pos
+    def get_curr_message(self):
+        return self.messages[self.curr_pos]
