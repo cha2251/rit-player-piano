@@ -5,7 +5,7 @@ class TestParse:
 
     def test_parse_midi_file(self):
         """ This is the test to ensure the function returns the correct list of midi messages.
-        TODO: complete this test
+        TODO: complete this test, test with smaller file
         """
         val = MIDI_FC.parse_midi_file('MIDI_sample.mid', 'Piano')
 
