@@ -13,7 +13,7 @@ def parse_midi_file(file_name, track_string):
         track_string (str): The name of the track in the MIDI file to retrieve.
 
     Returns:
-        list: A list of mido message objects
+        list: A list of mido message dictionary objects
     """
     track_messages = []
     # open midi file
@@ -30,7 +30,7 @@ def parse_midi_file(file_name, track_string):
         # iterate over messages in each track
         if track.name == track_string:
             for msg in track:
-                track_messages.append(msg)
+                track_messages.append(msg.dict())
                 print(msg.dict())
             
     return track_messages
@@ -59,16 +59,19 @@ class MIDIFileObject:
         self.file_name = file_name
         self.track_name = track_string
         self.curr_pos = 0
-        self.message_queue = parse_midi_file(file_name, track_string)
+        self.messages = parse_midi_file(file_name, track_string)
 
 
     def __str__(self):
         return f"{self.file_name}"
 
     
-    def get_next_note():
-        return 0
+    def get_next_note(self):
+        if self.curr_pos < len(self.messages):
+            self.curr_pos += 1
+
+        return self.messages[self.curr_pos]
 
     
-    def get_curr_pos():
-        return 0
+    def get_curr_pos(self):
+        return self.curr_pos
