@@ -1,28 +1,62 @@
+from ctypes import c_bool
 import mido
 import time
+from threading import Thread
 
 from src.common.midi_event import MidiEvent
 
-class OutputQueue:
-    def __init__(self):
+class OutputQueue(Thread):
+    def __init__(self, queue):
+        Thread.__init__(self)
+        self.queue = queue
         self._open_port = None
+        self._running = False
+
+    def __del__(self):
+        if self._open_port != None:
+            self._open_port.close()
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
     def select_device(self, name=None):
-        if not name == None and not name in mido.get_output_names():
+        if not name == None and not name in self.get_device_list():
             raise Exception('"{}" does not match any of the available devices'.format(name))
+
+        if self._open_port != None:
+            self._open_port.close()
 
         self._open_port = mido.open_output(name)
 
         print('Switched output device to "{}"'.format(self._open_port.name))
 
-    def check_queue(self, queue):
-        now = time.time()
+    # Returns the list of currently available MIDI devices that can be connected to
+    def get_device_list(self):
+        return mido.get_output_names()
         
-        while not queue.empty() and now >= queue.queue[0].timestamp:
-            midiEvent = queue.get()
+    # Checks the queue for messages and sends them to the output as needed and returns the number of message sent (mainly for testing)
+    def check_queue(self):
+        if self._open_port == None:
+            return 0
+
+        now = time.time()
+        messages_sent = 0
+
+        while not self.queue.empty() and now >= self.queue.queue[0].timestamp:
+            midiEvent = self.queue.get()
 
             self._open_port.send(midiEvent.event)
+            messages_sent += 1
+
+        return messages_sent
+
+    def run(self):
+        self._running = True
+
+        while self._running:
+            self.check_queue()
+
+    # Tells the output thread that it should stop (.join() must still be called afterwards!)
+    def signal_stop(self):
+        self._running = False
 
     def play_test_tones(self, queue, delay=0.0):
         if self._open_port == None:
@@ -65,17 +99,3 @@ class OutputQueue:
         for i in [0, 4, 7]:
             queue.put(MidiEvent(mido.Message('note_off',note=60+i), now))
         now += 0.05
-
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def is_even(self, number):
-        if number % 2 == 0:
-            return True
-        return False
-
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def in_range(self, number):
-        lower = 3
-        upper = 8
-        if number > lower and number < upper:
-            return True
-        return False

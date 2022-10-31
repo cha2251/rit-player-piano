@@ -22,16 +22,21 @@ class Main:
 
         self.output.select_device()
 
+        print("Starting output subsystem process")
+        self.output.start()
+        
         self.output.play_test_tones(self.shared_queues.mixed_output_queue, 0.2)
 
-        while True:
-            self.output.check_queue(self.shared_queues.mixed_output_queue)
+        input("Press enter to quit")
+
+        self.output.signal_stop()
+        self.output.join()
 
     def create_mixing(self):
         self.mixing = Mixing()
 
     def create_output(self):
-        self.output = OutputQueue()
+        self.output = OutputQueue(self.shared_queues.mixed_output_queue)
 
     def create_queues(self):
         self.shared_queues = SharedQueues()
