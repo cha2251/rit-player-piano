@@ -25,7 +25,7 @@ class Main:
         print("Starting output subsystem process")
         self.output.start()
         
-        self.output.play_test_tones(self.shared_queues.mixed_output_queue, 0.2)
+        # self.output.play_test_tones(self.shared_queues.mixed_output_queue, 0.2)
 
         input("Press enter to quit")
 
