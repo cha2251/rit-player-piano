@@ -24,6 +24,7 @@ https://cha2251.github.io/rit-player-piano/
 - Run tests with `pytest` in top level directory
 - Follow test discovery syntax when creating new tests 
  - https://docs.pytest.org/en/7.1.x/explanation/goodpractices.html#test-discovery
+ - Tip: to ensure print statements work in tests (if you need them) run `pytest -s`
 
 # Building Executeable
 - Start virtual environment

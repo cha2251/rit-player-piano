@@ -26,14 +26,22 @@ class Main:
         outputThread.start()
 
         while(True):
-            input()
+            if input() == 'quit':
+                break
             self.shared_queues.button_input_queue.put(MidiEvent(mido.Message('note_on',note=69),time.time()))
+        
+        self.shutdown()
+
+    def shutdown(self):
+        self.mixing.deactivate()
+        print("System Shutdown Succesfully")
 
     def test_output(self):
-        event = self.shared_queues.mixed_output_queue.get()
-        while event.timestamp > time.time():
-            pass
-        print(event)
+        while self.mixing.active:
+            event = self.shared_queues.mixed_output_queue.get()
+            while event.timestamp > time.time():
+                pass
+            print(event)
 
     def create_mixing(self):
         self.mixing = Mixing(self.shared_queues)
