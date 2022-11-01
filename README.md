@@ -19,6 +19,7 @@ https://cha2251.github.io/rit-player-piano/
 # Requirements
 - Install packages with `pip install -r requirements.txt`
 - Export current environment configuration file with `pip freeze > requirements.txt`
+ - Make sure you install the existing packages first and you're in a venv before exporting!
 
 # Running unit test
 - Run tests with `pytest` in top level directory
