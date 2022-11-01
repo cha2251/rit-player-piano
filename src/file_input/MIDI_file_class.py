@@ -40,6 +40,13 @@ class MIDIFileObject:
         """
         return f"{self.file_name}"
 
+    def has_next(self):
+        has_next = False
+        if self.curr_pos < len(self.messages)-1:
+            has_next = True
+
+        return has_next
+
     
     def get_next_message(self):
         """Iterate current position and get the next message.
@@ -48,7 +55,7 @@ class MIDIFileObject:
         Returns:
             dict: dictionary representation of next message
         """
-        if self.curr_pos < len(self.messages):
+        if self.curr_pos < len(self.messages)-1:
             self.curr_pos += 1
 
         return self.messages[self.curr_pos]

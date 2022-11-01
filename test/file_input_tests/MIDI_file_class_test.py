@@ -72,3 +72,16 @@ class TestParse:
 
         assert actual == expected
 
+    
+    def test_get_next_recursive(self):
+        fileObject = MIDI_FC.MIDIFileObject('MIDI_sample.mid', 'Piano')
+
+        while(fileObject.has_next()):
+            print(fileObject.get_next_message())
+
+        val = fileObject.get_curr_message()
+        expected = {'type': 'end_of_track', 'time': 0}
+        actual = val
+
+        assert actual == expected
+
