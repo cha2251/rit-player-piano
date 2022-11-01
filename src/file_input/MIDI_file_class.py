@@ -3,45 +3,9 @@ Created by Michael Samodurov 10/22/2022
 """
 
 import mido
+from pathlib import Path
 
-def parse_midi_file(file_name, track_string):
-    """Parse the designated MIDI file and retrieve the selected track.
-    TODO: implement input handling
 
-    Args:
-        file_name (str): The name of the MIDI file to open.
-        track_string (str): The name of the track in the MIDI file to retrieve.
-
-    Returns:
-        list: A list of mido message dictionary objects
-    """
-    track_messages = []
-    # open midi file
-    if not is_file_string_valid(file_name):
-        return []
-
-    file_location = 'MIDI_Files/{}'.format(file_name)
-    mid_fi = mido.MidiFile(file_location)
-
-    # iterate over midi file
-    for i, track in enumerate(mid_fi.tracks):
-        print('Track {}: {}'.format(i, track.name))
-
-        # iterate over messages in each track
-        if track.name == track_string:
-            for msg in track:
-                track_messages.append(msg.dict())
-                print(msg.dict())
-            
-    return track_messages
-
-def is_file_string_valid(file_string):
-
-    is_valid = False
-    if file_string != '':
-        is_valid = True
-    
-    return is_valid
 
 
 
@@ -65,7 +29,7 @@ class MIDIFileObject:
         self.file_name = file_name
         self.track_name = track_string
         self.curr_pos = 0
-        self.messages = parse_midi_file(file_name, track_string)
+        self.messages = self.parse_midi_file(file_name, track_string)
 
 
     def __str__(self):
@@ -96,3 +60,44 @@ class MIDIFileObject:
             dict: dictionary representation of next message
         """
         return self.messages[self.curr_pos]
+
+    def is_file_string_valid(self, file_string):
+
+        is_valid = False
+        file_location = 'MIDI_Files/{}'.format(file_string)
+        if file_string != '' and Path(file_location).is_file():
+            is_valid = True
+        
+        return is_valid
+
+    def parse_midi_file(self, file_name, track_string):
+        """Parse the designated MIDI file and retrieve the selected track.
+        TODO: implement input handling
+
+        Args:
+            file_name (str): The name of the MIDI file to open.
+            track_string (str): The name of the track in the MIDI file to retrieve.
+
+        Returns:
+            list: A list of mido message dictionary objects
+        """
+        track_messages = []
+        # open midi file
+        if not self.is_file_string_valid(file_name):
+            return []
+
+        file_location = 'MIDI_Files/{}'.format(file_name)
+        mid_fi = mido.MidiFile(file_location)
+
+        # iterate over midi file
+        for i, track in enumerate(mid_fi.tracks):
+            # print('Track {}: {}'.format(i, track.name))
+
+            # iterate over messages in each track
+            if track.name == track_string:
+                for msg in track:
+                    track_messages.append(msg.dict())
+                    # print(msg.dict())
+                
+        return track_messages
+
