@@ -33,7 +33,7 @@ class OutputQueue(Thread):
         return mido.get_output_names()
         
     # Checks the queue for messages and sends them to the output as needed and returns the number of message sent (mainly for testing)
-    def check_queue(self):
+    def _check_queue(self):
         if self._open_port == None:
             return 0
 
@@ -52,7 +52,7 @@ class OutputQueue(Thread):
         self._running = True
 
         while self._running:
-            self.check_queue()
+            self._check_queue()
 
     # Tells the output thread that it should stop (.join() must still be called afterwards!)
     def signal_stop(self):

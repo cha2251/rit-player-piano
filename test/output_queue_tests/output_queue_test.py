@@ -61,13 +61,13 @@ class TestRun:
     def test_empty_queue(self, output_queue):
         output_queue.select_device()
 
-        assert output_queue.check_queue() == 0
+        assert output_queue._check_queue() == 0
         assert len(output_queue._open_port.sent_messages) == 0
 
     def test_no_open_port(self, output_queue):
         output_queue.queue.put(None)
 
-        assert output_queue.check_queue() == 0
+        assert output_queue._check_queue() == 0
 
     def test_one_message(self, output_queue):
         test_message = MidiEvent(mido.Message('note_on',note=60), 42)
@@ -75,7 +75,7 @@ class TestRun:
         output_queue.select_device()
         output_queue.queue.put(test_message)
 
-        assert output_queue.check_queue() == 1
+        assert output_queue._check_queue() == 1
         assert output_queue._open_port.sent_messages[0] == test_message.event
 
     def test_future_message(self, output_queue):
@@ -84,7 +84,7 @@ class TestRun:
         output_queue.select_device()
         output_queue.queue.put(test_message)
 
-        assert output_queue.check_queue() == 0
+        assert output_queue._check_queue() == 0
         assert len(output_queue._open_port.sent_messages) == 0
 
     def test_many_messages(self, output_queue):
@@ -102,7 +102,7 @@ class TestRun:
 
         output_queue.select_device()
 
-        assert output_queue.check_queue() == num_past_messages
+        assert output_queue._check_queue() == num_past_messages
         assert len(output_queue._open_port.sent_messages) == num_past_messages
         assert output_queue.queue.qsize() == num_future_messages
 
