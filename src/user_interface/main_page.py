@@ -11,7 +11,7 @@ class MainPage(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.title = 'PLayer Piano'
+        self.title = 'Player Piano'
         self.left = 100
         self.top = 50
         self.width = 320

@@ -8,7 +8,7 @@ class PlayingPage(QWidget):
     def __init__(self):
         super().__init__()
         self.linkbtn = QPushButton("LINK")
-        self.title = 'PLayer Piano'
+        self.title = 'Player Piano'
         self.left = 100
         self.top = 50
         self.width = 320
