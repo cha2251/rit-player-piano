@@ -13,6 +13,9 @@ https://cha2251.github.io/rit-player-piano/
     - On windows: .\venv\Scripts\deactivate.bat
     - On Linux: Ctrl + D
 
+# Running Locally
+- Run with `python -m src.common.main` to prevent package errors
+
 # Requirements
 - Install packages with `pip install -r requirements.txt`
 - Export current environment configuration file with `pip freeze > requirements.txt`
@@ -21,3 +24,14 @@ https://cha2251.github.io/rit-player-piano/
 - Run tests with `pytest` in top level directory
 - Follow test discovery syntax when creating new tests 
  - https://docs.pytest.org/en/7.1.x/explanation/goodpractices.html#test-discovery
+
+# Building Executeable
+- Start virtual environment
+- Windows:
+    - In top level directory run: `pyinstaller.exe src\common\main.py --clean --onefile`
+        - Fix permission erros with: `chmod -R -c u+rwx .`
+- Linux:
+    - In top level directory run: `pyinstaller src\common\main.py --clean --onefile`
+- Linux:
+    - In top level directory run: `pyinstaller src\common\main.py --clean --onefile`
+        - Fix permission errors with: `chmod -R -c u+rwx .`
