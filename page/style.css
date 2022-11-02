@@ -21,6 +21,17 @@
   color: black;
 }
 
+/* Adding to Bootstrap class */
+.nav-link {
+  color:rgba(199, 199, 199, 1);
+}
+
+/* Adding to Bootstrap class */
+.nav-item a:hover {
+  color: white;
+}
+
+
 /* Add a color to the active/current link */
 .topnav a.active {
   background-color: #04AA6D;
@@ -40,16 +51,72 @@
 }
 
 body {
-  background-image: url("Images/space_sounds_1.jpg");
+  /* background-image: url("../Images/space_sounds_1.jpg");
   background-color: rgb(184, 184, 184);
   background-size: cover;
+  margin: 0; */
   margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+  background: #202020;
+  background-image: linear-gradient(rgba(110, 110, 110, 0.3) 0.1em, transparent 0.1em), linear-gradient(90deg, rgba(110, 110, 110, 0.3) 0.1em, transparent 0.1em);
+  background-size: 2em 2em;
+}
+
+body {
+	animation: fadeInAnimation ease 3s;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+}
+
+@keyframes fadeInAnimation {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+
+p {
+  color:rgb(199, 199, 199);
+}
+
+.name p {
+  text-align: end;
+}
+
+.name p:hover {
+  color: white;
+}
+
+.hide {
+  display: none;
+}
+
+.name:hover +.hide {
+  display: block;
+  color: white;
+}
+
+h1 {
+  color:rgba(168, 168, 168, 1);
+  font-size: 7em;
+  font-family: "Milo Serif";
+}
+
+h2 {
+  color:rgba(168, 168, 168, 1);
+  font-size: 5em;
+  font-family: "Helvetica Neue";
 }
 
 .text_description {
   text-align: center;
   padding: 20px;
-  color: white;
+  /* color: white; */
   font-size: larger;
   background-color: rgba(51, 51, 51, 0.8);
   
