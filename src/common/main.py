@@ -1,5 +1,6 @@
 from src.common.midi_event import MidiEvent
 from src.mixing.mixing import Mixing
+from src.output_queue.output_queue import OutputQueue
 from src.common.shared_queues import SharedQueues
 import mido
 
@@ -9,15 +10,32 @@ class Main:
     mixing = None
 
     def main(self):
-        print("Creating Shared Queues ")
+        mido.set_backend("mido.backends.rtmidi")
+        print("Using Mido backend: {}".format(mido.backend))
+
+        print("Creating Output Subsystem")
+        self.create_output()
+        print("Creating Shared Queues")
         self.create_queues()
         print("Creating Mixing Subsystem")
         self.create_mixing()
-        print("Sanity Check Pass: "+str(self.mixing.is_even(2)))
-        input("Press Enter")
+
+        print("Starting output subsystem process")
+        self.output.start()
+        
+        # self.output.play_test_tones(self.shared_queues.mixed_output_queue, 0.2)
+
+        input("Press enter to quit")
+
+        self.output.signal_stop()
+        self.output.join()
 
     def create_mixing(self):
         self.mixing = Mixing()
+
+    def create_output(self):
+        self.output = OutputQueue(self.shared_queues.mixed_output_queue)
+        self.output.select_device()
 
     def create_queues(self):
         self.shared_queues = SharedQueues()
