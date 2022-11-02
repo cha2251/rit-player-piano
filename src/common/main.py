@@ -10,17 +10,15 @@ class Main:
     mixing = None
 
     def main(self):
-        print("Creating Shared Queues ")
-        self.create_queues()
-        print("Creating Mixing Subsystem")
-        self.create_mixing()
-        print("Creating Output Subsystem")
-        self.create_output()
-
         mido.set_backend("mido.backends.rtmidi")
         print("Using Mido backend: {}".format(mido.backend))
 
-        self.output.select_device()
+        print("Creating Output Subsystem")
+        self.create_output()
+        print("Creating Shared Queues")
+        self.create_queues()
+        print("Creating Mixing Subsystem")
+        self.create_mixing()
 
         print("Starting output subsystem process")
         self.output.start()
@@ -37,6 +35,7 @@ class Main:
 
     def create_output(self):
         self.output = OutputQueue(self.shared_queues.mixed_output_queue)
+        self.output.select_device()
 
     def create_queues(self):
         self.shared_queues = SharedQueues()

@@ -1,4 +1,3 @@
-from ctypes import c_bool
 import mido
 import time
 from threading import Thread
@@ -18,10 +17,10 @@ class OutputQueue(Thread):
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
     def select_device(self, name=None):
-        if not name == None and not name in self.get_device_list():
+        if name is not None and name not in self.get_device_list():
             raise Exception('"{}" does not match any of the available devices'.format(name))
 
-        if self._open_port != None:
+        if self._open_port is not None:
             self._open_port.close()
 
         self._open_port = mido.open_output(name)
@@ -35,18 +34,14 @@ class OutputQueue(Thread):
     # Checks the queue for messages and sends them to the output as needed and returns the number of message sent (mainly for testing)
     def _check_queue(self):
         if self._open_port == None:
-            return 0
+            return
 
         now = time.time()
-        messages_sent = 0
 
         while not self.queue.empty() and now >= self.queue.queue[0].timestamp:
             midiEvent = self.queue.get()
 
             self._open_port.send(midiEvent.event)
-            messages_sent += 1
-
-        return messages_sent
 
     def run(self):
         self._running = True
@@ -54,12 +49,12 @@ class OutputQueue(Thread):
         while self._running:
             self._check_queue()
 
-    # Tells the output thread that it should stop (.join() must still be called afterwards!)
+    # Tells the output thread that it should stop
     def signal_stop(self):
         self._running = False
 
     def play_test_tones(self, queue, delay=0.0):
-        if self._open_port == None:
+        if self._open_port is None:
             raise Exception('There is no currently selected device')
 
         now = time.time() + delay

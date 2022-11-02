@@ -39,7 +39,9 @@ class TestPorts:
         mock_get_output_names = mocker.patch("mido.get_output_names")
         mock_get_output_names.return_value = test_output_devices
 
-        assert test_output_devices == output_queue.get_device_list()
+        actual_output_devices = output_queue.get_device_list()
+
+        assert actual_output_devices is test_output_devices
 
     def test_select_bad_device(self, mocker, output_queue):
         test_output_devices = ["Output1", "Output2"]
@@ -60,51 +62,70 @@ class TestRun:
     
     def test_empty_queue(self, output_queue):
         output_queue.select_device()
+        output_queue._check_queue()
 
-        assert output_queue._check_queue() == 0
-        assert len(output_queue._open_port.sent_messages) == 0
+        expected_sent_messages = 0
+        actual_sent_messages = len(output_queue._open_port.sent_messages)
+
+        assert actual_sent_messages is expected_sent_messages
 
     def test_no_open_port(self, output_queue):
         output_queue.queue.put(None)
+        output_queue._check_queue()
 
-        assert output_queue._check_queue() == 0
+        expected_unsent_messages = 1
+        actual_unsent_messages = output_queue.queue.qsize()
+
+        assert actual_unsent_messages is expected_unsent_messages
 
     def test_one_message(self, output_queue):
         test_message = MidiEvent(mido.Message('note_on',note=60), 42)
-
         output_queue.select_device()
         output_queue.queue.put(test_message)
+        output_queue._check_queue()
 
-        assert output_queue._check_queue() == 1
-        assert output_queue._open_port.sent_messages[0] == test_message.event
+        expected_sent_messages = 1
+        expected_sent_event = test_message.event
+
+        actual_sent_messages = len(output_queue._open_port.sent_messages)
+        actual_sent_event = output_queue._open_port.sent_messages[0]
+
+        assert actual_sent_messages is expected_sent_messages
+        assert actual_sent_event is expected_sent_event
 
     def test_future_message(self, output_queue):
         test_message = MidiEvent(mido.Message('note_on',note=60), FAR_FUTURE_TIMESTAMP)
-
         output_queue.select_device()
         output_queue.queue.put(test_message)
+        output_queue._check_queue()
 
-        assert output_queue._check_queue() == 0
-        assert len(output_queue._open_port.sent_messages) == 0
+        expected_sent_messages = 0
+        actual_sent_messages = len(output_queue._open_port.sent_messages)
+
+        assert actual_sent_messages is expected_sent_messages
 
     def test_many_messages(self, output_queue):
-        num_past_messages = 5
-        num_future_messages = 3
+        expected_past_messages = 5
+        expected_future_messages = 3
         past_messages = []
 
-        for i in range(num_past_messages):
+        for i in range(expected_past_messages):
             test_message = MidiEvent(mido.Message('note_on', note=60), i * 10)
             past_messages += [test_message]
             output_queue.queue.put(test_message)
 
-        for i in range(num_future_messages):
+        for i in range(expected_future_messages):
             output_queue.queue.put(MidiEvent(mido.Message('note_on', note=60), FAR_FUTURE_TIMESTAMP + i * 10))
 
         output_queue.select_device()
+        output_queue._check_queue()
 
-        assert output_queue._check_queue() == num_past_messages
-        assert len(output_queue._open_port.sent_messages) == num_past_messages
-        assert output_queue.queue.qsize() == num_future_messages
+        actual_sent_messages = len(output_queue._open_port.sent_messages)
+        actual_unsent_messages = output_queue.queue.qsize()
 
-        for i in range(num_past_messages):
-            assert output_queue._open_port.sent_messages[i] == past_messages[i].event
+        assert actual_sent_messages is expected_past_messages
+        assert actual_unsent_messages is expected_future_messages
+    
+        # Assert that each past message exists in the sent messages (already length checked)
+        for i in range(expected_past_messages):
+            assert past_messages[i].event in output_queue._open_port.sent_messages
