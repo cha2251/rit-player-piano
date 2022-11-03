@@ -2,8 +2,11 @@
 Created by Michael Samodurov 10/22/2022
 """
 
+import time
 import mido
 from pathlib import Path
+
+from src.common.midi_event import MidiEvent
 
 
 
@@ -95,16 +98,13 @@ class MIDIFileObject:
 
         file_location = 'MIDI_Files/{}'.format(file_name)
         mid_fi = mido.MidiFile(file_location)
-
-        # iterate over midi file
+        # iterate over midi
+        now = time.time()+2
         for i, track in enumerate(mid_fi.tracks):
-            # print('Track {}: {}'.format(i, track.name))
-
-            # iterate over messages in each track
-            if track.name == track_string:
-                for msg in track:
-                    track_messages.append(msg.dict())
-                    # print(msg.dict())
+            current=now
+            for msg in track:
+                current+=(msg.time/200) #TODO figure out why this works
+                track_messages.append(MidiEvent(msg,current))
                 
         return track_messages
 

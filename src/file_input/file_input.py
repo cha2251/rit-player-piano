@@ -1,16 +1,24 @@
+import queue
+from threading import Thread
+import time
+from src.file_input.MIDI_file_class import MIDIFileObject
+from src.common.midi_event import MidiEvent
 import mido
 
-class FileInput:
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def is_even(self, number):
-        if number % 2 == 0:
-            return True
-        return False
+class FileInput(Thread):
+    whitelisted_types = ['note_on','note_off']
+    file_input_queue: queue.Queue = None
 
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def in_range(self, number):
-        lower = 3
-        upper = 8
-        if number > lower and number < upper:
-            return True
-        return False
+    def __init__(self, file_input_queue):
+        Thread.__init__(self)
+        self.file_input_queue = file_input_queue
+    
+    def run(self):
+        self.copy_file_to_queue()
+    
+    def copy_file_to_queue(self):
+        fileObject = MIDIFileObject('PianoMan.mid', 'Harry Potter') #TODO, remove hardcode
+        while fileObject.has_next():
+            message = fileObject.get_next_message()
+            if message.event.type in self.whitelisted_types:
+                self.file_input_queue.put(message)
