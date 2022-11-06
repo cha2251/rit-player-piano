@@ -17,7 +17,7 @@ class FileInput(Thread):
         self.copy_file_to_queue()
     
     def copy_file_to_queue(self):
-        fileObject = MIDIFileObject('PianoMan.mid', 'Harry Potter') #TODO, remove hardcode
+        fileObject = MIDIFileObject('ChamberOfSecrets-HedwigsTheme.mid', 'Harry Potter') #TODO, remove hardcode
         while fileObject.has_next():
             message = fileObject.get_next_message()
             if message.event.type in self.whitelisted_types:
