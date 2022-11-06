@@ -1,8 +1,5 @@
 import queue
 from threading import Thread
-from time import sleep
-import time
-import mido
 
 from src.common.shared_queues import SharedQueues
 

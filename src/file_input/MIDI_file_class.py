@@ -31,8 +31,6 @@ class MIDIFileObject:
 
         self.file_name = file_name
         self.curr_pos = 0
-        self.curr_tempo = None
-        self.curr_time_signature = None
         self.current_time_delay = None
         self.messages = self.parse_midi_file(file_name)
 
@@ -58,7 +56,7 @@ class MIDIFileObject:
         This can be called iteratively.
 
         Returns:
-            dict: dictionary representation of next message
+            Mido Message() representation of next message
         """
         if self.curr_pos < len(self.messages)-1:
             self.curr_pos += 1
@@ -69,7 +67,7 @@ class MIDIFileObject:
     def get_curr_message(self):
         """
         Returns:
-            dict: dictionary representation of next message
+            Mido Message() representation of current message
         """
         return self.messages[self.curr_pos]
 
@@ -105,13 +103,13 @@ class MIDIFileObject:
         file_location = 'MIDI_Files/{}'.format(file_name)
         mid_fi = mido.MidiFile(file_location)
         
-        start_time = time.time()+2
+        start_time = time.time()+1 # Off
         curr_time = start_time
 
-        tempo = self.DEFAULT_TEMPO
-        ticks_per_beat = mid_fi.ticks_per_beat
-
-        for msg in merge_tracks(mid_fi.tracks):
+        tempo = self.DEFAULT_TEMPO # Tempo changes as we go, so default till first tempo event
+        ticks_per_beat = mid_fi.ticks_per_beat # Ticks Per Beat is only in header
+    
+        for msg in merge_tracks(mid_fi.tracks): # merge_tracks merges w/ respect to time
             if msg.time > 0:
                 delta = tick2second(msg.time, ticks_per_beat, tempo)
             else:
@@ -123,30 +121,6 @@ class MIDIFileObject:
 
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
-
-        # for msg in mid_fi:
-        #     print(msg)
-        #     input_time += msg.time
-
-        #     playback_time = curr_time - start_time
-        #     duration_to_next_event = input_time - playback_time
-
-        #     curr_time = duration_to_next_event+curr_time
-
-        #     track_messages.append(MidiEvent(msg,curr_time))
-
-        # for i, track in enumerate(mid_fi.tracks):
-        #     current=now
-        #     for msg in track:
-        #         if msg.type == 'set_tempo':
-        #             curr_tempo = msg.tempo
-        #             self.calc_time_delay()
-        #         if msg.type == 'time_signature':
-        #             curr_time_signature = msg
-        #             self.calc_time_delay()
-        #         print(msg)
-        #         current+=(msg.time/180) #TODO figure out why this works
-        #         track_messages.append(MidiEvent(msg,current))
                 
         return track_messages
 
