@@ -114,7 +114,9 @@ class MIDIFileObject:
             playback_time = curr_time - start_time
             duration_to_next_event = input_time - playback_time
 
-            track_messages.append(MidiEvent(msg,duration_to_next_event+curr_time))
+            curr_time = duration_to_next_event+curr_time
+
+            track_messages.append(MidiEvent(msg,curr_time))
 
         # for i, track in enumerate(mid_fi.tracks):
         #     current=now
