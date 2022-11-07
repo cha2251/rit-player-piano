@@ -2,7 +2,9 @@ import sys
 import mido
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import pyqtSlot, QSize
+from PyQt5.QtCore import pyqtSlot, QSize, Qt
+
+
 
 
 class HomePage(QWidget):
@@ -19,6 +21,20 @@ class HomePage(QWidget):
         if lower < number < upper:
             return True
         return False
+
+    def get_current_songs(self):
+        vbox = QVBoxLayout()
+        # get list of songs
+        songs = ["Ode to joy", "song 2", "song 3", "song 4"]
+        for song in songs:
+            label = QPushButton(song)
+            label.clicked.connect(lambda: self.song_on_click(song))
+            vbox.addWidget(label)
+
+        return vbox
+
+    def song_on_click(self, song_name):
+        print("Song name: " + song_name)
 
     def __init__(self):
         super().__init__()
@@ -39,13 +55,19 @@ class HomePage(QWidget):
 
         quit_button = QPushButton("Exit", self)
 
+        title = QLabel("Hello")
+        title.setAlignment(Qt.AlignCenter)
+        # title.setAlignment(Qt.AlignTop)
+
         hbox = QHBoxLayout()
-        hbox.addWidget(QLabel("Hello"))
         hbox.addWidget(self.linkbtn)
         hbox.addWidget(quit_button)
         vbox = QVBoxLayout(self)
+        vbox.addWidget(title)
+        vbox.addLayout(self.get_current_songs())
         vbox.addLayout(hbox)
         vbox.addWidget(button)
+        # vbox.setAlignment(Qt.AlignCenter)
         self.initUI()
 
     def initUI(self):
