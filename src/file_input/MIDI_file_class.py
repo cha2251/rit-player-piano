@@ -44,24 +44,23 @@ class MIDIFileObject:
         return f"{self.file_name}"
 
     def has_next(self):
-        has_next = False
-        if self.curr_pos < len(self.messages)-1:
-            has_next = True
+        if self.curr_pos >= len(self.messages):
+            return False
 
-        return has_next
+        return True
 
     
     def get_next_message(self):
-        """Iterate current position and get the next message.
+        """Return the current position and increment the current.
         This can be called iteratively.
 
         Returns:
             Mido Message() representation of next message
         """
-        if self.curr_pos < len(self.messages)-1:
-            self.curr_pos += 1
-
-        return self.messages[self.curr_pos]
+        
+        message = self.messages[self.curr_pos]
+        self.curr_pos += 1
+        return message
 
     
     def get_curr_message(self):

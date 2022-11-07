@@ -1,5 +1,6 @@
 import src.file_input.MIDI_file_class as MIDI_FC
 import mido
+import pytest
 
 
 class TestParse:
@@ -50,8 +51,8 @@ class TestParse:
         fileObject = MIDI_FC.MIDIFileObject('MIDI_sample.mid')
 
         val = fileObject.get_next_message()
-        expected = {'type': 'control_change', 'time': 0, 'control': 0, 'value': 121, 'channel': 1}
-        actual = val
+        expected = mido.MetaMessage('track_name', name='Wikipedia MIDI (extended)', time=0)
+        actual = val.event
 
         assert actual == expected
 
@@ -67,9 +68,8 @@ class TestParse:
         fileObject = MIDI_FC.MIDIFileObject('MIDI_sample.mid')
 
         val = fileObject.get_curr_message()
-        print (val)
         expected = mido.MetaMessage(type='track_name',name='Wikipedia MIDI (extended)', time=0)
-        actual = val
+        actual = val.event
 
         assert actual == expected
 
@@ -80,9 +80,7 @@ class TestParse:
         while(fileObject.has_next()):
             fileObject.get_next_message()
 
-        val = fileObject.get_curr_message()
-        expected = {'type': 'end_of_track', 'time': 0}
-        actual = val
 
-        assert actual == expected
-
+        with pytest.raises(IndexError):
+            fileObject.get_curr_message()
+            

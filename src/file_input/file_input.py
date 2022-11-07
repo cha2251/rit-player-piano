@@ -15,7 +15,6 @@ class FileInput(Thread):
     
     def copy_file_to_queue(self):
         fileObject = self.openFile()
-        print(fileObject)
         while fileObject.has_next():
             message = fileObject.get_next_message()
             if message.event.type in self.whitelisted_types:
