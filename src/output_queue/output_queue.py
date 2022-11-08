@@ -50,7 +50,7 @@ class OutputQueue(Thread):
             self._check_queue()
 
     # Tells the output thread that it should stop
-    def signal_stop(self):
+    def deactivate(self):
         self._running = False
 
     def play_test_tones(self, queue, delay=0.0):

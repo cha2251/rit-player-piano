@@ -19,6 +19,7 @@ class MIDIFileObject:
     """
 
     DEFAULT_TEMPO = 500000
+    STARTUP_DELAY = 2.5
     
 
     def __init__(self, file_name):
@@ -77,12 +78,7 @@ class MIDIFileObject:
         if file_string != '' and Path(file_location).is_file():
             is_valid = True
         
-        return is_valid
-
-    def calc_time_delay(self):
-        if self.curr_tempo is None or self.curr_time_signature is None:
-            return None
-        
+        return is_valid        
 
     def parse_midi_file(self, file_name):
         """Parse the designated MIDI file and retrieve the selected track.
@@ -102,17 +98,14 @@ class MIDIFileObject:
         file_location = 'MIDI_Files/{}'.format(file_name)
         mid_fi = mido.MidiFile(file_location)
         
-        start_time = time.time()+1 # Off
+        start_time = time.time()+self.STARTUP_DELAY
         curr_time = start_time
 
         tempo = self.DEFAULT_TEMPO # Tempo changes as we go, so default till first tempo event
         ticks_per_beat = mid_fi.ticks_per_beat # Ticks Per Beat is only in header
     
         for msg in merge_tracks(mid_fi.tracks): # merge_tracks merges w/ respect to time
-            if msg.time > 0:
-                delta = tick2second(msg.time, ticks_per_beat, tempo)
-            else:
-                delta = 0
+            delta = tick2second(msg.time, ticks_per_beat, tempo)
 
             curr_time += delta
 
