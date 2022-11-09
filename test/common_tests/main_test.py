@@ -12,6 +12,7 @@ class TestSubsystemCreate:
 
     def test_create_mixing(self):
         component = Main()
+        component.create_queues()
 
         assert component.mixing is None
 

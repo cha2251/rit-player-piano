@@ -2,12 +2,12 @@
 Created by Michael Samodurov 10/22/2022
 """
 
+import time
 import mido
 from pathlib import Path
 
-
-
-
+from src.common.midi_event import MidiEvent
+from mido import merge_tracks, tick2second
 
 class MIDIFileObject:
     """
@@ -18,7 +18,11 @@ class MIDIFileObject:
     it is redundant with the mido object.
     """
 
-    def __init__(self, file_name, track_string):
+    DEFAULT_TEMPO = 500000
+    STARTUP_DELAY = 2.5
+    
+
+    def __init__(self, file_name):
         """Constructor for MIDIFileObject class. Parses the given file and maintains the messages for the track.
 
         Args:
@@ -27,9 +31,9 @@ class MIDIFileObject:
         """
 
         self.file_name = file_name
-        self.track_name = track_string
         self.curr_pos = 0
-        self.messages = self.parse_midi_file(file_name, track_string)
+        self.current_time_delay = None
+        self.messages = self.parse_midi_file(file_name)
 
 
     def __str__(self):
@@ -41,30 +45,29 @@ class MIDIFileObject:
         return f"{self.file_name}"
 
     def has_next(self):
-        has_next = False
-        if self.curr_pos < len(self.messages)-1:
-            has_next = True
+        if self.curr_pos >= len(self.messages):
+            return False
 
-        return has_next
+        return True
 
     
     def get_next_message(self):
-        """Iterate current position and get the next message.
+        """Return the current position and increment the current.
         This can be called iteratively.
 
         Returns:
-            dict: dictionary representation of next message
+            Mido Message() representation of next message
         """
-        if self.curr_pos < len(self.messages)-1:
-            self.curr_pos += 1
-
-        return self.messages[self.curr_pos]
+        
+        message = self.messages[self.curr_pos]
+        self.curr_pos += 1
+        return message
 
     
     def get_curr_message(self):
         """
         Returns:
-            dict: dictionary representation of next message
+            Mido Message() representation of current message
         """
         return self.messages[self.curr_pos]
 
@@ -75,9 +78,9 @@ class MIDIFileObject:
         if file_string != '' and Path(file_location).is_file():
             is_valid = True
         
-        return is_valid
+        return is_valid        
 
-    def parse_midi_file(self, file_name, track_string):
+    def parse_midi_file(self, file_name):
         """Parse the designated MIDI file and retrieve the selected track.
         TODO: implement input handling
 
@@ -89,22 +92,27 @@ class MIDIFileObject:
             list: A list of mido message dictionary objects
         """
         track_messages = []
-        # open midi file
         if not self.is_file_string_valid(file_name):
             return []
 
         file_location = 'MIDI_Files/{}'.format(file_name)
         mid_fi = mido.MidiFile(file_location)
+        
+        start_time = time.time()+self.STARTUP_DELAY
+        curr_time = start_time
 
-        # iterate over midi file
-        for i, track in enumerate(mid_fi.tracks):
-            # print('Track {}: {}'.format(i, track.name))
+        tempo = self.DEFAULT_TEMPO # Tempo changes as we go, so default till first tempo event
+        ticks_per_beat = mid_fi.ticks_per_beat # Ticks Per Beat is only in header
+    
+        for msg in merge_tracks(mid_fi.tracks): # merge_tracks merges w/ respect to time
+            delta = tick2second(msg.time, ticks_per_beat, tempo)
 
-            # iterate over messages in each track
-            if track.name == track_string:
-                for msg in track:
-                    track_messages.append(msg.dict())
-                    # print(msg.dict())
+            curr_time += delta
+
+            track_messages.append(MidiEvent(msg,curr_time))
+
+            if msg.type == 'set_tempo':
+                tempo = msg.tempo
                 
         return track_messages
 

@@ -1,49 +1,77 @@
+from queue import Queue
+from src.common.midi_event import MidiEvent
+from src.file_input.MIDI_file_class import MIDIFileObject
 from src.file_input.file_input import FileInput
+import pytest
+import mido
 
-class TestIsEven:
-    def test_even(self):
-        component = FileInput()
-        evenVal = 2
+class TestCreate:
+    def test_copies_queue(self):
+        test_queue = Queue()
+        component = FileInput(test_queue)
 
-        actual = component.is_even(evenVal)
-        expected = True
+        actual = component.file_input_queue
+        
+        assert actual is test_queue
+
+
+class TestCopyFileToQueue:
+    def test_empty_file(self,mocker):
+        test_queue = Queue()
+        component = FileInput(test_queue)
+
+        test_file = MIDIFileObject('')
+
+        mocker.patch('src.file_input.file_input.FileInput.openFile',return_value=test_file)
+
+        expected = component.file_input_queue
+        component.copy_file_to_queue()
+        actual = component.file_input_queue
+        
         
         assert actual is expected
 
-    def test_odd(self):
-        component = FileInput()
-        evenVal = 1
-        
-        actual = component.is_even(evenVal)
-        expected = False
-        
-        assert actual is expected
+    def test_mutiple_notes(self,mocker):
+        test_queue = Queue()
+        component = FileInput(test_queue)
+        expected = Queue()
 
-class TestInRange:
-    def test_lower_bound(self):
-        component = FileInput()
-        lower_val = 3
+        test_file = MIDIFileObject('')
+        for i in range(10):
+            test_file.messages.append(MidiEvent(mido.Message('note_on'),i))
+            expected.put(MidiEvent(mido.Message('note_on'),i))
 
-        actual = component.in_range(lower_val)
-        expected = False
+        mocker.patch('src.file_input.file_input.FileInput.openFile',return_value=test_file)
+
+        component.copy_file_to_queue()
+        actual = component.file_input_queue
         
-        assert actual is expected
+        assert actual.qsize() == expected.qsize()
+        for i in range(actual.qsize()):
+            assert actual.get().event == expected.get().event
+
+    def test_blacklisted_notes(self,mocker):
+        test_queue = Queue()
+        component = FileInput(test_queue)
+        expected = Queue()
+
+        test_file = MIDIFileObject('')
+        for i in range(10):
+            test_file.messages.append(MidiEvent(mido.Message('note_on'),i))
+            expected.put(MidiEvent(mido.Message('note_on'),i))
+
+        for i in range(10):
+            test_file.messages.append(MidiEvent(mido.Message('control_change'),i))
+
+        mocker.patch('src.file_input.file_input.FileInput.openFile',return_value=test_file)
+
+        component.copy_file_to_queue()
+        actual = component.file_input_queue
+
+        
+        
+        assert actual.qsize() == expected.qsize()
+        for i in range(actual.qsize()):
+            assert actual.get().event == expected.get().event
     
-    def test_upper_bound(self):
-        component = FileInput()
-        upper_val = 8
-
-        actual = component.in_range(upper_val)
-        expected = False
-        
-        assert actual is expected
-    
-    def test_within_bounds(self):
-        component = FileInput()
-        within_range_val = 5
-
-        actual = component.in_range(within_range_val)
-        expected = True
-        
-        assert actual is expected
 

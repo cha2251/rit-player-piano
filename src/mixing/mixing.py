@@ -1,20 +1,40 @@
-import mido
+import queue
+from threading import Thread
 
-class Mixing:
-    def read_ports(self):
-        file_port = mido.open_input('File_Input')
-        button_port = mido.open_input('Button_Input')
+from src.common.shared_queues import SharedQueues
 
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def is_even(self, number):
-        if number % 2 == 0:
-            return True
-        return False
+class Mixing(Thread):
+    file_input_queue: queue.Queue = None
+    button_input_queue: queue.Queue = None
+    mixed_output_queue: queue.PriorityQueue = None
+    active = False
 
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def in_range(self, number):
-        lower = 3
-        upper = 8
-        if number > lower and number < upper:
-            return True
-        return False
+    def __init__(self, shared_queues:SharedQueues):
+        Thread.__init__(self)
+        self.file_input_queue = shared_queues.file_input_queue
+        self.button_input_queue = shared_queues.button_input_queue
+        self.mixed_output_queue = shared_queues.mixed_output_queue
+    
+    def run(self):
+        self.active = True
+        self.startup()
+        
+    def startup(self):
+        self.main_loop()
+    
+    def main_loop(self):
+        while(self.active):
+            try:
+                event = self.button_input_queue.get(timeout=.005) # We need a timeout or else we hang here on shutdown
+                self.mixed_output_queue.put(event)
+            except queue.Empty:
+                pass # Expected if we dont have anything in the queue
+            try:
+                event = self.file_input_queue.get(timeout=.005)
+                self.mixed_output_queue.put(event)
+            except queue.Empty:
+                pass # Expected if we dont have anything in the queue
+        
+
+    def deactivate(self):
+        self.active = False

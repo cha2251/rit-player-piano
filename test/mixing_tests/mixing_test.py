@@ -1,49 +1,76 @@
+from src.common.midi_event import MidiEvent
+from src.common.shared_queues import SharedQueues
 from src.mixing.mixing import Mixing
+import pytest
+import mido
 
-class TestIsEven:
-    def test_even(self):
-        component = Mixing()
-        evenVal = 2
+class TestCreate:
+    def test_copies_queues(self):
+        test_shared_queues =  SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
 
-        actual = component.is_even(evenVal)
-        expected = True
-        
-        assert actual is expected
-
-    def test_odd(self):
-        component = Mixing()
-        evenVal = 1
-        
-        actual = component.is_even(evenVal)
-        expected = False
-        
-        assert actual is expected
-
-class TestInRange:
-    def test_lower_bound(self):
-        component = Mixing()
-        lower_val = 3
-
-        actual = component.in_range(lower_val)
-        expected = False
-        
-        assert actual is expected
+        assert component.file_input_queue is test_shared_queues.file_input_queue
+        assert component.button_input_queue is test_shared_queues.button_input_queue
+        assert component.mixed_output_queue is test_shared_queues.mixed_output_queue
     
-    def test_upper_bound(self):
-        component = Mixing()
-        upper_val = 8
+class TestDeactivate():
+    def test_set_false(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
 
-        actual = component.in_range(upper_val)
+        component.active = True
+        component.deactivate()
+
         expected = False
-        
-        assert actual is expected
+        actual = component.active
+
+        assert expected == actual
+
+class TestRun:
+    @pytest.mark.timeout(0.5)
+    def test_exits(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
+
+        component.start()
+
+        component.deactivate()
     
-    def test_within_bounds(self):
-        component = Mixing()
-        within_range_val = 5
+    @pytest.mark.timeout(1)
+    def test_pulls_from_button(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
 
-        actual = component.in_range(within_range_val)
-        expected = True
-        
-        assert actual is expected
+        test_event = MidiEvent(mido.Message(type='note_on'),0)
+        component.button_input_queue.put(test_event)
 
+
+        component.start()
+        component.deactivate()
+
+        actual = component.mixed_output_queue.get()
+
+        assert test_event == actual
+
+    @pytest.mark.timeout(1)
+    def test_pulls_from_file(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
+
+        test_event = MidiEvent(mido.Message(type='note_on'),0)
+        component.file_input_queue.put(test_event)
+
+
+        component.start()
+        component.deactivate()
+
+        actual = component.mixed_output_queue.get()
+
+        assert test_event == actual
+
+    

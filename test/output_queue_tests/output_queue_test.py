@@ -55,9 +55,9 @@ class TestPorts:
 
 class TestRun:
     @pytest.mark.timeout(0.5)
-    def test_signal_stop(self, output_queue):
+    def test_deactivate(self, output_queue):
         output_queue.start()
-        output_queue.signal_stop()
+        output_queue.deactivate()
         output_queue.join()
     
     def test_empty_queue(self, output_queue):
