@@ -40,7 +40,6 @@ class OutputQueue(Thread):
 
         while not self.queue.empty() and now >= self.queue.queue[0].timestamp:
             midiEvent = self.queue.get()
-
             self._open_port.send(midiEvent.event)
 
     def run(self):
