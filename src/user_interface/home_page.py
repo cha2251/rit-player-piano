@@ -1,9 +1,8 @@
 import sys
-import mido
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
-    QSizePolicy
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import pyqtSlot, QSize, Qt
+    QSizePolicy, QMessageBox, QFileDialog
+from PyQt5.QtCore import pyqtSlot, Qt
+from distributed.utils import import_file
 
 
 class HomePage(QWidget):
@@ -59,9 +58,13 @@ class HomePage(QWidget):
         # title.setAlignment(Qt.AlignTop)
         title_spacer = QSpacerItem(1000, 5, QSizePolicy.Expanding)
 
+        add_song = QPushButton("Import")
+        add_song.clicked.connect(self.import_midi)
+
         hbox = QHBoxLayout()
         hbox.addWidget(title)
         hbox.addSpacerItem(title_spacer)
+        hbox.addWidget(add_song)
         hbox.addWidget(self.nav_settings)
         vbox = QVBoxLayout(self)
         vbox.addLayout(hbox)
@@ -87,6 +90,10 @@ class HomePage(QWidget):
 
     def show_song_page(self, page_num):
         pass
+
+    def import_midi(self):
+        add_song = QFileDialog()
+        add_song.exec()
 
 
 if __name__ == '__main__':
