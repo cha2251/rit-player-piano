@@ -19,23 +19,23 @@ class MainPage(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        self.first = HomePage()
-        self.first.linkbtn.clicked.connect(self.go_to_second)
+        self.home_page = HomePage()
+        self.home_page.linkbtn.clicked.connect(self.go_to_play_page)
 
-        self.second = PlayingPage()
-        self.second.linkbtn.clicked.connect(self.go_to_first)
+        self.play_page = PlayingPage()
+        self.play_page.linkbtn.clicked.connect(self.go_to_home_page)
 
         #self.stackedWidget = QStackedWidget(self)
         self.stackLayout = QStackedLayout(self)
-        self.stackLayout.addWidget(self.first)
-        self.stackLayout.addWidget(self.second)
+        self.stackLayout.addWidget(self.home_page)
+        self.stackLayout.addWidget(self.play_page)
 
         self.showMaximized()
 
-    def go_to_first(self):
+    def go_to_home_page(self):
         self.stackLayout.setCurrentIndex(0)
 
-    def go_to_second(self):
+    def go_to_play_page(self):
         self.stackLayout.setCurrentIndex(1)
 
 

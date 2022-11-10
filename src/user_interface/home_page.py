@@ -1,44 +1,42 @@
 import sys
 import mido
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
+    QSizePolicy
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 
 
-
-
 class HomePage(QWidget):
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def is_even(self, number):
-        if number % 2 == 0:
-            return True
-        return False
-
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def in_range(self, number):
-        lower = 3
-        upper = 8
-        if lower < number < upper:
-            return True
-        return False
 
     def get_current_songs(self):
         vbox = QVBoxLayout()
+        hbox = QHBoxLayout()
+        
+        button = QPushButton("1", self)
+        button.clicked.connect(lambda: self.show_song_page(1))
+
+        hbox.addWidget(button)
+        hbox.setAlignment(Qt.AlignCenter)
+        stuffs = [hbox]
         # get list of songs
         songs = ["Ode to joy", "song 2", "song 3", "song 4"]
+        count = 0
         for song in songs:
+            if count > 20:
+                count = 0
+
             label = QPushButton(song)
             label.clicked.connect(lambda: self.song_on_click(song))
             vbox.addWidget(label)
-
-        return vbox
+            vbox.setAlignment(Qt.AlignTop)
+        return vbox, hbox
 
     def song_on_click(self, song_name):
         print("Song name: " + song_name)
 
     def __init__(self):
         super().__init__()
-        self.linkbtn = QPushButton("LINK")
+        self.linkbtn = QPushButton("Settings")
         self.title = 'PLayer Piano'
         self.left = 100
         self.top = 50
@@ -47,26 +45,34 @@ class HomePage(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        button = QPushButton('PyQt5 button', self)
-        button.setIcon(QIcon(r"images\play-solid.svg"))
-        button.setIconSize(QSize(65, 65))
-        button.setToolTip('This is an example button')
-        button.clicked.connect(self.on_click)
+        # button = QPushButton('PyQt5 button', self)
+        # button.setIcon(QIcon(r"images\play-solid.svg"))
+        # button.setIconSize(QSize(65, 65))
+        # button.setToolTip('This is an example button')
+        # button.clicked.connect(self.on_click)
 
-        quit_button = QPushButton("Exit", self)
+        # quit_button = QPushButton("Exit", self)
 
-        title = QLabel("Hello")
-        title.setAlignment(Qt.AlignCenter)
+        title = QLabel("Select a song to start playing:")
+        title.setAlignment(Qt.AlignLeft)
         # title.setAlignment(Qt.AlignTop)
+        title_spacer = QSpacerItem(1000, 5, QSizePolicy.Expanding)
 
         hbox = QHBoxLayout()
+        hbox.addWidget(title)
+        hbox.addSpacerItem(title_spacer)
         hbox.addWidget(self.linkbtn)
-        hbox.addWidget(quit_button)
         vbox = QVBoxLayout(self)
-        vbox.addWidget(title)
-        vbox.addLayout(self.get_current_songs())
         vbox.addLayout(hbox)
-        vbox.addWidget(button)
+        spacer = QSpacerItem(100, 200, QSizePolicy.Expanding)
+        vbox.addSpacerItem(spacer)
+        v, h = self.get_current_songs()
+        vbox.addLayout(v)
+        spacer_bot = QSpacerItem(100, 1000, QSizePolicy.Expanding)
+        vbox.addSpacerItem(spacer_bot)
+        vbox.addLayout(h)
+        # vbox.addLayout(hbox)
+        # vbox.addWidget(button)
         # vbox.setAlignment(Qt.AlignCenter)
         self.initUI()
 
@@ -77,6 +83,9 @@ class HomePage(QWidget):
     @pyqtSlot()
     def on_click(self):
         print('PyQt5 button click')
+
+    def show_song_page(self, page_num):
+        pass
 
 
 if __name__ == '__main__':
