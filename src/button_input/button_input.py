@@ -1,16 +1,21 @@
 import mido
+import queue
+from threading import Thread
 
-class ButtonInput:
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def is_even(self, number):
-        if number % 2 == 0:
-            return True
-        return False
 
-    # Test fucntions for setting up unit test infra. TODO: Remove in sprint 2.
-    def in_range(self, number):
-        lower = 3
-        upper = 8
-        if number > lower and number < upper:
-            return True
-        return False
+class ButtonInput(Thread):
+    button_input_queue: queue.Queue
+
+    def __init__(self, button_input_queue):
+        Thread.__init__(self)
+        self.button_input_queue = button_input_queue
+        self.active = False
+
+    def run(self):
+        self.active = True
+        while self.active:
+            if True:  # replace with key check
+                pass  # replace with queue addition
+
+    def deactivate(self):
+        self.active = False
