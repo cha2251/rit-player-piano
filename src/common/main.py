@@ -31,9 +31,8 @@ class Main:
 
         self.output.start()
         self.file_input.start()
+        self.button_input.start()
         self.mixing.start()
-        
-        # self.output.play_test_tones(self.shared_queues.mixed_output_queue, 0.2)
 
         print("Type `quit` to quit")
 
@@ -46,6 +45,7 @@ class Main:
     def shutdown(self):
         self.output.signal_stop()
         self.mixing.deactivate()
+        self.button_input.deactivate()
         print("System Shutdown Succesfully")
 
     def create_mixing(self):
