@@ -37,8 +37,13 @@ class Main:
         print("Type `quit` to quit")
 
         while(True):
-            if input() == 'quit':
+            command = input()
+            if command == 'quit':
                 break
+            if command == 'off':
+                self.file_input.deactivate()
+                self.shared_queues.file_input_queue.queue.clear()
+                self.shared_queues.mixed_output_queue.queue.clear()
         
         self.shutdown()
 
@@ -46,6 +51,7 @@ class Main:
         self.output.signal_stop()
         self.button_input.deactivate()
         self.mixing.deactivate()
+        self.file_input.deactivate()
         self.button_input.deactivate()
         print("System Shutdown Succesfully")
 
