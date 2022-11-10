@@ -36,7 +36,6 @@ class Main:
         while(True):
             if input() == 'quit':
                 break
-            self.shared_queues.button_input_queue.put(MidiEvent(mido.Message('note_on',note=90,velocity=120),time.time()))
         
         self.shutdown()
 
