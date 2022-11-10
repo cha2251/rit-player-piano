@@ -48,6 +48,7 @@ class OutputQueue(Thread):
 
         while self._running:
             self._check_queue()
+            time.sleep(0)
 
     # Tells the output thread that it should stop
     def signal_stop(self):

@@ -44,6 +44,7 @@ class Main:
 
     def shutdown(self):
         self.output.signal_stop()
+        self.button_input.deactivate()
         self.mixing.deactivate()
         self.button_input.deactivate()
         print("System Shutdown Succesfully")

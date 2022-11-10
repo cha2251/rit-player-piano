@@ -1,6 +1,7 @@
 import queue
 from threading import Thread
 from src.file_input.MIDI_file_class import MIDIFileObject
+import time
 
 class FileInput(Thread):
     whitelisted_types = ['note_on','note_off']
@@ -19,6 +20,7 @@ class FileInput(Thread):
             message = fileObject.get_next_message()
             if message.event.type in self.whitelisted_types:
                 self.file_input_queue.put(message)
+                time.sleep(0)
 
     def openFile(self):
         return MIDIFileObject('ChamberOfSecrets-HedwigsTheme.mid') #TODO, remove hardcode
