@@ -7,7 +7,7 @@ from PyQt5.QtCore import pyqtSlot, QSize
 class PlayingPage(QWidget):
     def __init__(self):
         super().__init__()
-        self.linkbtn = QPushButton("LINK")
+        self.nav_home = QPushButton("LINK")
         self.title = 'Player Piano'
         self.left = 100
         self.top = 50
@@ -50,7 +50,7 @@ class PlayingPage(QWidget):
         hbox.addWidget(pauseButton)
         hbox.addWidget(playButton)
         vbox = QVBoxLayout(self)
-        vbox.addWidget(self.linkbtn)
+        vbox.addWidget(self.nav_home)
         vbox.addLayout(hbox)
         # vbox.addWidget(playButton)
         self.initUI()

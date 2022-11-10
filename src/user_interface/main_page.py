@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLay
 
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
+from src.user_interface.settings import SettingsPage
 
 
 class MainPage(QWidget):
@@ -20,15 +21,20 @@ class MainPage(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         self.home_page = HomePage()
-        self.home_page.linkbtn.clicked.connect(self.go_to_play_page)
+        self.home_page.nav_play.clicked.connect(self.go_to_play_page)
+        self.home_page.nav_settings.clicked.connect(self.go_to_settings_page)
 
         self.play_page = PlayingPage()
-        self.play_page.linkbtn.clicked.connect(self.go_to_home_page)
+        self.play_page.nav_home.clicked.connect(self.go_to_home_page)
 
-        #self.stackedWidget = QStackedWidget(self)
+        self.settings_page = SettingsPage()
+        self.settings_page.nav_home.clicked.connect(self.go_to_home_page)
+
+        # self.stackedWidget = QStackedWidget(self)
         self.stackLayout = QStackedLayout(self)
         self.stackLayout.addWidget(self.home_page)
         self.stackLayout.addWidget(self.play_page)
+        self.stackLayout.addWidget(self.settings_page)
 
         self.showMaximized()
 
@@ -37,6 +43,9 @@ class MainPage(QWidget):
 
     def go_to_play_page(self):
         self.stackLayout.setCurrentIndex(1)
+
+    def go_to_settings_page(self):
+        self.stackLayout.setCurrentIndex(2)
 
 
 if __name__ == '__main__':

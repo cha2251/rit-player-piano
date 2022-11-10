@@ -6,38 +6,12 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 
 
-class HomePage(QWidget):
+class SettingsPage(QWidget):
 
-    def get_current_songs(self):
-        vbox = QVBoxLayout()
-        hbox = QHBoxLayout()
-        
-        button = QPushButton("1", self)
-        button.clicked.connect(lambda: self.show_song_page(1))
-
-        hbox.addWidget(button)
-        hbox.setAlignment(Qt.AlignCenter)
-        stuffs = [hbox]
-        # get list of songs
-        songs = ["Ode to joy", "song 2", "song 3", "song 4"]
-        count = 0
-        for song in songs:
-            if count > 20:
-                count = 0
-
-            label = QPushButton(song)
-            label.clicked.connect(lambda: self.song_on_click(song))
-            vbox.addWidget(label)
-            vbox.setAlignment(Qt.AlignTop)
-        return vbox, hbox
-
-    def song_on_click(self, song_name):
-        print("Song name: " + song_name)
 
     def __init__(self):
         super().__init__()
-        self.nav_play = QPushButton("Play")
-        self.nav_settings = QPushButton("Settings")
+        self.nav_home = QPushButton("Home")
         self.title = 'PLayer Piano'
         self.left = 100
         self.top = 50
@@ -54,7 +28,7 @@ class HomePage(QWidget):
 
         # quit_button = QPushButton("Exit", self)
 
-        title = QLabel("Select a song to start playing:")
+        title = QLabel("SETTINGS")
         title.setAlignment(Qt.AlignLeft)
         # title.setAlignment(Qt.AlignTop)
         title_spacer = QSpacerItem(1000, 5, QSizePolicy.Expanding)
@@ -62,16 +36,16 @@ class HomePage(QWidget):
         hbox = QHBoxLayout()
         hbox.addWidget(title)
         hbox.addSpacerItem(title_spacer)
-        hbox.addWidget(self.nav_settings)
+        hbox.addWidget(self.nav_home)
         vbox = QVBoxLayout(self)
         vbox.addLayout(hbox)
         spacer = QSpacerItem(100, 200, QSizePolicy.Expanding)
         vbox.addSpacerItem(spacer)
-        v, h = self.get_current_songs()
-        vbox.addLayout(v)
+        # v, h = self.get_current_songs()
+        # vbox.addLayout(v)
         spacer_bot = QSpacerItem(100, 1000, QSizePolicy.Expanding)
         vbox.addSpacerItem(spacer_bot)
-        vbox.addLayout(h)
+        # vbox.addLayout(h)
         # vbox.addLayout(hbox)
         # vbox.addWidget(button)
         # vbox.setAlignment(Qt.AlignCenter)
@@ -91,5 +65,5 @@ class HomePage(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = HomePage()
+    ex = SettingsPage()
     sys.exit(app.exec_())
