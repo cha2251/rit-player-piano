@@ -11,9 +11,9 @@ class ButtonInput(Thread):
     button_input_queue: queue.Queue
     active = False
 
-    def __init__(self, shared_queues: SharedQueues):
+    def __init__(self, button_input_queue):
         Thread.__init__(self)
-        self.button_input_queue = shared_queues.button_input_queue
+        self.button_input_queue = button_input_queue
 
     def run(self):
         self.active = True
