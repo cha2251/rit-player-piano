@@ -23,8 +23,10 @@ class ButtonInput(Thread):
                 if keyboard.is_pressed(keys[i]):
                     self.button_input_queue.put(
                         MidiEvent(mido.Message('note_on', note=55 + i, velocity=120), time.time()))
+                    while keyboard.is_pressed(keys[i]):
+                        pass
                     self.button_input_queue.put(
-                        MidiEvent(mido.Message('note_off', note=55 + i, velocity=120), time.time()+.5))
+                        MidiEvent(mido.Message('note_off', note=55 + i, velocity=120), time.time()))
 
     def deactivate(self):
         self.active = False
