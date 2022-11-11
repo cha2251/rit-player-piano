@@ -41,6 +41,7 @@ class Main:
     def shutdown(self):
         self.output.deactivate()
         self.mixing.deactivate()
+        self.shared_queues.deactivate()
         print("System Shutdown Succesfully")
 
     def create_mixing(self):
