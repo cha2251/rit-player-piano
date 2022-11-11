@@ -1,5 +1,6 @@
 import queue
 from threading import Thread
+import time
 
 from src.common.shared_queues import SharedQueues
 
@@ -22,19 +23,20 @@ class Mixing(Thread):
     def startup(self):
         self.main_loop()
     
-    def main_loop(self):
+    def main_loop(self):        
         while(self.active):
             try:
-                event = self.button_input_queue.get(timeout=.005) # We need a timeout or else we hang here on shutdown
+                event = self.button_input_queue.get_nowait()
                 self.mixed_output_queue.put(event)
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
             try:
-                event = self.file_input_queue.get(timeout=.005)
+                event = self.file_input_queue.get_nowait()
                 self.mixed_output_queue.put(event)
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
-        
+
+            time.sleep(0)
 
     def deactivate(self):
         self.active = False
