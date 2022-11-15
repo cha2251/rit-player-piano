@@ -18,15 +18,17 @@ class ButtonInput(Thread):
     def run(self):
         self.active = True
         keys = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p']
+        pressed = [False]*10
         while self.active:
             for i in range(10):
-                if keyboard.is_pressed(keys[i]):
+                if keyboard.is_pressed(keys[i]) and not pressed[i]:
                     self.button_input_queue.put(
                         MidiEvent(mido.Message('note_on', note=55 + i, velocity=120), time.time()))
-                    while keyboard.is_pressed(keys[i]):
-                        pass
+                    pressed[i] = True
+                if not keyboard.is_pressed(keys[i]) and pressed[i]:
                     self.button_input_queue.put(
                         MidiEvent(mido.Message('note_off', note=55 + i, velocity=120), time.time()))
+                    pressed[i] = False
 
     def deactivate(self):
         self.active = False
