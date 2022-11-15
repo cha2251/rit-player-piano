@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLay
     QSizePolicy
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
+from .draggable import Draggable
 
 
 class SettingsPage(QWidget):
@@ -28,6 +29,11 @@ class SettingsPage(QWidget):
 
         # quit_button = QPushButton("Exit", self)
 
+        ##### drop1 = Draggable("first", "second") # don't do this it wont work??
+        drop1 = ""
+        drop1 = QLabel("STUFF")
+        drop1.setAcceptDrops(True)
+
         title = QLabel("SETTINGS")
         title.setAlignment(Qt.AlignLeft)
         # title.setAlignment(Qt.AlignTop)
@@ -37,6 +43,9 @@ class SettingsPage(QWidget):
         hbox.addWidget(title)
         hbox.addSpacerItem(title_spacer)
         hbox.addWidget(self.nav_home)
+
+        hbox.addWidget(drop1)
+
         vbox = QVBoxLayout(self)
         vbox.addLayout(hbox)
         spacer = QSpacerItem(100, 200, QSizePolicy.Expanding)

@@ -32,6 +32,7 @@ class HomePage(QWidget):
 
     def song_on_click(self, song_name):
         print("Song name: " + song_name)
+        
 
     def __init__(self):
         super().__init__()
