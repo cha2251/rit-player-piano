@@ -6,8 +6,6 @@ from multiprocessing import Process, Manager, Queue
 
 from src.common.midi_event import MidiEvent
 
-MAXIMUM_QUEUE_TRANSFER_TIME = 0.003
-
 def _runOutputQueue(inputQueue, selectDeviceQueue, running):
     output = OutputQueueProcess(inputQueue, selectDeviceQueue, running)
     output.run()
@@ -32,8 +30,7 @@ class OutputQueue():
 
 class OutputQueueProcess():
     def __init__(self, inputQueue, selectDeviceQueue, running):
-        self.inputQueue = inputQueue
-        self.queue = PriorityQueue()
+        self.queue = inputQueue
         self._selectDeviceQueue = selectDeviceQueue
         self._open_port = None
         self._running = running
@@ -59,13 +56,6 @@ class OutputQueueProcess():
         while not self._selectDeviceQueue.empty():
             self.select_device(self._selectDeviceQueue.get_nowait())
 
-    # Transfers messages from the process input queue to our internal priority queue
-    def _transfer_queues(self):
-        now = time.time()
-
-        while not self.inputQueue.empty() and time.time() - now < MAXIMUM_QUEUE_TRANSFER_TIME:
-            self.queue.put(self.inputQueue.get())
-
     # Checks the queue for messages and sends them to the output as needed and returns the number of message sent (mainly for testing)
     def _check_priority_queue(self):
         if self._open_port == None:
@@ -73,7 +63,7 @@ class OutputQueueProcess():
         
         now = time.time()
 
-        while not self.queue.empty() and now >= self.queue.queue[0].timestamp:
+        while not self.queue.empty() and now >= self.queue.peek().timestamp:
             midiEvent = self.queue.get()
 
             self._open_port.send(midiEvent.event)
@@ -81,7 +71,6 @@ class OutputQueueProcess():
     def run(self):
         while self._running.value:
             self._process_command_queue()
-            self._transfer_queues()
             self._check_priority_queue()
 
 def play_test_tones(queue, delay=0.0):
