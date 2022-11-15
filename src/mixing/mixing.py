@@ -45,19 +45,19 @@ class Mixing(Thread):
         offset_time = time.time() - self.pause_time
         for event in self.holding_queue:
             self.mixed_output_queue.put(MidiEvent(event.event,event.timestamp+offset_time))
-        self.holding_queue.queue.clear()
+        self.holding_queue.clear()
     
     def main_loop(self):
         while(self.active):
             if(self.state == self.State.PLAY):
                 try:
-                    event = self.button_input_queue.get(timeout=.005) # We need a timeout or else we hang here on shutdown
+                    event = self.button_input_queue.get(timeout=0) # We need a timeout or else we hang here on shutdown
                     self.mixed_output_queue.put(event)
                     time.sleep(0)
                 except queue.Empty:
                     pass # Expected if we dont have anything in the queue
                 try:
-                    event = self.file_input_queue.get(timeout=.005)
+                    event = self.file_input_queue.get(timeout=0)
                     self.mixed_output_queue.put(event)
                 except queue.Empty:
                     pass # Expected if we dont have anything in the queue
