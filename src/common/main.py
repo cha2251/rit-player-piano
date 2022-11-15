@@ -44,6 +44,10 @@ class Main:
                 self.file_input.deactivate()
                 self.shared_queues.file_input_queue.queue.clear()
                 self.shared_queues.mixed_output_queue.queue.clear()
+            if command == 'pause':
+                self.mixing.pause()
+            if command == 'play':
+                self.mixing.unpause()
         
         self.shutdown()
 
