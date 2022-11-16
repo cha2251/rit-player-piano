@@ -5,10 +5,11 @@ from PyQt5.QtCore import pyqtSlot, QSize
 
 
 class PlayingPage(QWidget):
-    def __init__(self):
+    def __init__(self, song_name="DEFAULT"):
         super().__init__()
-        self.nav_home = QPushButton("LINK")
-        self.title = 'Player Piano'
+        self.song_name = song_name
+        self.nav_home = QPushButton("LINK: " + song_name)
+        self.title = "TITLE: "
         self.left = 100
         self.top = 50
         self.width = 320
@@ -78,6 +79,12 @@ class PlayingPage(QWidget):
     @pyqtSlot()
     def on_click_restart(self):
         print('restart')
+
+    def set_song(self, song):
+        print("setting song: " +song)
+        self.title = song
+        self.nav_home.setText("SONG: " + song)
+        self.setWindowTitle("Player Piano: " + song)
 
 
 #    def setupUiOld(self, MainWindow):

@@ -23,6 +23,7 @@ class MainPage(QWidget):
         self.home_page = HomePage()
         self.home_page.nav_play.clicked.connect(self.go_to_play_page)
         self.home_page.nav_settings.clicked.connect(self.go_to_settings_page)
+        self.home_page.lambda_thing = lambda song: self.update_playing_page_song(song)
 
         self.play_page = PlayingPage()
         self.play_page.nav_home.clicked.connect(self.go_to_home_page)
@@ -46,6 +47,10 @@ class MainPage(QWidget):
 
     def go_to_settings_page(self):
         self.stackLayout.setCurrentIndex(2)
+
+    def update_playing_page_song(self, song_name):
+        self.play_page.set_song(song_name)
+        print("MAIN UPDATE SONG NAME")
 
 
 if __name__ == '__main__':

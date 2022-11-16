@@ -1,43 +1,17 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
-    QSizePolicy, QMessageBox, QFileDialog
+
 from PyQt5.QtCore import pyqtSlot, Qt
-from distributed.utils import import_file
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
+    QSizePolicy, QFileDialog
 
 
 class HomePage(QWidget):
-
-    def get_current_songs(self):
-        vbox = QVBoxLayout()
-        hbox = QHBoxLayout()
-        
-        button = QPushButton("1", self)
-        button.clicked.connect(lambda: self.show_song_page(1))
-
-        hbox.addWidget(button)
-        hbox.setAlignment(Qt.AlignCenter)
-        stuffs = [hbox]
-        # get list of songs
-        songs = ["Ode to joy", "song 2", "song 3", "song 4"]
-        count = 0
-        for song in songs:
-            if count > 20:
-                count = 0
-
-            label = QPushButton(song)
-            label.clicked.connect(lambda: self.song_on_click(song))
-            vbox.addWidget(label)
-            vbox.setAlignment(Qt.AlignTop)
-        return vbox, hbox
-
-    def song_on_click(self, song_name):
-        print("Song name: " + song_name)
-        
 
     def __init__(self):
         super().__init__()
         self.nav_play = QPushButton("Play")
         self.nav_settings = QPushButton("Settings")
+        self.lambda_thing = None
         self.title = 'PLayer Piano'
         self.left = 100
         self.top = 50
@@ -88,6 +62,34 @@ class HomePage(QWidget):
     @pyqtSlot()
     def on_click(self):
         print('PyQt5 button click')
+
+    def get_current_songs(self):
+        vbox = QVBoxLayout()
+        hbox = QHBoxLayout()
+
+        button = QPushButton("1", self)
+        button.clicked.connect(lambda: self.show_song_page(1))
+
+        hbox.addWidget(button)
+        hbox.setAlignment(Qt.AlignCenter)
+        stuffs = [hbox]
+        # get list of songs
+        songs = ["Ode to joy", "Harry Potter", "song 3", "song 4"]
+        count = 0
+        for song in songs:
+            if count > 20:
+                count = 0
+            label = QPushButton(song)
+            label.clicked.connect(lambda state, x=song: self.song_on_click(x))
+            vbox.addWidget(label)
+            vbox.setAlignment(Qt.AlignTop)
+        return vbox, hbox
+
+    def song_on_click(self, song_name):
+        print("Song name: " + song_name)
+        # self.nav_play.set_song(song_name)
+        self.lambda_thing(song_name)
+        self.nav_play.click()
 
     def show_song_page(self, page_num):
         pass
