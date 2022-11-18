@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QMessageBox, QFileDialog
 from PyQt5.QtCore import pyqtSlot, Qt
-from distributed.utils import import_file
+
 
 #
 # Don't do this????
