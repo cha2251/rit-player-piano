@@ -7,6 +7,7 @@ from src.user_interface.playing_page import PlayingPage
 from src.user_interface.settings import SettingsPage
 
 
+
 class MainPage(QWidget):
 
     def __init__(self):
@@ -55,6 +56,21 @@ class MainPage(QWidget):
 
 if __name__ == '__main__':
     app = QApplication([])
+    style = """
+        QWidget {
+            background: #262d37;
+        }
+        QLabel{
+            color: #fff;
+        }
+        QPushButton{
+            color: #fff;
+        }
+        QPushButton:hover{
+            background: #fff;
+        }
+    """
+    app.setStyleSheet(style)
     window = MainPage()
     window.show()
     app.exec_()
