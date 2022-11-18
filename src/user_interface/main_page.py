@@ -58,16 +58,28 @@ if __name__ == '__main__':
     app = QApplication([])
     style = """
         QWidget {
-            background: #262d37;
+            background: #2a0b40;
         }
         QLabel{
             color: #fff;
         }
         QPushButton{
             color: #fff;
+            background-color: #5b2185;
+            border-style: outset;
+            border-width: 2px;
+            border-color: #792cb0;
+            max-width: 50em;
+            min-width: 5em;
+            padding: 5px;
+            font-family: "Times New Roman", Times, serif;
+            font: bold 15px;
         }
         QPushButton:hover{
-            background: #fff;
+            background: #792cb0;
+        }
+        QPushButton:pressed{
+            border-style: inset;
         }
     """
     app.setStyleSheet(style)
