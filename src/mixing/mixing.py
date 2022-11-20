@@ -60,7 +60,8 @@ class Mixing(Thread):
                 self.mixed_output_queue.put(MidiEvent(mido.Message(event, time.time())))
 
         for event in self.holding_queue:
-            self.mixed_output_queue.put(MidiEvent(event.event,event.timestamp+offset_time))        
+            event.addTime(offset_time)
+            self.mixed_output_queue.put(event)        
 
         self.holding_queue.clear()
 
@@ -77,6 +78,7 @@ class Mixing(Thread):
             if(self.state == self.State.PLAY):
                 try:
                     event = self.file_input_queue.get(timeout=.005)
+                    event.addTime(self.total_pause_time)
                     self.paused_notes.update({event.event.note:event.event.type})
                     self.mixed_output_queue.put(event)
                 except queue.Empty:
