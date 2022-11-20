@@ -18,7 +18,8 @@ class Mixing(Thread):
     holding_queue: queue.PriorityQueue = None
     active = False
     state = State.STOP
-    pause_time = 0
+    current_pause_time = 0
+    total_pause_time = 0
 
     paused_notes = {}
 
@@ -38,29 +39,32 @@ class Mixing(Thread):
 
     def pause(self):
         self.state = self.State.PAUSE
-        self.pause_time= time.time()
+        self.current_pause_time= time.time()
         with self.mixed_output_queue.mutex: #Thread safe
             self.holding_queue = deepcopy(self.mixed_output_queue.queue)
 
         for note in self.paused_notes.keys():
             if(self.paused_notes[note]=='note_on'):
-                self.mixed_output_queue.put(
-                        MidiEvent(mido.Message('note_off', note, velocity=0), time.time()))
+                event = mido.Message('note_off', note=note)
+                self.mixed_output_queue.put(MidiEvent(event, time.time()))
 
         self.mixed_output_queue.queue.clear()
     
     def unpause(self):
         self.state = self.State.PLAY
-        offset_time = time.time() - self.pause_time
-        for event in self.holding_queue:
-            self.mixed_output_queue.put(MidiEvent(event.event,event.timestamp+offset_time))
-        
+        offset_time = time.time() - self.current_pause_time
+
         for note in self.paused_notes.keys():
             if(self.paused_notes[note]=='note_off'):
-                self.mixed_output_queue.put(
-                        MidiEvent(mido.Message('note_on', note, velocity=120), time.time()))
+                event = mido.Message('note_on', note=note, velocity=120)
+                self.mixed_output_queue.put(MidiEvent(mido.Message(event, time.time())))
+
+        for event in self.holding_queue:
+            self.mixed_output_queue.put(MidiEvent(event.event,event.timestamp+offset_time))        
 
         self.holding_queue.clear()
+
+        self.total_pause_time += self.current_pause_time
     
     def main_loop(self):
         while(self.active):
