@@ -26,7 +26,13 @@ class OutputQueue():
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
     def select_device(self, name=None):
+        if name is not None and name not in self.get_device_list():
+            raise Exception("Device \"{}\" does not exist".format(name))
+
         self._selectDeviceQueue.put(name)
+
+    def get_device_list(self):
+        return mido.get_output_names()
 
 class OutputQueueProcess():
     def __init__(self, inputQueue, selectDeviceQueue, running):
