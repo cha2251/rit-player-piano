@@ -1,7 +1,8 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
+    QSizePolicy
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import pyqtSlot, QSize
+from PyQt5.QtCore import pyqtSlot, QSize, Qt
 
 
 class PlayingPage(QWidget):
@@ -41,11 +42,10 @@ class PlayingPage(QWidget):
         restartButton.setToolTip('restart song')
         restartButton.clicked.connect(self.on_click_restart)
 
-        quit_button = QPushButton("Exit", self)
+        spacer = QSpacerItem(1000, 5, QSizePolicy.Expanding)
 
         hbox = QHBoxLayout()
-        hbox.addWidget(QLabel("Hello"))
-        hbox.addWidget(quit_button)
+        hbox.setAlignment(Qt.AlignCenter)
         hbox.addWidget(restartButton)
         hbox.addWidget(stopButton)
         hbox.addWidget(pauseButton)
@@ -81,63 +81,10 @@ class PlayingPage(QWidget):
         print('restart')
 
     def set_song(self, song):
-        print("setting song: " +song)
+        print("setting song: " + song)
         self.title = song
         self.nav_home.setText("SONG: " + song)
         self.setWindowTitle("Player Piano: " + song)
-
-
-#    def setupUiOld(self, MainWindow):
-#        MainWindow.setObjectName("MainWindow")
-#        MainWindow.resize(1117, 899)
-#        self.centralwidget = QtWidgets.QWidget(MainWindow)
-#        self.centralwidget.setObjectName("centralwidget")
-#        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-#        self.verticalLayoutWidget.setGeometry(QtCore.QRect(-1, -1, 1121, 861))
-#        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-#        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-#        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-#        self.verticalLayout.setObjectName("verticalLayout")
-#        self.label_2 = QtWidgets.QLabel(self.verticalLayoutWidget)
-#        self.label_2.setObjectName("label_2")
-#        self.verticalLayout.addWidget(self.label_2)
-#        self.label = QtWidgets.QLabel(self.verticalLayoutWidget)
-#        self.label.setObjectName("label")
-#        self.verticalLayout.addWidget(self.label)
-#        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-#        self.verticalLayout.addItem(spacerItem)
-#        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-#        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-#        self.stop = QtWidgets.QGraphicsView(self.verticalLayoutWidget)
-#        self.stop.setMaximumSize(QtCore.QSize(200, 200))
-#        self.stop.setObjectName("stop")
-#        self.horizontalLayout_2.addWidget(self.stop)
-#        self.PlayPauseButton = QtWidgets.QGraphicsView(self.verticalLayoutWidget)
-#        self.PlayPauseButton.setMaximumSize(QtCore.QSize(200, 200))
-#        self.PlayPauseButton.setObjectName("PlayPauseButton")
-#        self.horizontalLayout_2.addWidget(self.PlayPauseButton)
-#        self.restart = QtWidgets.QGraphicsView(self.verticalLayoutWidget)
-#        self.restart.setMaximumSize(QtCore.QSize(200, 200))
-#        self.restart.setObjectName("restart")
-#        self.horizontalLayout_2.addWidget(self.restart)
-#        self.verticalLayout.addLayout(self.horizontalLayout_2)
-#        MainWindow.setCentralWidget(self.centralwidget)
-#        self.menubar = QtWidgets.QMenuBar(MainWindow)
-#        self.menubar.setGeometry(QtCore.QRect(0, 0, 1117, 26))
-#        self.menubar.setObjectName("menubar")
-#        MainWindow.setMenuBar(self.menubar)
-#        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-#        self.statusbar.setObjectName("statusbar")
-#        MainWindow.setStatusBar(self.statusbar)
-#
-#        self.retranslateUi(MainWindow)
-#        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-#
-#    def retranslateUiold(self, MainWindow):
-#        _translate = QtCore.QCoreApplication.translate
-#        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-#        self.label_2.setText(_translate("MainWindow", "TITLE of SONG"))
-#        self.label.setText(_translate("MainWindow", "TextLabel"))
 
 
 if __name__ == '__main__':
