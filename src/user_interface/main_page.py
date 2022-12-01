@@ -74,6 +74,7 @@ if __name__ == '__main__':
             padding: 5px;
             font-family: "Times New Roman", Times, serif;
             font: bold 15px;
+            border-radius: 10px;
         }
         QPushButton:hover{
             background: #792cb0;
