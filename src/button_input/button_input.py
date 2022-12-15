@@ -1,34 +1,37 @@
-import mido
 import queue
-from threading import Thread
-from src.common.midi_event import MidiEvent
-from src.common.shared_queues import SharedQueues
-import keyboard
 import time
+from threading import Thread
+
+import mido
+
+from src.button_input.KeyListener import KeyListener
+from src.common.midi_event import MidiEvent
 
 
 class ButtonInput(Thread):
     button_input_queue: queue.Queue
     active = False
+    keyMap = dict
+    default = {'q': 55, 'w': 56, 'e': 57, 'r': 58, 't': 59,
+               'y': 60, 'u': 61, 'i': 62, 'o': 63, 'p': 64}
+    listeners = []
 
-    def __init__(self, button_input_queue):
+    def __init__(self, button_input_queue, keyMap=None):
         Thread.__init__(self)
         self.button_input_queue = button_input_queue
+        if keyMap is None:
+            self.keyMap = self.default
+        else:
+            self.keyMap = keyMap
+        for k, v in self.keyMap.items():
+            self.listeners.append(KeyListener(k, v, button_input_queue))
 
     def run(self):
         self.active = True
-        keys = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p']
-        pressed = [False]*10
+        for i in self.listeners:
+            i.start()
         while self.active:
-            for i in range(10):
-                if keyboard.is_pressed(keys[i]) and not pressed[i]:
-                    self.button_input_queue.put(
-                        MidiEvent(mido.Message('note_on', note=55 + i, velocity=120), time.time()))
-                    pressed[i] = True
-                if not keyboard.is_pressed(keys[i]) and pressed[i]:
-                    self.button_input_queue.put(
-                        MidiEvent(mido.Message('note_off', note=55 + i, velocity=120), time.time()))
-                    pressed[i] = False
+            continue
 
     def deactivate(self):
         self.active = False
