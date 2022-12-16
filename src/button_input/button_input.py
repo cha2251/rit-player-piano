@@ -26,6 +26,12 @@ class ButtonInput(Thread):
         for k, v in self.keyMap.items():
             self.listeners.append(KeyListener(k, v, button_input_queue))
 
+    def changeMap(self, keyMap):
+        self.keyMap = keyMap
+
+    def changeKey(self, key, note):
+        self.keyMap[key] = note
+
     def run(self):
         self.active = True
         for i in self.listeners:
