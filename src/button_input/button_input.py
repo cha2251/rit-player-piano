@@ -1,6 +1,7 @@
 import queue
 import time
 from threading import Thread
+from pynput import keyboard
 
 import mido
 
@@ -14,7 +15,6 @@ class ButtonInput(Thread):
     keyMap = dict
     default = {'q': 55, 'w': 56, 'e': 57, 'r': 58, 't': 59,
                'y': 60, 'u': 61, 'i': 62, 'o': 63, 'p': 64}
-    listeners = []
 
     def __init__(self, button_input_queue, keyMap=None):
         Thread.__init__(self)
@@ -23,8 +23,7 @@ class ButtonInput(Thread):
             self.keyMap = self.default
         else:
             self.keyMap = keyMap
-        for k, v in self.keyMap.items():
-            self.listeners.append(KeyListener(k, v, button_input_queue))
+        self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
 
     def changeMap(self, keyMap):
         self.keyMap = keyMap
@@ -34,10 +33,22 @@ class ButtonInput(Thread):
 
     def run(self):
         self.active = True
-        for i in self.listeners:
-            i.start()
+        self.listener.start()
+        self.listener.join()
         while self.active:
             continue
+
+    def on_press(self, key):
+        if key.char in self.keyMap.keys():
+            note = self.keyMap[key.char]
+            self.button_input_queue.put(
+                MidiEvent(mido.Message('note_on', note=note, velocity=120), time.time()))
+
+    def on_release(self, key):
+        if key.char in self.keyMap.keys():
+            note = self.keyMap[key.char]
+            self.button_input_queue.put(
+                MidiEvent(mido.Message('note_off', note=note, velocity=120), time.time()))
 
     def deactivate(self):
         self.active = False
