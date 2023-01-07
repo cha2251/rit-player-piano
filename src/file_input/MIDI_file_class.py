@@ -93,7 +93,7 @@ class MIDIFileObject:
         """
         track_messages = []
         if not self.is_file_string_valid(file_name):
-            return []
+            return [] #TODO: Actual error message
 
         file_location = 'MIDI_Files/{}'.format(file_name)
         mid_fi = mido.MidiFile(file_location)
