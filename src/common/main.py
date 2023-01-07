@@ -5,6 +5,7 @@ from src.output_queue.output_queue import OutputQueue
 from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
 import mido
+import mido.backends.rtmidi
 
 
 class Main:
