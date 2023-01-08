@@ -24,11 +24,12 @@ jobs:
       - name: Build with Pyinstaller
         run: |
           pyinstaller src/common/main.py --onefile --clean
-      - name: Upload Artifact
+      - name: Upload Executable
         - uses: actions/upload-artifact@v3
             with: 
               name: linux-executable
               path: dist/main
+      - name: Upload Midi Files
         - uses: actions/upload-artifact@v3
             with: 
               name: linux-executable
@@ -54,11 +55,12 @@ jobs:
       - name: Build with Pyinstaller
         run: |
           pyinstaller.exe src\common\main.py --onefile --clean
-      - name: Upload Artifact
+      - name: Upload Executable
         - uses: actions/upload-artifact@v3
             with: 
               name: windows-executable
               path: dist\main.exe
+      - name: Upload Midi Files
         - uses: actions/upload-artifact@v3
             with: 
               name: windows-executable
