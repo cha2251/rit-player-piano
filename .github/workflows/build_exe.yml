@@ -29,7 +29,7 @@ jobs:
         with: 
           name: linux-executable
           path: |
-            dist/*
+            dist/main
             MIDI_Files/*
   
   archive-windows-artifact:
@@ -57,5 +57,5 @@ jobs:
         with: 
           name: windows-executable
           path: |
-            dist\*
+            dist\main.exe
             MIDI_Files\*
