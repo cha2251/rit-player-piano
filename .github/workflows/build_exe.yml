@@ -25,12 +25,14 @@ jobs:
         run: |
           pyinstaller src/common/main.py --onefile --clean
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with: 
-          name: linux-executable
-          path: |
-            dist/*main
-            MIDI_Files/*
+        - uses: actions/upload-artifact@v3
+            with: 
+              name: linux-executable
+              path: dist/main
+        - uses: actions/upload-artifact@v3
+            with: 
+              name: linux-executable
+              path: MIDI_Files/*
   
   archive-windows-artifact:
     runs-on: windows-latest
@@ -53,8 +55,11 @@ jobs:
         run: |
           pyinstaller.exe src\common\main.py --onefile --clean
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with: 
-          name: windows-executable
-          path: dist\*main.exe
-            MIDI_Files\*
+        - uses: actions/upload-artifact@v3
+            with: 
+              name: windows-executable
+              path: dist\main.exe
+        - uses: actions/upload-artifact@v3
+            with: 
+              name: windows-executable
+              path: MIDI_Files\*
