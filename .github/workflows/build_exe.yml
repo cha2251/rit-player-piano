@@ -23,12 +23,14 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Build with Pyinstaller
         run: |
-          pyinstaller src/common/main.py --clean --add-data="./MIDI_Files/*:./MIDI_Files/"
+          pyinstaller src/common/main.py --onefile --clean
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with: 
           name: linux-executable
-          path: dist/*
+          path: |
+            dist/*
+            MIDI_Files/*
   
   archive-windows-artifact:
     runs-on: windows-latest
@@ -49,9 +51,11 @@ jobs:
           pip install -r requirements.txt
       - name: Build with Pyinstaller
         run: |
-          pyinstaller.exe src\common\main.py --clean --add-data="./MIDI_Files/*;./MIDI_Files/"
+          pyinstaller.exe src\common\main.py --onefile --clean
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with: 
           name: windows-executable
-          path: dist\*
+          path: |
+            dist\*
+            MIDI_Files\*
