@@ -24,12 +24,15 @@ jobs:
       - name: Build with Pyinstaller
         run: |
           pyinstaller src/common/main.py --onefile --clean
+      - name: Fix Directory Structure
+        run: |
+          mv dist/main main
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with: 
           name: linux-executable
           path: |
-            dist/main*
+            main
             MIDI_Files/*
   
   archive-windows-artifact:
@@ -52,10 +55,13 @@ jobs:
       - name: Build with Pyinstaller
         run: |
           pyinstaller.exe src\common\main.py --onefile --clean
+      - name: Fix Directory Structure
+        run: |
+          mv dist\main.exe main.exe
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with: 
           name: windows-executable
           path: |
-            dist\main*
+            main.exe
             MIDI_Files\*
