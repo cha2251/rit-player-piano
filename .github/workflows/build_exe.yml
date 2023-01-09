@@ -23,7 +23,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Build with Pyinstaller
         run: |
-          pyinstaller src/common/main.py --onefile --clean
+          pyinstaller src/common/main.py --onefile --clean --icon=PlayerPianoIcon.ico
       - name: Fix Directory Structure
         run: |
           mv dist/main PlayerPiano
@@ -54,7 +54,7 @@ jobs:
           pip install -r requirements.txt
       - name: Build with Pyinstaller
         run: |
-          pyinstaller.exe src\common\main.py --onefile --clean
+          pyinstaller.exe src\common\main.py --onefile --clean --icon=PlayerPianoIcon.ico
       - name: Fix Directory Structure
         run: |
           mv dist\main.exe PlayerPiano.exe
