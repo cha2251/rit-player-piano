@@ -33,7 +33,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with: 
           name: linux-executable
-          path: \*\MIDI_Files
+          path: |
+          /MIDI_Files
   
   archive-windows-artifact:
     runs-on: windows-latest
@@ -64,4 +65,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with: 
           name: windows-executable
-          path: /*/MIDI_Files
+          path: |
+          \MIDI_Files
