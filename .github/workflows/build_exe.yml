@@ -26,13 +26,13 @@ jobs:
           pyinstaller src/common/main.py --onefile --clean
       - name: Fix Directory Structure
         run: |
-          mv dist/main main
+          mv dist/main PlayerPiano
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with: 
-          name: linux-executable
+          name: PlayerPiano-linux
           path: |
-            main
+            PlayerPiano
             MIDI_Files/*
   
   archive-windows-artifact:
@@ -57,11 +57,11 @@ jobs:
           pyinstaller.exe src\common\main.py --onefile --clean
       - name: Fix Directory Structure
         run: |
-          mv dist\main.exe main.exe
+          mv dist\main.exe PlayerPiano.exe
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with: 
-          name: windows-executable
+          name: PlayerPiano-windows
           path: |
-            main.exe
+            PlayerPiano.exe
             MIDI_Files\*
