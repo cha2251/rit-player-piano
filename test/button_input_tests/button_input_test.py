@@ -32,17 +32,17 @@ class TestCreate:
         assert actual == expected
 
 
-class TestDeactivate:
-    def test_set_false(self):
+class TestModify:
+    def test_change_map(self):
         testQueues = SharedQueues
         testQueues.create_queues(testQueues)
         component = ButtonInput(testQueues.button_input_queue)
+        testDict = {'q': 1, 'w': 2}
 
-        component.active = True
-        component.deactivate()
+        component.changeMap(testDict)
 
-        expected = False
-        actual = component.active
+        expected = testDict
+        actual = component.keyMap
 
         assert actual == expected
 
