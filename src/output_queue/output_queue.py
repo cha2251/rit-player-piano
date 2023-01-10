@@ -40,7 +40,6 @@ class OutputQueue(Thread):
 
         while not self.queue.empty() and now >= self.queue.queue[0].timestamp:
             midiEvent = self.queue.get()
-
             self._open_port.send(midiEvent.event)
 
     def run(self):
@@ -51,7 +50,7 @@ class OutputQueue(Thread):
             time.sleep(0)
 
     # Tells the output thread that it should stop
-    def signal_stop(self):
+    def deactivate(self):
         self._running = False
 
     def play_test_tones(self, queue, delay=0.0):

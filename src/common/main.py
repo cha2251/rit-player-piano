@@ -6,6 +6,7 @@ from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
 from src.button_input.button_input import ButtonInput
 import mido
+import mido.backends.rtmidi # Needed for windows builds w/ pyinstaller
 
 
 class Main:
@@ -53,6 +54,7 @@ class Main:
         self.mixing.deactivate()
         self.file_input.deactivate()
         self.button_input.deactivate()
+        print("System Shutdown Succesfully")
 
     def create_mixing(self):
         self.mixing = Mixing(self.shared_queues)

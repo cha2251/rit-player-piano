@@ -35,7 +35,6 @@ class Mixing(Thread):
                 self.mixed_output_queue.put(event)
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
-        
-
+     
     def deactivate(self):
         self.active = False
