@@ -1,6 +1,6 @@
 import queue
 from threading import Thread
-
+import time
 from src.common.shared_queues import SharedQueues
 
 class Mixing(Thread):
@@ -27,6 +27,7 @@ class Mixing(Thread):
             try:
                 event = self.button_input_queue.get(timeout=.005) # We need a timeout or else we hang here on shutdown
                 self.mixed_output_queue.put(event)
+                time.sleep(0)
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
             try:
@@ -34,7 +35,6 @@ class Mixing(Thread):
                 self.mixed_output_queue.put(event)
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
-        
-
+     
     def deactivate(self):
         self.active = False

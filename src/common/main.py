@@ -4,6 +4,7 @@ from src.mixing.mixing import Mixing
 from src.output_queue.output_queue import OutputQueue
 from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
+from src.button_input.button_input import ButtonInput
 import mido
 import mido.backends.rtmidi # Needed for windows builds w/ pyinstaller
 
@@ -12,6 +13,7 @@ class Main:
     shared_queues = None
     mixing = None
     file_input = None
+    button_input = None
 
     def main(self):
         mido.set_backend("mido.backends.rtmidi")
@@ -23,25 +25,35 @@ class Main:
         self.create_output()
         print("Creating File Subsystem")
         self.create_file_input()
+        print("Creating Button Subsystem")
+        self.create_button_input()
         print("Creating Mixing Subsystem")
         self.create_mixing()
 
         self.output.start()
-        self.mixing.start()
         self.file_input.start()
+        self.button_input.start()
+        self.mixing.start()
 
         print("Type `quit` to quit")
 
         while(True):
-            if input() == 'quit':
+            command = input()
+            if command == 'quit':
                 break
-            self.shared_queues.button_input_queue.put(MidiEvent(mido.Message('note_on',note=90,velocity=120),time.time()))
+            if command == 'off':
+                self.file_input.deactivate()
+                self.shared_queues.file_input_queue.queue.clear()
+                self.shared_queues.mixed_output_queue.queue.clear()
         
         self.shutdown()
 
     def shutdown(self):
-        self.output.deactivate()
+        self.output.signal_stop()
+        self.button_input.deactivate()
         self.mixing.deactivate()
+        self.file_input.deactivate()
+        self.button_input.deactivate()
         print("System Shutdown Succesfully")
 
     def create_mixing(self):
@@ -57,6 +69,9 @@ class Main:
 
     def create_file_input(self):
         self.file_input = FileInput(self.shared_queues.file_input_queue)
+
+    def create_button_input(self):
+        self.button_input = ButtonInput(self.shared_queues.button_input_queue)
 
 
 if __name__ == "__main__":

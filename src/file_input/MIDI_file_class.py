@@ -80,6 +80,11 @@ class MIDIFileObject:
         
         return is_valid        
 
+    def calc_time_delay(self):
+        if self.curr_tempo is None or self.curr_time_signature is None:
+            return None
+        
+
     def parse_midi_file(self, file_name):
         """Parse the designated MIDI file and retrieve the selected track.
         TODO: implement input handling
@@ -105,7 +110,10 @@ class MIDIFileObject:
         ticks_per_beat = mid_fi.ticks_per_beat # Ticks Per Beat is only in header
     
         for msg in merge_tracks(mid_fi.tracks): # merge_tracks merges w/ respect to time
-            delta = tick2second(msg.time, ticks_per_beat, tempo)
+            if msg.time > 0:
+                delta = tick2second(msg.time, ticks_per_beat, tempo)
+            else:
+                delta = 0
 
             curr_time += delta
 
