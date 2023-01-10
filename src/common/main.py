@@ -53,7 +53,6 @@ class Main:
         self.mixing.deactivate()
         self.file_input.deactivate()
         self.button_input.deactivate()
-        print("System Shutdown Succesfully")
 
     def create_mixing(self):
         self.mixing = Mixing(self.shared_queues)

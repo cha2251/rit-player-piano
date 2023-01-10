@@ -11,7 +11,6 @@ from src.common.midi_event import MidiEvent
 
 class ButtonInput(Thread):
     button_input_queue: queue.Queue
-    active = False
     keyMap = dict
     default = {'q': 55, 'w': 56, 'e': 57, 'r': 58, 't': 59,
                'y': 60, 'u': 61, 'i': 62, 'o': 63, 'p': 64}
@@ -41,12 +40,8 @@ class ButtonInput(Thread):
 
     # Enables keyboard listener while thread is active
     def run(self):
-        self.active = True
         self.listener.start()
         self.listener.join()
-        while self.active:
-            continue
-        self.listener.stop()
 
     # Reacts to key presses and sends a midi event if the key is mapped
     def on_press(self, key):
@@ -70,6 +65,6 @@ class ButtonInput(Thread):
             self.button_input_queue.put(
                 MidiEvent(mido.Message('note_off', note=note, velocity=120), time.time()))
 
-    # Disables active boolean to cancel runtime loop
+    # Stops listener thread
     def deactivate(self):
-        self.active = False
+        self.listener.stop()
