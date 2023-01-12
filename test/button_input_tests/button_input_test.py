@@ -3,7 +3,6 @@ from pynput import keyboard
 
 from src.button_input.button_input import ButtonInput
 from src.common.shared_queues import SharedQueues
-from src.common.midi_event import MidiEvent
 
 
 class TestCreate:

@@ -5,7 +5,6 @@ from pynput import keyboard
 
 import mido
 
-from src.button_input.KeyListener import KeyListener
 from src.common.midi_event import MidiEvent
 
 

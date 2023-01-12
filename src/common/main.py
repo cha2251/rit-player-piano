@@ -1,12 +1,10 @@
-import time
-from src.common.midi_event import MidiEvent
 from src.mixing.mixing import Mixing
 from src.output_queue.output_queue import OutputQueue
 from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
 from src.button_input.button_input import ButtonInput
 import mido
-import mido.backends.rtmidi # Needed for windows builds w/ pyinstaller
+import mido.backends.rtmidi  # Needed for windows builds w/ pyinstaller
 
 
 class Main:
@@ -14,6 +12,10 @@ class Main:
     mixing = None
     file_input = None
     button_input = None
+    output = None
+
+    def __init__(self):
+        pass
 
     def main(self):
         mido.set_backend("mido.backends.rtmidi")
@@ -37,7 +39,7 @@ class Main:
 
         print("Type `quit` to quit")
 
-        while(True):
+        while True:
             command = input()
             if command == 'quit':
                 break
@@ -45,11 +47,11 @@ class Main:
                 self.file_input.deactivate()
                 self.shared_queues.file_input_queue.queue.clear()
                 self.shared_queues.mixed_output_queue.queue.clear()
-        
+
         self.shutdown()
 
     def shutdown(self):
-        self.output.signal_stop()
+        self.output.deactivate()
         self.button_input.deactivate()
         self.mixing.deactivate()
         self.file_input.deactivate()
