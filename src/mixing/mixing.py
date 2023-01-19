@@ -36,6 +36,7 @@ class Mixing(Thread):
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
 
+            # This yields this thread temporarily so that other threads don't get starved
             time.sleep(0)
 
     def deactivate(self):
