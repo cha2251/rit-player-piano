@@ -28,50 +28,61 @@ class HomePage(QWidget):
 
         # quit_button = QPushButton("Exit", self)
 
-        title = QLabel("Select a song to start playing:")
-        title.setAlignment(Qt.AlignLeft)
+        title = QLabel("RIT Player Piano")
+        title.setAlignment(Qt.AlignCenter)
         # title.setAlignment(Qt.AlignTop)
-        title_spacer = QSpacerItem(1000, 5, QSizePolicy.Expanding)
+        title_spacer = QSpacerItem(400, 5, QSizePolicy.Fixed)
+        outer_spacer = QSpacerItem(200, 5, QSizePolicy.Fixed)
 
-        add_song = QPushButton("Import")
+        add_song = QPushButton("upload song")
         add_song.clicked.connect(self.import_midi)
 
         hbox = QHBoxLayout()
+        hbox.setAlignment(Qt.AlignTop)
+        hbox.addSpacerItem(outer_spacer)
+        hbox.addWidget(add_song)
+        hbox.addSpacerItem(title_spacer)
         hbox.addWidget(title)
         hbox.addSpacerItem(title_spacer)
-        hbox.addWidget(add_song)
         hbox.addWidget(self.nav_settings)
+        hbox.addSpacerItem(outer_spacer)
         vbox = QVBoxLayout(self)
+        vbox.setAlignment(Qt.AlignTop)
         vbox.addLayout(hbox)
         spacer = QSpacerItem(100, 200, QSizePolicy.Expanding)
-        vbox.addSpacerItem(spacer)
-        v, h = self.get_current_songs()
+        ## vbox.addSpacerItem(spacer)
+        v = self.get_current_songs()
         vbox.addLayout(v)
-        spacer_bot = QSpacerItem(100, 1000, QSizePolicy.Expanding)
-        vbox.addSpacerItem(spacer_bot)
-        vbox.addLayout(h)
+        ## spacer_bot = QSpacerItem(100, 200, QSizePolicy.Expanding)
+        ## vbox.addSpacerItem(spacer_bot)
+        ## vbox.addLayout(h)
         # vbox.addLayout(hbox)
         # vbox.addWidget(button)
         # vbox.setAlignment(Qt.AlignCenter)
         self.initUI()
 
     def initUI(self):
-        # self.showFullScreen()
-        self.showMaximized()
+        self.showFullScreen()
+        # self.showMaximized()
 
     @pyqtSlot()
     def on_click(self):
         print('PyQt5 button click')
 
     def get_current_songs(self):
+        bigHbox = QHBoxLayout()
         vbox = QVBoxLayout()
         hbox = QHBoxLayout()
+
+        ##vbox.setAlignment(Qt.AlignRight)
+        vbox.addSpacerItem(QSpacerItem(100, 100, QSizePolicy.Expanding))
+        hbox.setAlignment(Qt.AlignCenter)
+        hbox.addStretch()
 
         button = QPushButton("1", self)
         button.clicked.connect(lambda: self.show_song_page(1))
 
         hbox.addWidget(button)
-        hbox.setAlignment(Qt.AlignCenter)
         stuffs = [hbox]
         # get list of songs
         songs = ["Ode to joy", "Harry Potter", "song 3", "song 4"]
@@ -82,8 +93,13 @@ class HomePage(QWidget):
             label = QPushButton(song)
             label.clicked.connect(lambda state, x=song: self.song_on_click(x))
             vbox.addWidget(label)
-            vbox.setAlignment(Qt.AlignTop)
-        return vbox, hbox
+        vbox.addSpacerItem(QSpacerItem(100, 100, QSizePolicy.Expanding))
+        hbox.addStretch()
+        vbox.addLayout(hbox)
+        bigHbox.addStretch()
+        bigHbox.addLayout(vbox)
+        bigHbox.addStretch()
+        return bigHbox
 
     def song_on_click(self, song_name):
         print("Song name: " + song_name)
