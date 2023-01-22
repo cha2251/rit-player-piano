@@ -7,7 +7,6 @@ from src.user_interface.playing_page import PlayingPage
 from src.user_interface.settings import SettingsPage
 
 
-
 class MainPage(QWidget):
 
     def __init__(self):
@@ -38,7 +37,8 @@ class MainPage(QWidget):
         self.stackLayout.addWidget(self.play_page)
         self.stackLayout.addWidget(self.settings_page)
 
-        self.showMaximized()
+        # self.showMaximized()
+        self.show()
 
     def go_to_home_page(self):
         self.stackLayout.setCurrentIndex(0)
@@ -62,6 +62,7 @@ if __name__ == '__main__':
         }
         QLabel{
             color: #fff;
+            font: 40px;
         }
         QPushButton{
             color: #fff;
