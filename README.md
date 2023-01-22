@@ -31,7 +31,7 @@ https://cha2251.github.io/rit-player-piano/
 - Run with `python -m src.common.main` to prevent package errors
 
 # Requirements
-- If running Linux, install dependencies with `sudo apt-get install -y libasound2-dev pkg-config libjack-dev portaudio19-dev`
+- If running Linux, install dependencies with `sudo apt-get install -y libasound2-dev pkg-config libjack-dev`
 - Install packages with `pip install -r requirements.txt`
 - Export current environment configuration file with `pip freeze > requirements.txt`
  - Make sure you install the existing packages first and you're in a venv before exporting!
