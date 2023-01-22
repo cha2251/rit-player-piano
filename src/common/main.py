@@ -5,6 +5,7 @@ from src.output_queue.output_queue import OutputQueue
 from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
 import mido
+import mido.backends.rtmidi # Needed for windows builds w/ pyinstaller
 
 
 class Main:
@@ -41,6 +42,7 @@ class Main:
     def shutdown(self):
         self.output.deactivate()
         self.mixing.deactivate()
+        self.shared_queues.deactivate()
         print("System Shutdown Succesfully")
 
     def create_mixing(self):
