@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QFileDialog
 
+from src.user_interface.render2d import PaintWidget
 
 class HomePage(QWidget):
 
@@ -63,8 +64,8 @@ class HomePage(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.showFullScreen()
-        # self.showMaximized()
+        # self.showFullScreen()
+        self.showMaximized()
 
     @pyqtSlot()
     def on_click(self):
@@ -83,6 +84,9 @@ class HomePage(QWidget):
         button.clicked.connect(lambda: self.show_song_page(1))
 
         hbox.addWidget(button)
+
+        hbox.addWidget(PaintWidget())
+
         stuffs = [hbox]
 
 
