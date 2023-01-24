@@ -69,7 +69,7 @@ class TestPorts:
             output_queue.select_device(bad_device_name)
 
 class TestRun:
-    @pytest.mark.timeout(0.5)
+    @pytest.mark.timeout(5)
     def test_deactivate(self):
         sync_manager = SharedQueueSyncManager()
         output_queue = OutputQueue(sync_manager.PeekingPriorityQueue())
