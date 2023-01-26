@@ -1,6 +1,4 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QStackedWidget, \
-    QStackedLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout
 
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
