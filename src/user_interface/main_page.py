@@ -1,3 +1,5 @@
+from threading import Thread
+
 from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout
 
 from src.user_interface.home_page import HomePage
@@ -5,10 +7,12 @@ from src.user_interface.playing_page import PlayingPage
 from src.user_interface.settings import SettingsPage
 
 
-class MainPage(QWidget):
+class MainPage(QWidget, Thread):
 
-    def __init__(self):
+    def __init__(self, shutdown):
         super().__init__()
+        Thread.__init__(self)
+        self.shutdown = shutdown
 
         self.title = 'Player Piano'
         self.left = 100
@@ -51,6 +55,10 @@ class MainPage(QWidget):
         self.play_page.set_song(song_name)
         print("MAIN UPDATE SONG NAME")
 
+    def closeEvent(self, event):
+        self.shutdown()
+        event.accept()
+
 
 if __name__ == '__main__':
     app = QApplication([])
@@ -83,6 +91,6 @@ if __name__ == '__main__':
         }
     """
     app.setStyleSheet(style)
-    window = MainPage()
+    window = MainPage(5)
     window.show()
     app.exec_()
