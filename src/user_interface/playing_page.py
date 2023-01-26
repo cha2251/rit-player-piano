@@ -37,7 +37,7 @@ class PlayingPage(QWidget):
         pauseButton.clicked.connect(self.on_click_pause)
 
         restartButton = QPushButton('', self)
-        restartButton.setIcon(QIcon(r"images\rotate-left-solid.svg"))
+        restartButton.setIcon(QIcon(r"../../UI_Images/rotate-left-solid.svg"))
         restartButton.setIconSize(QSize(65, 65))
         restartButton.setToolTip('restart song')
         restartButton.clicked.connect(self.on_click_restart)
