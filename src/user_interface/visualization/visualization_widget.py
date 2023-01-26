@@ -2,11 +2,11 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import Qt, QSize, QTimer
 
-class PaintWidget(QWidget):
-    def __init__(self, parent=None):
+class VisualizationWidget(QWidget):
+    def __init__(self, refreshRate=30, parent=None):
         super().__init__(parent=parent)
 
-        self.refreshRate = 30
+        self.refreshRate = refreshRate
         self.timing = 0
 
         self.points = []
@@ -20,10 +20,10 @@ class PaintWidget(QWidget):
         timer = QTimer(self, timeout=self.update, interval=(1000 / self.refreshRate))
         timer.start()
 
-    def paintEvent(self, event):
+    def paintEvent(self, _event):
         qp = QPainter(self)
-
         qp.setPen(Qt.black)
+
         size = self.size()
 
         for (x, y) in self.points:
