@@ -19,19 +19,19 @@ class PlayingPage(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         playButton = QPushButton('', self)
-        playButton.setIcon(QIcon(r"images\play-solid.svg"))
+        playButton.setIcon(QIcon(r"../../UI_Images/play-solid.svg"))
         playButton.setIconSize(QSize(65, 65))
         playButton.setToolTip('play song')
         playButton.clicked.connect(self.on_click_play)
 
         stopButton = QPushButton('', self)
-        stopButton.setIcon(QIcon(r"images\stop-solid.svg"))
+        stopButton.setIcon(QIcon(r"../../UI_Images/stop-solid.svg"))
         stopButton.setIconSize(QSize(65, 65))
         stopButton.setToolTip('stop song')
         stopButton.clicked.connect(self.on_click_stop)
 
         pauseButton = QPushButton('', self)
-        pauseButton.setIcon(QIcon(r"images\pause-solid.svg"))
+        pauseButton.setIcon(QIcon(r"../../UI_Images/pause-solid.svg"))
         pauseButton.setIconSize(QSize(65, 65))
         pauseButton.setToolTip('pause song')
         pauseButton.clicked.connect(self.on_click_pause)

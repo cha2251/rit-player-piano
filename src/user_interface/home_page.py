@@ -11,7 +11,7 @@ class HomePage(QWidget):
         super().__init__()
         self.nav_play = QPushButton("Play")
         self.nav_settings = QPushButton("Settings")
-        self.lambda_thing = None
+        self.pick_song_lambda = None
         self.title = 'PLayer Piano'
         self.left = 100
         self.top = 50
@@ -30,7 +30,6 @@ class HomePage(QWidget):
 
         title = QLabel("RIT Player Piano")
         title.setAlignment(Qt.AlignCenter)
-        # title.setAlignment(Qt.AlignTop)
         title_spacer = QSpacerItem(400, 5, QSizePolicy.Fixed)
         outer_spacer = QSpacerItem(200, 5, QSizePolicy.Fixed)
 
@@ -104,7 +103,7 @@ class HomePage(QWidget):
     def song_on_click(self, song_name):
         print("Song name: " + song_name)
         # self.nav_play.set_song(song_name)
-        self.lambda_thing(song_name)
+        self.pick_song_lambda(song_name)
         self.nav_play.click()
 
     def show_song_page(self, page_num):
