@@ -5,6 +5,7 @@ from threading import Thread
 from multiprocessing import Process, Manager, Queue
 
 from src.common.midi_event import MidiEvent
+from src.output_queue.synth import Synthesizer
 
 def _runOutputQueue(inputQueue, selectDeviceString, running):
     output = OutputQueueProcess(inputQueue, selectDeviceString, running)
@@ -30,12 +31,9 @@ class OutputQueue():
         self._outputSystem.join()
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
-    def select_device(self, name=None):
-        if name is not None and name not in self.get_device_list():
+    def select_device(self, name=""):
+        if name != "" and name not in self.get_device_list():
             raise Exception("Device \"{}\" does not exist".format(name))
-
-        if name is None:
-            name = self.get_device_list()[0]
 
         self._selectDeviceString.value = name
 
@@ -61,7 +59,11 @@ class OutputQueueProcess():
         if self._open_port is not None:
             self._open_port.close()
 
-        self._open_port = mido.open_output(name)
+        if name == "":
+            self._open_port = Synthesizer()
+            self._open_port.start()
+        else:
+            self._open_port = mido.open_output(name)
 
         print('Switched output device to "{}"'.format(self._open_port.name))
 
