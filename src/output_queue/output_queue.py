@@ -5,7 +5,7 @@ from threading import Thread
 from multiprocessing import Process, Manager, Queue
 
 from src.common.midi_event import MidiEvent
-from src.output_queue.synth import Synthesizer
+from src.output_queue.synth import MIDISynthesizer
 
 def _runOutputQueue(inputQueue, selectDeviceString, running):
     output = OutputQueueProcess(inputQueue, selectDeviceString, running)
@@ -60,7 +60,7 @@ class OutputQueueProcess():
             self._open_port.close()
 
         if name == "":
-            self._open_port = Synthesizer()
+            self._open_port = MIDISynthesizer()
             self._open_port.start()
         else:
             self._open_port = mido.open_output(name)
