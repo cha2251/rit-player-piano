@@ -6,13 +6,15 @@ import multiprocessing
 
 from src.common.shared_priority_queue import SharedQueueSyncManager, PeekingPriorityQueue
 from src.output_queue.output_queue import OutputQueue, OutputQueueProcess
+from src.output_queue.synth import SYNTHESIZER_NAME
 from src.common.midi_event import MidiEvent
 
 FAR_FUTURE_TIMESTAMP = 1e10
+DUMMY_PORT_NAME = "DummyPort"
 
 class DummyPort:
     def __init__(self):
-        self.name = "DummyPort"
+        self.name = DUMMY_PORT_NAME
         self.sent_messages = []
 
     def close(self):
@@ -56,7 +58,7 @@ class TestPorts:
 
         actual_output_devices = output_queue.get_device_list()
 
-        assert actual_output_devices is test_output_devices
+        assert actual_output_devices == ([SYNTHESIZER_NAME] + test_output_devices)
 
     def test_select_bad_device(self, mocker, output_queue):
         test_output_devices = ["Output1", "Output2"]
@@ -79,7 +81,7 @@ class TestRun:
         sync_manager.join()
     
     def test_empty_queue(self, output_queue_process):
-        output_queue_process.select_device()
+        output_queue_process.select_device(DUMMY_PORT_NAME)
         output_queue_process._check_priority_queue()
 
         expected_sent_messages = 0
@@ -98,7 +100,7 @@ class TestRun:
 
     def test_one_message(self, output_queue_process):
         test_message = MidiEvent(mido.Message('note_on',note=60), 42)
-        output_queue_process.select_device()
+        output_queue_process.select_device(DUMMY_PORT_NAME)
         output_queue_process.queue.put(test_message)
         output_queue_process._check_priority_queue()
 
@@ -113,7 +115,7 @@ class TestRun:
 
     def test_future_message(self, output_queue_process):
         test_message = MidiEvent(mido.Message('note_on',note=60), FAR_FUTURE_TIMESTAMP)
-        output_queue_process.select_device()
+        output_queue_process.select_device(DUMMY_PORT_NAME)
         output_queue_process.queue.put(test_message)
         output_queue_process._check_priority_queue()
 
@@ -135,7 +137,7 @@ class TestRun:
         for i in range(expected_future_messages):
             output_queue_process.queue.put(MidiEvent(mido.Message('note_on', note=60), FAR_FUTURE_TIMESTAMP + i * 10))
 
-        output_queue_process.select_device()
+        output_queue_process.select_device(DUMMY_PORT_NAME)
         output_queue_process._check_priority_queue()
 
         actual_sent_messages = len(output_queue_process._open_port.sent_messages)
