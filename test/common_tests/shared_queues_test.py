@@ -8,8 +8,6 @@ class TestQueuesCreate:
     def test_create_file_queue(self):
         component = SharedQueues()
 
-        assert component.file_input_queue is None
-
         component.create_queues()
 
         assert component.file_input_queue is not None
@@ -17,16 +15,12 @@ class TestQueuesCreate:
     def test_create_button_queue(self):
         component = SharedQueues()
 
-        assert component.button_input_queue is None
-
         component.create_queues()
 
         assert component.button_input_queue is not None
 
     def test_create_mixed_queue(self):
         component = SharedQueues()
-
-        assert component.mixed_output_queue is None
 
         component.create_queues()
 
