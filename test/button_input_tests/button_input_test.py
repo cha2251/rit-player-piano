@@ -47,7 +47,7 @@ class TestModify:
 
 
 class TestRun:
-    @pytest.mark.timeout(0.5)
+    @pytest.mark.timeout(1)
     def test_exits(self):
         testQueues = SharedQueues
         testQueues.create_queues(testQueues)
@@ -56,6 +56,8 @@ class TestRun:
         component.start()
 
         component.deactivate()
+
+        component.join()
 
     @pytest.mark.timeout(1)
     def test_detect_input(self):

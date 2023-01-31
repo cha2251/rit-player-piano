@@ -40,7 +40,6 @@ class ButtonInput(Thread):
     # Enables keyboard listener while thread is active
     def run(self):
         self.listener.start()
-        self.listener.join()
 
     # Reacts to key presses and sends a midi event if the key is mapped
     def on_press(self, key):
