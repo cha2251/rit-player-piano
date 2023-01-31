@@ -26,6 +26,8 @@ class MIDISynthesizer(Thread):
         self.notes_dict_lock = Lock()
         self.name = SYNTHESIZER_NAME
 
+        self.start()
+
     def close(self):
         """Stops the synthesizer, closes the audio stream, and joins the thread."""
         self.active = False

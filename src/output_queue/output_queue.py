@@ -1,6 +1,7 @@
 from queue import PriorityQueue, Empty
 import mido
 import time
+import platform
 from threading import Thread
 from multiprocessing import Process, Manager, Queue
 
@@ -36,7 +37,10 @@ class OutputQueue():
             raise Exception("Device \"{}\" does not exist".format(name))
 
         if name is None:
-            name = SYNTHESIZER_NAME
+            if platform.system() != "Windows" or len(mido.get_output_names()) == 0:
+                name = SYNTHESIZER_NAME
+            else:
+                name = mido.get_output_names()[0]
 
         self._selectDeviceString.value = name
 
@@ -65,9 +69,12 @@ class OutputQueueProcess():
 
         if name == SYNTHESIZER_NAME:
             self._open_port = MIDISynthesizer()
-            self._open_port.start()
         else:
-            self._open_port = mido.open_output(name)
+            try:
+                self._open_port = mido.open_output(name)
+            except:
+                print("Failed to open output device \"{}\". Using synthesizer instead".format(name))
+                self._open_port = MIDISynthesizer()
 
         print('Switched output device to "{}"'.format(self._open_port.name))
 
