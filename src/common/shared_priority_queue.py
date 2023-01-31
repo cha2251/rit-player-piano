@@ -23,8 +23,11 @@ class PeekingPriorityQueue(queue.Queue):
         with self.accessLock:
             return heappop(self.queue)
 
-    def peek(self):
-        return self.queue[0]
+    def peek(self, n=0):
+        try:
+            return self.queue[n]
+        except:
+            return None
 
     def get_and_clear_queue(self):
         with self.accessLock:
