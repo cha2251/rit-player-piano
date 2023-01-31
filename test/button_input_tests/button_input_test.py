@@ -38,6 +38,8 @@ class TestModify:
         component = ButtonInput(testQueues.button_input_queue)
         testDict = {'q': 1, 'w': 2}
 
+        assert component.keyMap != testDict
+
         component.changeMap(testDict)
 
         expected = testDict

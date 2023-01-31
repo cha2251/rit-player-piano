@@ -8,7 +8,7 @@ import mido
 from src.common.midi_event import MidiEvent
 
 
-class ButtonInput(Thread):
+class ButtonInput:
     button_input_queue: queue.Queue
     keyMap = dict
     default = {'q': 55, 'w': 56, 'e': 57, 'r': 58, 't': 59,
@@ -21,7 +21,6 @@ class ButtonInput(Thread):
     a keyboard listener from pynput is also created to detect key presses.
     """
     def __init__(self, button_input_queue, keyMap=None):
-        Thread.__init__(self)
         self.button_input_queue = button_input_queue
         if keyMap is None:
             self.keyMap = self.default
@@ -30,12 +29,16 @@ class ButtonInput(Thread):
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
 
     # Updates the keymap with a new set of mappings
-    def changeMap(self, keyMap):
+    def change_map(self, keyMap):
         self.keyMap = keyMap
 
     # Updates a single key's mapping or adds a new key mapping if the key lacks a map
-    def changeKey(self, key, note):
+    def change_key(self, key, note):
         self.keyMap[key] = note
+
+    # Removes an unneeded key from the key map
+    def delete_key(self, key):
+        self.keyMap.pop(key)
 
     # Enables keyboard listener while thread is active
     def run(self):
