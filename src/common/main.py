@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+=======
+import sys
+import time
+from threading import Thread
+
+from PyQt5.QtWidgets import QApplication
+
+import src.user_interface.main_page
+from src.common.midi_event import MidiEvent
+>>>>>>> main
 from src.mixing.mixing import Mixing
 from src.output_queue.output_queue import OutputQueue
 from src.common.shared_queues import SharedQueues
@@ -37,17 +48,18 @@ class Main:
         self.button_input.start()
         self.mixing.start()
 
+        #init UI
+        x = Thread(target=self.init_UI, args=(self.shutdown,))
+        x.start()
+
+
         print("Type `quit` to quit")
 
-        while True:
-            command = input()
-            if command == 'quit':
+        while(True):
+            if (False and input() == 'quit') or not x.is_alive():  # Change false when developing in console mode
                 break
-            if command == 'off':
-                self.file_input.deactivate()
-                self.shared_queues.file_input_queue.queue.clear()
-                self.shared_queues.mixed_output_queue.queue.clear()
-
+            # self.shared_queues.button_input_queue.put(MidiEvent(mido.Message('note_on',note=90,velocity=120),time.time()))
+        
         self.shutdown()
 
     def shutdown(self):
@@ -56,6 +68,7 @@ class Main:
         self.mixing.deactivate()
         self.file_input.deactivate()
         self.button_input.deactivate()
+        self.shared_queues.deactivate()
         print("System Shutdown Succesfully")
 
     def create_mixing(self):
@@ -74,6 +87,42 @@ class Main:
 
     def create_button_input(self):
         self.button_input = ButtonInput(self.shared_queues.button_input_queue)
+
+    def init_UI(self, shutdown):
+        app = QApplication([])
+        style = """
+        QWidget {
+            background: #2a0b40;
+        }
+        QLabel{
+            color: #fff;
+            font: 40px;
+        }
+        QPushButton{
+            color: #fff;
+            background-color: #5b2185;
+            border-style: outset;
+            border-width: 2px;
+            border-color: #792cb0;
+            max-width: 50em;
+            min-width: 5em;
+            padding: 5px;
+            font-family: "Times New Roman", Times, serif;
+            font: bold 15px;
+            border-radius: 10px;
+        }
+        QPushButton:hover{
+            background: #792cb0;
+        }
+        QPushButton:pressed{
+            border-style: inset;
+        }
+        """
+        app.setStyleSheet(style)
+        window = src.user_interface.main_page.MainPage(shutdown)
+        window.show()
+        app.exec_()
+
 
 
 if __name__ == "__main__":

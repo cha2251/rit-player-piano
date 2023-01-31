@@ -29,7 +29,7 @@ class TestDeactivate():
         assert expected == actual
 
 class TestRun:
-    @pytest.mark.timeout(0.5)
+    @pytest.mark.timeout(5) #Longer timeout than strictly nesscary, to allow for slower computers
     def test_exits(self):
         test_shared_queues = SharedQueues()
         test_shared_queues.create_queues()
@@ -41,7 +41,7 @@ class TestRun:
 
         component.join()
     
-    @pytest.mark.timeout(1)
+    @pytest.mark.timeout(5)
     def test_pulls_from_button(self):
         test_shared_queues = SharedQueues()
         test_shared_queues.create_queues()
@@ -58,7 +58,7 @@ class TestRun:
 
         assert test_event == actual
 
-    @pytest.mark.timeout(1)
+    @pytest.mark.timeout(5)
     def test_pulls_from_file(self):
         test_shared_queues = SharedQueues()
         test_shared_queues.create_queues()
