@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
-    QSizePolicy, QLabel
+    QSizePolicy, QLabel, QToolButton
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 
@@ -8,8 +8,12 @@ from PyQt5.QtCore import pyqtSlot, QSize, Qt
 class PlayingPage(QWidget):
     def __init__(self, song_name="DEFAULT"):
         super().__init__()
-        #self.song_name = song_name
-        self.nav_home = QPushButton("back")
+        # self.song_name = song_name
+        # self.nav_home = QPushButton("back")
+        self.nav_home = QToolButton()
+        self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        self.nav_home.setText("POSA")
+        self.nav_home.setIcon(QIcon(r"../../UI_Images/play-solid.svg"))
         self.left = 100
         self.top = 50
         self.width = 320
@@ -18,13 +22,13 @@ class PlayingPage(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        backButtonIcon = QPushButton("", self)
-        backButtonIcon.setIcon(QIcon(r"../../UI_Images/back-arrow.svg"))
-        backButtonIcon.setIconSize(QSize(65, 65))
-        backButtonIcon.setToolTip("Go back to home screen")
-        back = QVBoxLayout()
-        back.addWidget(backButtonIcon)
-        back.addWidget(self.nav_home)
+        ##backButtonIcon = QPushButton("", self)
+        ##backButtonIcon.setIcon(QIcon(r"../../UI_Images/back-arrow.svg"))
+        ##backButtonIcon.setIconSize(QSize(65, 65))
+        ##backButtonIcon.setToolTip("Go back to home screen")
+        ##back = QVBoxLayout()
+        ##back.addWidget(backButtonIcon)
+        ##back.addWidget(self.nav_home)
 
         playButton = QPushButton("", self)
         playButton.setIcon(QIcon(r"../../UI_Images/play-solid.svg"))
@@ -59,8 +63,8 @@ class PlayingPage(QWidget):
         hbox.addWidget(pauseButton)
         hbox.addWidget(playButton)
         vbox = QVBoxLayout(self)
-        #vbox.addWidget(self.nav_home)
-        vbox.addLayout(back)
+        vbox.addWidget(self.nav_home)
+        ## vbox.addLayout(back)
         vbox.addLayout(hbox)
         # vbox.addWidget(playButton)
         self.initUI()

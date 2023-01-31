@@ -89,6 +89,25 @@ if __name__ == '__main__':
         QPushButton:pressed{
             border-style: inset;
         }
+        QToolButton{
+            color: #fff;
+            background-color: #5b2185;
+            border-style: outset;
+            border-width: 2px;
+            border-color: #792cb0;
+            max-width: 50em;
+            min-width: 5em;
+            padding: 5px;
+            font-family: "Times New Roman", Times, serif;
+            font: bold 15px;
+            border-radius: 10px;
+        }
+        QToolButton:hover{
+            background: #792cb0;
+        }
+        QToolButton:pressed{
+            border-style: inset;
+        }
     """
     app.setStyleSheet(style)
     window = MainPage(5)
