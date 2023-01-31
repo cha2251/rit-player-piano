@@ -41,7 +41,9 @@ class MIDISynthesizer(Thread):
             if (message.type == 'note_off' or message.velocity == 0) and message.note in self.notes_dict:
                 del self.notes_dict[message.note]
             elif message.type == 'note_on':
-                self.notes_dict[message.note] = self.sound_generator(message.note, message.velocity / 127)
+                # Get an amplitude/loudness between [0-1] for a note with velocity [0-127]
+                amplitude = message.velocity / 127
+                self.notes_dict[message.note] = self.sound_generator(message.note, amplitude)
 
     def sound_generator(self, note, amplitude):
         """Returns a generator that produces samples for a given note and amplitude."""
@@ -83,4 +85,5 @@ def get_samples(notes_dict, num_samples=BUFFER_SIZE):
     ]
 
 def note_to_freq(note):
+    """Converts a MIDI note number to a frequency in Hz."""
     return int(440 * math.pow(2, (note - 69) / 12))
