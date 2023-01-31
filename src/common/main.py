@@ -1,14 +1,9 @@
-<<<<<<< HEAD
-=======
 import sys
 import time
 from threading import Thread
-
 from PyQt5.QtWidgets import QApplication
-
 import src.user_interface.main_page
 from src.common.midi_event import MidiEvent
->>>>>>> main
 from src.mixing.mixing import Mixing
 from src.output_queue.output_queue import OutputQueue
 from src.common.shared_queues import SharedQueues
