@@ -1,6 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget,  QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
-    QSizePolicy
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
+    QSizePolicy, QLabel
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 
@@ -8,20 +8,28 @@ from PyQt5.QtCore import pyqtSlot, QSize, Qt
 class PlayingPage(QWidget):
     def __init__(self, song_name="DEFAULT"):
         super().__init__()
-        self.song_name = song_name
-        self.nav_home = QPushButton("LINK: " + song_name)
-        self.title = "TITLE: "
+        #self.song_name = song_name
+        self.nav_home = QPushButton("back")
         self.left = 100
         self.top = 50
         self.width = 320
         self.height = 200
+        self.title = "RIT Player Piano"
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        playButton = QPushButton('', self)
+        backButtonIcon = QPushButton("", self)
+        backButtonIcon.setIcon(QIcon(r"../../UI_Images/back-arrow.svg"))
+        backButtonIcon.setIconSize(QSize(65, 65))
+        backButtonIcon.setToolTip("Go back to home screen")
+        back = QVBoxLayout()
+        back.addWidget(backButtonIcon)
+        back.addWidget(self.nav_home)
+
+        playButton = QPushButton("", self)
         playButton.setIcon(QIcon(r"../../UI_Images/play-solid.svg"))
         playButton.setIconSize(QSize(65, 65))
-        playButton.setToolTip('play song')
+        playButton.setToolTip("play song")
         playButton.clicked.connect(self.on_click_play)
 
         stopButton = QPushButton('', self)
@@ -51,7 +59,8 @@ class PlayingPage(QWidget):
         hbox.addWidget(pauseButton)
         hbox.addWidget(playButton)
         vbox = QVBoxLayout(self)
-        vbox.addWidget(self.nav_home)
+        #vbox.addWidget(self.nav_home)
+        vbox.addLayout(back)
         vbox.addLayout(hbox)
         # vbox.addWidget(playButton)
         self.initUI()
@@ -83,7 +92,7 @@ class PlayingPage(QWidget):
     def set_song(self, song):
         print("setting song: " + song)
         self.title = song
-        self.nav_home.setText("SONG: " + song)
+        ##self.nav_home.setText("SONG: " + song)
         self.setWindowTitle("Player Piano: " + song)
 
 

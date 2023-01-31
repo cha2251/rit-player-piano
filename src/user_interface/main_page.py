@@ -39,8 +39,8 @@ class MainPage(QWidget, Thread):
         self.stackLayout.addWidget(self.play_page)
         self.stackLayout.addWidget(self.settings_page)
 
-        # self.showMaximized()
-        self.show()
+        self.showMaximized()
+        # self.showFullScreen()
 
     def go_to_home_page(self):
         self.stackLayout.setCurrentIndex(0)
