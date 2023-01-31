@@ -40,7 +40,7 @@ class TestModify:
 
         assert component.keyMap != testDict
 
-        component.changeMap(testDict)
+        component.change_map(testDict)
 
         expected = testDict
         actual = component.keyMap
@@ -55,11 +55,9 @@ class TestRun:
         testQueues.create_queues(testQueues)
         component = ButtonInput(testQueues.button_input_queue)
 
-        component.start()
+        component.run()
 
         component.deactivate()
-
-        component.join()
 
     @pytest.mark.timeout(1)
     def test_detect_input(self):
@@ -67,7 +65,7 @@ class TestRun:
         testQueues.create_queues(testQueues)
         component = ButtonInput(testQueues.button_input_queue)
 
-        component.start()
+        component.run()
         component.on_press(keyboard.KeyCode.from_char('q'))
         component.on_release(keyboard.KeyCode.from_char('q'))
         component.deactivate()
