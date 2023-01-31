@@ -1,10 +1,12 @@
 from queue import PriorityQueue, Empty
 import mido
 import time
+import platform
 from threading import Thread
 from multiprocessing import Process, Manager, Queue
 
 from src.common.midi_event import MidiEvent
+from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
 
 def _runOutputQueue(inputQueue, selectDeviceString, running):
     output = OutputQueueProcess(inputQueue, selectDeviceString, running)
@@ -35,12 +37,15 @@ class OutputQueue():
             raise Exception("Device \"{}\" does not exist".format(name))
 
         if name is None:
-            name = self.get_device_list()[0]
+            if platform.system() != "Windows" or len(mido.get_output_names()) == 0:
+                name = SYNTHESIZER_NAME
+            else:
+                name = mido.get_output_names()[0]
 
         self._selectDeviceString.value = name
 
     def get_device_list(self):
-        return mido.get_output_names()
+        return [SYNTHESIZER_NAME] + mido.get_output_names()
 
 class OutputQueueProcess():
     def __init__(self, inputQueue, selectDeviceString, running):
@@ -54,14 +59,22 @@ class OutputQueueProcess():
             self._open_port.close()
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
-    def select_device(self, name=None):
-        if name is not None and name not in mido.get_output_names():
+    def select_device(self, name):
+        if name != SYNTHESIZER_NAME and name not in mido.get_output_names():
             print('"{}" does not match any of the available devices'.format(name))
+            return
 
         if self._open_port is not None:
             self._open_port.close()
 
-        self._open_port = mido.open_output(name)
+        if name == SYNTHESIZER_NAME:
+            self._open_port = MIDISynthesizer()
+        else:
+            try:
+                self._open_port = mido.open_output(name)
+            except:
+                print("Failed to open output device \"{}\". Using synthesizer instead".format(name))
+                self._open_port = MIDISynthesizer()
 
         print('Switched output device to "{}"'.format(self._open_port.name))
 
