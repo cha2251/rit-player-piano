@@ -65,9 +65,11 @@ class PlayingPage(QWidget):
         hbox.addWidget(playButton)
         vbox = QVBoxLayout(self)
         vbox.addWidget(self.nav_home)
-        ## vbox.addLayout(back)
+        ############################################################
+        ## vbox.addWidget()  ## ADD VISUALIZER WIDGET HERE to vbox
+        ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
+        ############################################################
         vbox.addLayout(hbox)
-        # vbox.addWidget(playButton)
         self.initUI()
 
     def initUI(self):
