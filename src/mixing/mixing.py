@@ -1,7 +1,6 @@
 import queue
 from threading import Thread
 import time
-
 from src.common.shared_queues import SharedQueues
 
 class Mixing(Thread):

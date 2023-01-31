@@ -25,7 +25,7 @@ class TestCopyFileToQueue:
         mocker.patch('src.file_input.file_input.FileInput.openFile',return_value=test_file)
 
         expected = component.file_input_queue
-        component.copy_file_to_queue()
+        component.run()
         actual = component.file_input_queue
         
         
@@ -43,7 +43,7 @@ class TestCopyFileToQueue:
 
         mocker.patch('src.file_input.file_input.FileInput.openFile',return_value=test_file)
 
-        component.copy_file_to_queue()
+        component.run()
         actual = component.file_input_queue
         
         assert actual.qsize() == expected.qsize()
@@ -65,7 +65,7 @@ class TestCopyFileToQueue:
 
         mocker.patch('src.file_input.file_input.FileInput.openFile',return_value=test_file)
 
-        component.copy_file_to_queue()
+        component.run()
         actual = component.file_input_queue
 
         
