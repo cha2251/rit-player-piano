@@ -95,7 +95,7 @@ if __name__ == '__main__':
             border-style: outset;
             border-width: 2px;
             border-color: #792cb0;
-            max-width: 50em;
+            max-width: 25;
             min-width: 5em;
             padding: 5px;
             font-family: "Times New Roman", Times, serif;
