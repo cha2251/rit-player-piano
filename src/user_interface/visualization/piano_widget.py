@@ -10,14 +10,14 @@ class PianoWidget(QWidget):
         self.timer.start()
 
         self.border_size = 3
-        self.key_width = 64
+        self.key_width = 32
         self.key_height = self.key_width * 3
 
         self.black_key_width = self.key_width * 0.66667
         self.black_key_height = self.key_height * 0.6
         self.black_key_positions = [0.5, 1.5, 3.5, 4.5, 5.5]
 
-        self.octaves = 3
+        self.octaves = 7
 
         self.setBaseSize(self.sizeHint())
 
