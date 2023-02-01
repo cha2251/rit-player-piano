@@ -70,14 +70,14 @@ class Mixing(Thread):
     def main_loop(self):
         while(self.active):
             try:
-                event = self.button_input_queue.get(timeout=.005) # We need a timeout or else we hang here on shutdown
+                event = self.button_input_queue.get_nowait()
                 self.mixed_output_queue.put(event)
                 time.sleep(0)
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
             if(self.state == self.State.PLAY):
                 try:
-                    event = self.file_input_queue.get(timeout=.005)
+                    event = self.file_input_queue.get_nowait()
                     event.addTime(self.total_pause_time)
                     self.paused_notes.update({event.event.note:event.event.type})
                     self.mixed_output_queue.put(event)

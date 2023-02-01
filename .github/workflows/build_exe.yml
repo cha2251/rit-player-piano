@@ -17,15 +17,51 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          sudo apt-get install -y libasound2-dev
+          sudo apt-get install -y libasound2-dev portaudio19-dev
           python -m pip install --upgrade pip
           pip install flake8 pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Build with Pyinstaller
         run: |
-          pyinstaller src/common/main.py --clean --onefile
+          pyinstaller src/common/main.py --onefile --clean --icon=PlayerPianoIcon.ico
+      - name: Fix Directory Structure
+        run: |
+          mv dist/main PlayerPiano
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with: 
-          name: linux-executable
-          path: dist/main
+          name: PlayerPiano-linux
+          path: |
+            PlayerPiano
+            MIDI_Files/*
+  
+  archive-windows-artifact:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ["3.8"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          pip install -r requirements.txt
+      - name: Build with Pyinstaller
+        run: |
+          pyinstaller.exe src\common\main.py --onefile --clean --icon=PlayerPianoIcon.ico
+      - name: Fix Directory Structure
+        run: |
+          mv dist\main.exe PlayerPiano.exe
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with: 
+          name: PlayerPiano-windows
+          path: |
+            PlayerPiano.exe
+            MIDI_Files\*

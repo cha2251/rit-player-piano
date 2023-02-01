@@ -1,4 +1,8 @@
+import sys
 import time
+from threading import Thread
+from PyQt5.QtWidgets import QApplication
+import src.user_interface.main_page
 from src.common.midi_event import MidiEvent
 from src.mixing.mixing import Mixing
 from src.output_queue.output_queue import OutputQueue
@@ -6,13 +10,19 @@ from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
 from src.button_input.button_input import ButtonInput
 import mido
+import mido.backends.rtmidi  # Needed for windows builds w/ pyinstaller
 
+CONSOLE_MODE = True # Flip to enable devleoping in console mode
 
 class Main:
     shared_queues = None
     mixing = None
     file_input = None
     button_input = None
+    output = None
+
+    def __init__(self):
+        pass
 
     def main(self):
         mido.set_backend("mido.backends.rtmidi")
@@ -36,27 +46,36 @@ class Main:
 
         print("Type `quit` to quit")
 
-        while(True):
+
+        #init UI
+        x = Thread(target=self.init_UI, args=(self.shutdown,))
+        x.start()
+
+
+        print("Type `quit` to quit")
+
+        while(CONSOLE_MODE and x.is_alive()): 
             command = input()
             if command == 'quit':
                 break
             if command == 'off':
                 self.file_input.deactivate()
                 self.shared_queues.file_input_queue.queue.clear()
-                self.shared_queues.mixed_output_queue.queue.clear()
             if command == 'pause':
                 self.mixing.pause()
             if command == 'play':
                 self.mixing.unpause()
-        
+
         self.shutdown()
+        
+        
 
     def shutdown(self):
-        self.output.signal_stop()
+        self.output.deactivate()
         self.button_input.deactivate()
         self.mixing.deactivate()
         self.file_input.deactivate()
-        self.button_input.deactivate()
+        self.shared_queues.deactivate()
         print("System Shutdown Succesfully")
 
     def create_mixing(self):
@@ -75,6 +94,42 @@ class Main:
 
     def create_button_input(self):
         self.button_input = ButtonInput(self.shared_queues.button_input_queue)
+
+    def init_UI(self, shutdown):
+        app = QApplication([])
+        style = """
+        QWidget {
+            background: #2a0b40;
+        }
+        QLabel{
+            color: #fff;
+            font: 40px;
+        }
+        QPushButton{
+            color: #fff;
+            background-color: #5b2185;
+            border-style: outset;
+            border-width: 2px;
+            border-color: #792cb0;
+            max-width: 50em;
+            min-width: 5em;
+            padding: 5px;
+            font-family: "Times New Roman", Times, serif;
+            font: bold 15px;
+            border-radius: 10px;
+        }
+        QPushButton:hover{
+            background: #792cb0;
+        }
+        QPushButton:pressed{
+            border-style: inset;
+        }
+        """
+        app.setStyleSheet(style)
+        window = src.user_interface.main_page.MainPage(shutdown)
+        window.show()
+        app.exec_()
+
 
 
 if __name__ == "__main__":

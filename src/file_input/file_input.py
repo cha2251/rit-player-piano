@@ -11,7 +11,6 @@ class FileInput(Thread):
     def __init__(self, file_input_queue):
         Thread.__init__(self)
         self.file_input_queue = file_input_queue
-        
     
     def run(self):
         self.active = True

@@ -19,6 +19,7 @@ class MIDIFileObject:
     """
 
     DEFAULT_TEMPO = 500000
+    STARTUP_DELAY = 2.5
     
 
     def __init__(self, file_name):
@@ -77,7 +78,12 @@ class MIDIFileObject:
         if file_string != '' and Path(file_location).is_file():
             is_valid = True
         
-        return is_valid
+        return is_valid        
+
+    def calc_time_delay(self):
+        if self.curr_tempo is None or self.curr_time_signature is None:
+            return None
+        
 
     def calc_time_delay(self):
         if self.curr_tempo is None or self.curr_time_signature is None:
@@ -97,12 +103,12 @@ class MIDIFileObject:
         """
         track_messages = []
         if not self.is_file_string_valid(file_name):
-            return []
+            return [] #TODO: Actual error message
 
         file_location = 'MIDI_Files/{}'.format(file_name)
         mid_fi = mido.MidiFile(file_location)
         
-        start_time = time.time()+1 # Off
+        start_time = time.time()+self.STARTUP_DELAY
         curr_time = start_time
 
         tempo = self.DEFAULT_TEMPO # Tempo changes as we go, so default till first tempo event

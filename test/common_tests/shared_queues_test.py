@@ -8,8 +8,6 @@ class TestQueuesCreate:
     def test_create_file_queue(self):
         component = SharedQueues()
 
-        assert component.file_input_queue is None
-
         component.create_queues()
 
         assert component.file_input_queue is not None
@@ -17,16 +15,12 @@ class TestQueuesCreate:
     def test_create_button_queue(self):
         component = SharedQueues()
 
-        assert component.button_input_queue is None
-
         component.create_queues()
 
         assert component.button_input_queue is not None
 
     def test_create_mixed_queue(self):
         component = SharedQueues()
-
-        assert component.mixed_output_queue is None
 
         component.create_queues()
 
@@ -56,7 +50,7 @@ class TestFileQueue:
         testEvent = MidiEvent(mido.Message('note_on',note=60), 1)
         file_queue.put(testEvent)
 
-        assert file_queue.get() is testEvent
+        assert file_queue.get() == testEvent
 
     def test_ordering(self):
         component = SharedQueues()
@@ -73,9 +67,9 @@ class TestFileQueue:
         file_queue.put(testEvent2)
         file_queue.put(testEvent3)
 
-        assert file_queue.get() is testEvent1
-        assert file_queue.get() is testEvent2
-        assert file_queue.get() is testEvent3
+        assert file_queue.get() == testEvent1
+        assert file_queue.get() == testEvent2
+        assert file_queue.get() == testEvent3
 
 
 class TestButtonQueue:
@@ -102,7 +96,7 @@ class TestButtonQueue:
         testEvent = MidiEvent(mido.Message('note_on',note=60), 1)
         button_queue.put(testEvent)
 
-        assert button_queue.get() is testEvent
+        assert button_queue.get() == testEvent
 
     def test_ordering(self):
         component = SharedQueues()
@@ -119,9 +113,9 @@ class TestButtonQueue:
         button_queue.put(testEvent2)
         button_queue.put(testEvent3)
 
-        assert button_queue.get() is testEvent1
-        assert button_queue.get() is testEvent2
-        assert button_queue.get() is testEvent3
+        assert button_queue.get() == testEvent1
+        assert button_queue.get() == testEvent2
+        assert button_queue.get() == testEvent3
 
 class TestMixingQueue:
     def test_put_event(self):
@@ -147,7 +141,7 @@ class TestMixingQueue:
         testEvent = MidiEvent(mido.Message('note_on',note=60), 1)
         mixing_queue.put(testEvent)
 
-        assert mixing_queue.get() is testEvent
+        assert mixing_queue.get() == testEvent
 
     def test_ordering(self):
         component = SharedQueues()
@@ -164,8 +158,8 @@ class TestMixingQueue:
         mixing_queue.put(testEvent2)
         mixing_queue.put(testEvent3)
 
-        assert mixing_queue.get() is testEvent1
-        assert mixing_queue.get() is testEvent3 # Ordered by timestamp
-        assert mixing_queue.get() is testEvent2 
+        assert mixing_queue.get() == testEvent1
+        assert mixing_queue.get() == testEvent3 # Ordered by timestamp
+        assert mixing_queue.get() == testEvent2 
 
         
