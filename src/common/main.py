@@ -128,7 +128,7 @@ class Main:
         }
         """
         app.setStyleSheet(style)
-        window = src.user_interface.main_page.MainPage(self.shutdown,self.mixing,self.file_input)
+        window = src.user_interface.main_page.MainPage(self.shutdown,self.mixing,self.file_input,self.output)
         window.show()
         app.exec_()
 

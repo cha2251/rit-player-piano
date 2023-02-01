@@ -5,11 +5,11 @@ from src.user_interface.visualization.piano_widget import PianoWidget
 from src.user_interface.visualization.notes_widget import NotesWidget
 
 class VisualizationWidget(QWidget):
-    def __init__(self, refreshRate=30, parent=None):
+    def __init__(self, refreshRate=30, parent=None, output=None):
         super().__init__(parent=parent)
 
-        self.piano_widget = PianoWidget(refreshRate=refreshRate, parent=self)
         self.notes_widget = NotesWidget(refreshRate=refreshRate, parent=self)
+        self.piano_widget = PianoWidget(refreshRate=refreshRate, parent=self, output=output)
 
         hbox = QHBoxLayout(self)
 

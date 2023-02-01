@@ -10,7 +10,7 @@ import time
 from src.user_interface.visualization.visualization import VisualizationWidget
 
 class PlayingPage(QWidget):
-    def __init__(self, mixing_system, song_name="DEFAULT"):
+    def __init__(self, mixing_system, output=None, song_name="DEFAULT"):
         super().__init__()
         self.nav_home = QToolButton()
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -95,7 +95,7 @@ class PlayingPage(QWidget):
         ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
         ############################################################
 
-        vbox.addWidget(VisualizationWidget(parent=self))
+        vbox.addWidget(VisualizationWidget(parent=self, output=output))
         vbox.addLayout(hbox)
 
         self.initUI()

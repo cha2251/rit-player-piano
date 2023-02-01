@@ -3,13 +3,13 @@ import mido
 import time
 import platform
 from threading import Thread
-from multiprocessing import Process, Manager, Queue
+from multiprocessing import Process, Manager
 
 from src.common.midi_event import MidiEvent
 from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
 
-def _runOutputQueue(inputQueue, selectDeviceString, running):
-    output = OutputQueueProcess(inputQueue, selectDeviceString, running)
+def _runOutputQueue(inputQueue, selectDeviceString, _notePlayingSet, running):
+    output = OutputQueueProcess(inputQueue, selectDeviceString, _notePlayingSet, running)
     output.run()
 
 class OutputQueue():
@@ -21,7 +21,9 @@ class OutputQueue():
         # switch to a different output device. A value other than None indicates a device change
         self._selectDeviceString = Manager().Value('c_char_p', None)
 
-        self._outputSystem = Process(target=_runOutputQueue, args=(inputQueue, self._selectDeviceString, self._processShouldRun,))
+        self._notePlayingSet = Manager().dict()
+
+        self._outputSystem = Process(target=_runOutputQueue, args=(inputQueue, self._selectDeviceString, self._notePlayingSet, self._processShouldRun,))
 
     def start(self):
         self._processShouldRun.value = True
@@ -47,10 +49,14 @@ class OutputQueue():
     def get_device_list(self):
         return [SYNTHESIZER_NAME] + mido.get_output_names()
 
+    def get_playing_notes(self):
+        return list(self._notePlayingSet.keys())
+
 class OutputQueueProcess():
-    def __init__(self, inputQueue, selectDeviceString, running):
+    def __init__(self, inputQueue, selectDeviceString, _notePlayingSet, running):
         self.queue = inputQueue
         self._selectDeviceString = selectDeviceString
+        self._notePlayingSet = _notePlayingSet
         self._open_port = None
         self._running = running
 
@@ -89,9 +95,14 @@ class OutputQueueProcess():
             while not self.queue.empty() and now >= self.queue.peek().timestamp:
                 midiEvent = self.queue.get()
 
-                self._open_port.send(midiEvent.event)
+            if (midiEvent.event.type == 'note_off' or midiEvent.event.velocity == 0) and midiEvent.event.note in self._notePlayingSet.keys():
+                del self._notePlayingSet[midiEvent.event.note]
+            elif midiEvent.event.type == 'note_on':
+                self._notePlayingSet[midiEvent.event.note] = True
+
+            self._open_port.send(midiEvent.event)
         except IndexError:
-            pass # Expected when pausing/stopping and the queue is cleared
+            pass # Expected when the queue is empty
 
     def run(self):
         while self._running.value:

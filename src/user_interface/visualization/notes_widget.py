@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QPainter, QColor, QPen
-from PyQt5.QtCore import Qt, QSize, QTimer
+from threading import Timer
+from PyQt5.QtWidgets import QWidget, QLabel
+from PyQt5.QtGui import QPainter, QColor, QPen, QImage, QPixmap
+from PyQt5.QtCore import Qt, QSize, QTimer, QRect, QPropertyAnimation, QPoint, QAbstractAnimation, QSequentialAnimationGroup
 
 import random
 import time
@@ -12,83 +13,134 @@ class NotesWidget(QWidget):
     def __init__(self, refreshRate=30, parent=None):
         super().__init__(parent=parent)
 
-        self.timer = QTimer(self, timeout=self.update, interval=(1000 / 10))
-        self.timer.start()
+        self.refreshRate = 30.0
 
-        self.shared_queues = SharedQueues()
-
-        self.key_width = 32
+        self.key_width = 48
         self.black_key_positions = [0.5, 1.5, 3.5, 4.5, 5.5]
 
-        self.notes_width = self.key_width * 0.6667
+        self.notes_width = self.key_width * 0.5
         self.notes_height = 10
-        self.widget_height = 500
+        self.widget_height = 1000
 
         self.octaves = 7
 
         self.time = 0
-        self.max_time = 3
+        self.max_time = 5
+        self.max_render_time = self.max_time + 1
 
         self.test_offsets = []
         self.note_offsets = [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5, 5.5, 6]
 
+        self.notes_playing = []
+
         for i in range(self.octaves * 7 + 1):
             self.test_offsets.append(i * self.notes_height + random.randint(0, int(self.widget_height)))
 
+        self.update_note_queue()
+        self.rendered_image = QImage(self.sizeHint().width(), self.sizeHint().height() * 2, QImage.Format_ARGB32)
+        self.paintScene()
+
+        self.render_timer = QTimer(self, timeout=self.thingy, interval=(1000 / 1.0))
+        self.render_timer.start()
+
+        # QTimer(self, timeout=self.paintScene, interval=1000).start()
+        Timer(0.1, self.paintScene).start()
+
+        self.shared_queues = SharedQueues()
+
         self.setBaseSize(self.sizeHint())
 
-    def paintEvent(self, _event):
-        qp = QPainter(self)
+        self.label = QLabel(self)
+        self.label.hide()
+
+    def thingy(self):
+        yoffset = self.rendered_image.height() / self.max_render_time
+        doffset = (self.time - time.time()) / self.max_render_time * self.rendered_image.height()
+        hoffset = self.rendered_image.height() - self.height()
+
+        self.anim = QPropertyAnimation(self.label, b"pos")
+        self.anim.setEndValue(QPoint(0, -doffset - hoffset))
+        self.anim.setDuration(0)
+        self.anim.start(QAbstractAnimation.DeleteWhenStopped)
+
+        self.label.hide()
+        self.label.setPixmap(QPixmap.fromImage(self.rendered_image))
+        self.label.show()
+
+        self.anim = QPropertyAnimation(self.label, b"pos")
+        self.anim.setEndValue(QPoint(0, yoffset - doffset - hoffset))
+        self.anim.setDuration(1000)
+        self.anim.start(QAbstractAnimation.DeleteWhenStopped)
+
+    # def paintEvent(self, _event):
+    #     qp = QPainter(self)
+    #     yoffset = (self.time - time.time()) / self.max_render_time * self.height()
+    #     target = QRect(0, 0, self.width(), self.height())
+    #     source = QRect(0, yoffset, self.rendered_image.width(), self.height())
+    #     qp.drawImage(target, self.rendered_image, source)
+    #     qp.end()
+
+    def paintScene(self):
+        Timer(1, self.paintScene).start()
+
+        self.time = time.time()
+        self.rendered_image.fill(Qt.transparent)
+        current_time = time.time()
+        qp = QPainter()
+        qp.begin(self.rendered_image)
 
         if SharedQueues.mixed_output_queue is None:
             return
 
-        n = 0
-        current_queue = sorted(SharedQueues.mixed_output_queue.copy_of_queue(), key=lambda x: x.timestamp)
-        current_time = time.time()
+        for i in range(len(self.notes_queue)):
+            event = self.notes_queue[i]
 
-        while True:
-            if n >= len(current_queue):
+            if event.timestamp > current_time + self.max_render_time:
                 break
-
-            event = current_queue[n]
-            n += 1
-
-            if event.timestamp > current_time + self.max_time:
-                break
-            elif event.event.type != "note_on":
+            elif event.event.type != "note_on" or event.event.velocity == 0:
+                try:
+                    if event.timestamp - current_time < 0.1:
+                        self.notes_playing.remove(event.event.note)
+                except:
+                    pass
                 continue
+
+            start_timestamp = event.timestamp
+            end_timestamp = event.timestamp + 0.5
+
+            if event.event.note not in self.notes_playing and event.timestamp - current_time < 0.1:
+                self.notes_playing += [event.event.note]
+
+            for j in range(i + 1, len(self.notes_queue)):
+                if (self.notes_queue[j].event.type == "note_off" or self.notes_queue[j].event.velocity == 0) and self.notes_queue[j].event.note == event.event.note:
+                    end_timestamp = self.notes_queue[j].timestamp
+                    break
 
             key = event.event.note - 24
             x = ((key // 12) * 7 + self.note_offsets[key % 12]) * self.key_width
-            y = self.widget_height * (1 - ((event.timestamp - time.time()) / self.max_time))
+            y = self.rendered_image.height() * (1 - ((start_timestamp - current_time) / self.max_render_time))
+            y2 = self.rendered_image.height() * (1 - ((end_timestamp - current_time) / self.max_render_time))
 
             qp.fillRect(
                 x + (self.key_width - self.notes_width) / 2,
-                y - self.notes_height,
+                y2,
                 self.notes_width,
-                self.notes_height,
+                y - y2,
                 QColor(255, 215, 0, 255),
             )
 
-        # # Draw the white key notes
-        # for i in range(self.octaves * 7 + 1):
-        #     if i % 2 == 1:
-        #         continue
+        elapsed = time.time() - current_time
+        # print("{}, {}".format(elapsed, 1 / self.refreshRate - elapsed))
 
-        #     delta = self.key_width - self.notes_width
-        #     x = i * self.key_width
-        #     y = (self.time * testing_speed + self.test_offsets[i]) % self.widget_height
+        if elapsed > 1 / self.refreshRate:
+            print("Warning: NotesWidget took too long to render ({:.1} ms).".format(elapsed * 1e3))
 
-        #     qp.fillRect(
-        #         x + delta / 2,
-        #         y,
-        #         self.notes_width,
-        #         self.notes_height,
-        #         QColor(255, 215, 0, 255),
-        #     )
+        qp.end()
 
-        self.time += self.timer.interval() / 1000
+    def update_note_queue(self):
+        self.notes_queue = SharedQueues.mixed_output_queue.peekn(512)
+
+        Timer(1.1, self.update_note_queue).start()
 
     def sizeHint(self):
         return QSize(self.octaves * 7 * self.key_width, self.widget_height)
