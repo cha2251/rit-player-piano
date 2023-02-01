@@ -2,13 +2,7 @@ import queue
 import time
 from threading import Thread
 from pynput import keyboard
-
 import mido
-import queue
-from threading import Thread
-from src.common.midi_event import MidiEvent
-from src.common.shared_queues import SharedQueues
-import keyboard
 import time
 
 from src.common.midi_event import MidiEvent
