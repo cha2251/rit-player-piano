@@ -51,7 +51,6 @@ class Mixing(Thread):
                 self.mixed_output_queue.put(MidiEvent(event, time.time()))
     
     def unpause(self):
-        self.state = self.State.PLAY
         offset_time = time.time() - self.current_pause_time
 
         for note in self.paused_notes.keys():
@@ -66,6 +65,7 @@ class Mixing(Thread):
         self.holding_queue.clear()
 
         self.total_pause_time += self.current_pause_time
+        self.state = self.State.PLAY
     
     def stop(self):
         pass

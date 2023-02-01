@@ -85,10 +85,13 @@ class OutputQueueProcess():
 
         now = time.time()
 
-        while not self.queue.empty() and now >= self.queue.peek().timestamp:
-            midiEvent = self.queue.get()
+        try:
+            while not self.queue.empty() and now >= self.queue.peek().timestamp:
+                midiEvent = self.queue.get()
 
-            self._open_port.send(midiEvent.event)
+                self._open_port.send(midiEvent.event)
+        except IndexError:
+            pass # Expected when pausing/stopping and the queue is cleared
 
     def run(self):
         while self._running.value:
