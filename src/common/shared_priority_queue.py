@@ -1,3 +1,4 @@
+from copy import deepcopy
 import queue
 from heapq import heappush, heappop
 from multiprocessing.managers import SyncManager
@@ -19,6 +20,12 @@ class PeekingPriorityQueue(queue.Queue):
 
     def peek(self):
         return self.queue[0]
+
+    def get_and_clear_queue(self):
+        val = deepcopy(self.queue)
+        self.queue.clear()
+        return val
+
 
 class SharedQueueSyncManager(SyncManager):
     '''Manages the synchronization of Python objects in between processes'''

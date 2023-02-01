@@ -1,4 +1,3 @@
-from copy import deepcopy
 import queue
 from threading import Thread
 import time
@@ -37,18 +36,19 @@ class Mixing(Thread):
         self.state = self.State.PLAY
         self.main_loop()
 
+    def play(self):
+        pass
+
     def pause(self):
         self.state = self.State.PAUSE
         self.current_pause_time= time.time()
-        with self.mixed_output_queue.mutex: #Thread safe
-            self.holding_queue = deepcopy(self.mixed_output_queue.queue)
+        
+        self.holding_queue = self.mixed_output_queue.get_and_clear_queue()
 
         for note in self.paused_notes.keys():
             if(self.paused_notes[note]=='note_on'):
                 event = mido.Message('note_off', note=note)
                 self.mixed_output_queue.put(MidiEvent(event, time.time()))
-
-        self.mixed_output_queue.queue.clear()
     
     def unpause(self):
         self.state = self.State.PLAY
@@ -66,6 +66,27 @@ class Mixing(Thread):
         self.holding_queue.clear()
 
         self.total_pause_time += self.current_pause_time
+    
+    def stop(self):
+        pass
+    
+    def play_pushed(self):
+        if self.state is self.State.STOP:
+            self.play()
+        if self.state is self.State.PAUSE:
+            self.unpause()
+
+    def pause_pushed(self):
+        if self.state is self.State.PLAY:
+            self.pause()
+        elif self.state is self.State.PAUSE:
+            self.unpause()
+    
+    def stop_pushed(self):
+        if self.state is self.State.PLAY:
+            self.stop()
+        elif self.state is self.State.PAUSE:
+            self.stop()
     
     def main_loop(self):
         while(self.active):

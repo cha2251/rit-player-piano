@@ -41,16 +41,12 @@ class Main:
 
         self.output.start()
         self.file_input.start()
-        self.button_input.start()
+        self.button_input.run()
         self.mixing.start()
-
-        print("Type `quit` to quit")
-
 
         #init UI
         x = Thread(target=self.init_UI, args=(self.shutdown,))
         x.start()
-
 
         print("Type `quit` to quit")
 
