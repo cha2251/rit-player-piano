@@ -1,3 +1,4 @@
+import os
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QLabel, QToolButton
@@ -25,7 +26,7 @@ class PlayingPage(QWidget):
 
         playButton = QToolButton()
         playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        playButton.setIcon(QIcon(r"../../UI_Images/play-solid.svg"))
+        playButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "play-solid.svg")))
         playButton.setIconSize(QSize(65, 65))
         playButton.setText("play")
         playButton.setToolTip("play song")
@@ -33,7 +34,7 @@ class PlayingPage(QWidget):
 
         stopButton = QToolButton()
         stopButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        stopButton.setIcon(QIcon(r"../../UI_Images/stop-solid.svg"))
+        stopButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "stop-solid.svg")))
         stopButton.setIconSize(QSize(65, 65))
         stopButton.setText('stop')
         stopButton.setToolTip('stop song')
@@ -41,7 +42,7 @@ class PlayingPage(QWidget):
 
         pauseButton = QToolButton()
         pauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        pauseButton.setIcon(QIcon(r"../../UI_Images/pause-solid.svg"))
+        pauseButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "pause-solid.svg")))
         pauseButton.setIconSize(QSize(65, 65))
         pauseButton.setText('pause')
         pauseButton.setToolTip('pause song')
@@ -49,7 +50,7 @@ class PlayingPage(QWidget):
 
         restartButton = QToolButton()
         restartButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        restartButton.setIcon(QIcon(r"../../UI_Images/rotate-left-solid.svg"))
+        restartButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "rotate-left-solid.svg")))
         restartButton.setIconSize(QSize(65, 65))
         restartButton.setText('restart')
         restartButton.setToolTip('restart song')
