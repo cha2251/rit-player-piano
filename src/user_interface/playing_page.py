@@ -1,9 +1,12 @@
 import sys
 from src.mixing.mixing import Mixing
-from PyQt5.QtWidgets import QApplication, QWidget,  QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
-    QSizePolicy
+# from PyQt5.QtWidgets import QApplication, QWidget,  QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
+#     QSizePolicy
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
+    QSizePolicy, QLabel, QToolButton, QProgressBar
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
+import time
 
 
 class PlayingPage(QWidget):
@@ -22,6 +25,14 @@ class PlayingPage(QWidget):
 
         playButton = QPushButton('', self)
         playButton.setIcon(QIcon(r"UI_Images/play-solid.svg"))
+        self.progress = QProgressBar(self)
+        self.progress.setGeometry(3, 4, 2, 2) #not working...
+        self.progress.setAlignment(Qt.AlignCenter)
+        
+
+        playButton = QToolButton()
+        playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        playButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "play-solid.svg")))
         playButton.setIconSize(QSize(65, 65))
         playButton.setToolTip('play song')
         playButton.clicked.connect(self.on_click_play)
@@ -54,6 +65,11 @@ class PlayingPage(QWidget):
         hbox.addWidget(playButton)
         vbox = QVBoxLayout(self)
         vbox.addWidget(self.nav_home)
+        vbox.addWidget(self.progress)
+        ############################################################
+        ## vbox.addWidget()  ## ADD VISUALIZER WIDGET HERE to vbox
+        ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
+        ############################################################
         vbox.addLayout(hbox)
         # vbox.addWidget(playButton)
         self.initUI()
@@ -77,6 +93,8 @@ class PlayingPage(QWidget):
     @pyqtSlot()
     def on_click_play(self):
         self.mixing_system.play_pushed()
+        print('play')
+        self.progress_action()
 
     @pyqtSlot()
     def on_click_restart(self):
@@ -87,6 +105,12 @@ class PlayingPage(QWidget):
         self.title = song
         self.nav_home.setText("SONG: " + song)
         self.setWindowTitle("Player Piano: " + song)
+
+    def progress_action(self):
+        for i in range(100):
+            time.sleep(0.05)
+            self.progress.setValue(i)
+            
 
 
 if __name__ == '__main__':
