@@ -1,7 +1,5 @@
 from threading import Thread
-
 from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout, qApp
-
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
 from src.user_interface.settings import SettingsPage
@@ -12,7 +10,6 @@ class MainPage(QWidget, Thread):
     def __init__(self, shutdown):
         super().__init__()
         Thread.__init__(self)
-
         style = """
             QWidget {
                 background: #2a0b40;

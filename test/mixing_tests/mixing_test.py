@@ -38,6 +38,8 @@ class TestRun:
         component.start()
 
         component.deactivate()
+
+        component.join()
     
     @pytest.mark.timeout(5)
     def test_pulls_from_button(self):

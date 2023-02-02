@@ -71,6 +71,7 @@ class PlayingPage(QWidget):
         ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
         ############################################################
         vbox.addLayout(hbox)
+
         self.initUI()
 
     def initUI(self):

@@ -72,7 +72,7 @@ class HomePage(QWidget):
         bigHbox = QHBoxLayout()
         vbox = QVBoxLayout()
         hbox = QHBoxLayout()
-
+        
         vbox.addSpacerItem(QSpacerItem(100, 100, QSizePolicy.Expanding))
         hbox.setAlignment(Qt.AlignCenter)
         hbox.addStretch()
