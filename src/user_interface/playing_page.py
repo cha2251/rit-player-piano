@@ -15,7 +15,7 @@ class PlayingPage(QWidget):
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.nav_home.setIconSize(QSize(55, 55))
         self.nav_home.setText("back")
-        self.nav_home.setIcon(QIcon(r"../../UI_Images/back-arrow.svg"))
+        self.nav_home.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "back-arrow.svg")))
         self.left = 100
         self.top = 50
         self.width = 320

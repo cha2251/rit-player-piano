@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout, qApp
 
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
-from src.user_interface.settings import SettingsPage
+from src.user_interface.settings_page import SettingsPage
 
 
 class MainPage(QWidget, Thread):
