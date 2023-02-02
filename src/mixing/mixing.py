@@ -20,7 +20,7 @@ class Mixing(Thread):
     current_pause_time = 0
     total_pause_time = 0
 
-    paused_notes = {}
+    current_notes = {}
 
     def __init__(self, shared_queues:SharedQueues):
         Thread.__init__(self)
@@ -33,11 +33,12 @@ class Mixing(Thread):
         self.startup()
         
     def startup(self):
-        self.state = self.State.PLAY
+        self.play()
         self.main_loop()
 
     def play(self):
-        pass
+        self.state = self.State.PLAY
+        # TODO: Restart stopped song
 
     def pause(self):
         self.state = self.State.PAUSE
@@ -45,16 +46,16 @@ class Mixing(Thread):
         
         self.holding_queue = self.mixed_output_queue.get_and_clear_queue()
 
-        for note in self.paused_notes.keys():
-            if(self.paused_notes[note]=='note_on'):
+        for note in self.current_notes.keys():
+            if(self.current_notes[note]=='note_on'):
                 event = mido.Message('note_off', note=note)
                 self.mixed_output_queue.put(MidiEvent(event, time.time()))
     
     def unpause(self):
         offset_time = time.time() - self.current_pause_time
 
-        for note in self.paused_notes.keys():
-            if(self.paused_notes[note]=='note_off'):
+        for note in self.current_notes.keys():
+            if(self.current_notes[note]=='note_off'):
                 event = mido.Message('note_on', note=note, velocity=120)
                 self.mixed_output_queue.put(MidiEvent(mido.Message(event, time.time())))
 
@@ -69,7 +70,16 @@ class Mixing(Thread):
         self.state = self.State.PLAY
     
     def stop(self):
-        pass
+        self.state = self.State.STOP
+        self.current_pause_time = 0
+        self.total_pause_time = 0
+
+        self.mixed_output_queue.get_and_clear_queue()
+
+        for note in self.current_notes.keys():
+            if(self.current_notes[note]=='note_on'):
+                event = mido.Message('note_off', note=note)
+                self.mixed_output_queue.put(MidiEvent(event, time.time()))
     
     def play_pushed(self):
         if self.state is self.State.STOP:
@@ -101,7 +111,7 @@ class Mixing(Thread):
                 try:
                     event = self.file_input_queue.get_nowait()
                     event.addTime(self.total_pause_time)
-                    self.paused_notes.update({event.event.note:event.event.type})
+                    self.current_notes.update({event.event.note:event.event.type})
                     self.mixed_output_queue.put(event)
                 except queue.Empty:
                     pass # Expected if we dont have anything in the queue

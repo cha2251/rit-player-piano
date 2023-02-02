@@ -1,4 +1,5 @@
 import sys
+from src.mixing.mixing import Mixing
 from PyQt5.QtWidgets import QApplication, QWidget,  QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy
 from PyQt5.QtGui import QIcon
@@ -6,8 +7,9 @@ from PyQt5.QtCore import pyqtSlot, QSize, Qt
 
 
 class PlayingPage(QWidget):
-    def __init__(self, song_name="DEFAULT"):
+    def __init__(self, mixing_system, song_name="DEFAULT"):
         super().__init__()
+        self.mixing_system = mixing_system
         self.song_name = song_name
         self.nav_home = QPushButton("LINK: " + song_name)
         self.title = "TITLE: "
@@ -62,23 +64,26 @@ class PlayingPage(QWidget):
 
     @pyqtSlot()
     def on_click_quit(self):
-        print('quit')
+        print('quit pushed')
 
     @pyqtSlot()
     def on_click_stop(self):
-        print('stop')
+        print('stop pushed')
+        self.mixing_system.stop_pushed()
 
     @pyqtSlot()
     def on_click_pause(self):
-        print('pause')
+        print('pause pushed')
+        self.mixing_system.pause_pushed()
 
     @pyqtSlot()
     def on_click_play(self):
-        print('play')
+        print('play pushed')
+        self.mixing_system.play_pushed()
 
     @pyqtSlot()
     def on_click_restart(self):
-        print('restart')
+        print('restart pushed')
 
     def set_song(self, song):
         print("setting song: " + song)
