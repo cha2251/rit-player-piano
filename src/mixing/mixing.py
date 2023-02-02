@@ -58,9 +58,10 @@ class Mixing(Thread):
                 event = mido.Message('note_on', note=note, velocity=120)
                 self.mixed_output_queue.put(MidiEvent(mido.Message(event, time.time())))
 
+
         for event in self.holding_queue:
             event.addTime(offset_time)
-            self.mixed_output_queue.put(event)        
+        self.mixed_output_queue.set_queue(self.holding_queue)
 
         self.holding_queue.clear()
 
