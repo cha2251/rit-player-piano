@@ -153,3 +153,20 @@ class TestStateChanges:
         component.stop_pushed()
 
         assert component.state == component.State.STOP
+
+class TestPause:
+    def test_pause_turns_off_notes(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
+
+        testNote = 80
+
+        component.current_notes = ({testNote:'note_on'})
+
+        assert component.mixed_output_queue.qsize() == 0
+
+        component.pause()
+
+        assert component.mixed_output_queue.peek().event.type == 'note_off'
+        assert component.mixed_output_queue.peek().event.note == testNote

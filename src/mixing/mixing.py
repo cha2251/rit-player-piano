@@ -54,12 +54,6 @@ class Mixing(Thread):
     def unpause(self):
         offset_time = time.time() - self.current_pause_time
 
-        for note in self.current_notes.keys():
-            if(self.current_notes[note]=='note_off'):
-                event = mido.Message('note_on', note=note, velocity=120)
-                self.mixed_output_queue.put(MidiEvent(mido.Message(event, time.time())))
-
-
         for event in self.holding_queue:
             event.addTime(offset_time)
         self.mixed_output_queue.set_queue(self.holding_queue)
