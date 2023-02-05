@@ -68,17 +68,14 @@ class PlayingPage(QWidget):
 
     @pyqtSlot()
     def on_click_stop(self):
-        print('stop pushed')
         self.mixing_system.stop_pushed()
 
     @pyqtSlot()
     def on_click_pause(self):
-        print('pause pushed')
         self.mixing_system.pause_pushed()
 
     @pyqtSlot()
     def on_click_play(self):
-        print('play pushed')
         self.mixing_system.play_pushed()
 
     @pyqtSlot()
