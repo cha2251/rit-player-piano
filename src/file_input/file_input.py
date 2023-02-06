@@ -44,3 +44,5 @@ class FileInput(Thread):
 
     def deactivate(self):
         self.active = False
+        self.filename = None
+        self.fileObject = None
