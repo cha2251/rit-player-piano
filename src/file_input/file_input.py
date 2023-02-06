@@ -6,6 +6,7 @@ import time
 class FileInput(Thread):
     whitelisted_types = ['note_on','note_off']
     file_input_queue: queue.Queue = None
+    filename = None
     fileObject = None
     active = False
 
@@ -19,7 +20,9 @@ class FileInput(Thread):
     
     def copy_file_to_queue(self):
         while self.active:
-            while self.fileObject is not None and self.fileObject.has_next():
+            while self.filename is not None:
+                if self.fileObject is None:
+                    self.fileObject = MIDIFileObject(self.filename)                   
                 message = self.fileObject.get_next_message()
                 if message.event.type in self.whitelisted_types:
                     self.file_input_queue.put(message)
@@ -28,10 +31,12 @@ class FileInput(Thread):
 
     def openFile(self,filename):
         self.file_input_queue.queue.clear()
+
         if not filename.endswith(".mid"):
             filename += ".mid"
 
-        self.fileObject = MIDIFileObject(filename)
+        self.fileObject = None
+        self.filename = filename
 
     def deactivate(self):
         self.active = False
