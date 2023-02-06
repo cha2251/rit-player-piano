@@ -1,3 +1,4 @@
+import time
 from src.common.midi_event import MidiEvent
 from src.common.shared_queues import SharedQueues
 from src.mixing.mixing import Mixing
@@ -51,6 +52,7 @@ class TestRun:
         component.button_input_queue.put(test_event)
 
         component.start()
+        component.active = True
         component.deactivate()
 
         actual = component.mixed_output_queue.get()
@@ -65,10 +67,11 @@ class TestRun:
 
         test_event = MidiEvent(mido.Message(type='note_on'),0)
         component.file_input_queue.put(test_event)
-
+        component.state = component.State.PLAY
 
         component.start()
         component.deactivate()
+        component.join()
 
         actual = component.mixed_output_queue.get()
 

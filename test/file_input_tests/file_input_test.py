@@ -1,4 +1,5 @@
 from queue import Queue
+import time
 from src.common.midi_event import MidiEvent
 from src.file_input.MIDI_file_class import MIDIFileObject
 from src.file_input.file_input import FileInput
@@ -45,6 +46,7 @@ class TestCopyFileToQueue:
             expected.put(MidiEvent(mido.Message('note_on'),i))
 
         component.start()
+        time.sleep(.5) #Allow time to process
         component.deactivate()
         component.join()
 
@@ -71,6 +73,7 @@ class TestCopyFileToQueue:
 
 
         component.start()
+        time.sleep(.5) #Allow time to process
         component.deactivate()
         component.join()
 
