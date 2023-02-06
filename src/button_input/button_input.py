@@ -3,7 +3,6 @@ import time
 from threading import Thread
 from pynput import keyboard
 import mido
-import time
 
 from src.common.midi_event import MidiEvent
 

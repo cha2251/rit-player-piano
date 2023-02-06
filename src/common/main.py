@@ -12,7 +12,7 @@ from src.button_input.button_input import ButtonInput
 import mido
 import mido.backends.rtmidi  # Needed for windows builds w/ pyinstaller
 
-CONSOLE_MODE = True # Flip to enable devleoping in console mode
+CONSOLE_MODE = True # Set to True to allow for console commands
 
 class Main:
     shared_queues = None
@@ -50,7 +50,7 @@ class Main:
 
         print("Type `quit` to quit")
 
-        while(CONSOLE_MODE and x.is_alive()): 
+        while(CONSOLE_MODE and x.is_alive()):
             command = input()
             if command == 'quit':
                 break
@@ -63,6 +63,9 @@ class Main:
                 self.mixing.play_pushed()
             if command == 'stop':
                 self.mixing.stop_pushed()
+
+        while(x.is_alive()): # Do not shutdown until UI is closed
+            pass
 
         self.shutdown()
         
