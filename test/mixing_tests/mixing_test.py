@@ -50,7 +50,6 @@ class TestRun:
         test_event = MidiEvent(mido.Message(type='note_on'),0)
         component.button_input_queue.put(test_event)
 
-
         component.start()
         component.deactivate()
 
@@ -75,4 +74,99 @@ class TestRun:
 
         assert test_event == actual
 
+class TestStateChanges:
+    def test_play_when_playing(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
+
+        component.play()
+
+        assert component.state == component.State.PLAY
+
+        component.play_pushed()
+
+        assert component.state == component.State.PLAY
+
+    def test_play_when_paused(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
+
+        component.pause()
+
+        assert component.state == component.State.PAUSE
+
+        component.play_pushed()
+
+        assert component.state == component.State.PLAY
     
+    def test_pause_when_playing(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
+
+        component.play()
+
+        assert component.state == component.State.PLAY
+
+        component.pause_pushed()
+
+        assert component.state == component.State.PAUSE
+    
+
+    def test_pause_when_paused(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
+
+        component.pause()
+
+        assert component.state == component.State.PAUSE
+
+        component.pause_pushed()
+
+        assert component.state == component.State.PLAY
+    
+    def test_stop_when_playing(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
+
+        component.play()
+
+        assert component.state == component.State.PLAY
+
+        component.stop_pushed()
+
+        assert component.state == component.State.STOP
+
+    def test_stop_when_paused(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
+
+        component.pause()
+
+        assert component.state == component.State.PAUSE
+
+        component.stop_pushed()
+
+        assert component.state == component.State.STOP
+
+class TestPause:
+    def test_pause_turns_off_notes(self):
+        test_shared_queues = SharedQueues()
+        test_shared_queues.create_queues()
+        component = Mixing(test_shared_queues)
+
+        testNote = 80
+
+        component.current_notes = ({testNote:'note_on'})
+
+        assert component.mixed_output_queue.qsize() == 0
+
+        component.pause()
+
+        assert component.mixed_output_queue.peek().event.type == 'note_off'
+        assert component.mixed_output_queue.peek().event.note == testNote

@@ -1,4 +1,5 @@
 import sys
+from src.mixing.mixing import Mixing
 from PyQt5.QtWidgets import QApplication, QWidget,  QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy
 from PyQt5.QtGui import QIcon
@@ -6,8 +7,9 @@ from PyQt5.QtCore import pyqtSlot, QSize, Qt
 
 
 class PlayingPage(QWidget):
-    def __init__(self, song_name="DEFAULT"):
+    def __init__(self, mixing_system, song_name="DEFAULT"):
         super().__init__()
+        self.mixing_system = mixing_system
         self.song_name = song_name
         self.nav_home = QPushButton("LINK: " + song_name)
         self.title = "TITLE: "
@@ -19,25 +21,25 @@ class PlayingPage(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         playButton = QPushButton('', self)
-        playButton.setIcon(QIcon(r"../../UI_Images/play-solid.svg"))
+        playButton.setIcon(QIcon(r"UI_Images/play-solid.svg"))
         playButton.setIconSize(QSize(65, 65))
         playButton.setToolTip('play song')
         playButton.clicked.connect(self.on_click_play)
 
         stopButton = QPushButton('', self)
-        stopButton.setIcon(QIcon(r"../../UI_Images/stop-solid.svg"))
+        stopButton.setIcon(QIcon(r"UI_Images/stop-solid.svg"))
         stopButton.setIconSize(QSize(65, 65))
         stopButton.setToolTip('stop song')
         stopButton.clicked.connect(self.on_click_stop)
 
         pauseButton = QPushButton('', self)
-        pauseButton.setIcon(QIcon(r"../../UI_Images/pause-solid.svg"))
+        pauseButton.setIcon(QIcon(r"UI_Images/pause-solid.svg"))
         pauseButton.setIconSize(QSize(65, 65))
         pauseButton.setToolTip('pause song')
         pauseButton.clicked.connect(self.on_click_pause)
 
         restartButton = QPushButton('', self)
-        restartButton.setIcon(QIcon(r"../../UI_Images/rotate-left-solid.svg"))
+        restartButton.setIcon(QIcon(r"UI_Images/rotate-left-solid.svg"))
         restartButton.setIconSize(QSize(65, 65))
         restartButton.setToolTip('restart song')
         restartButton.clicked.connect(self.on_click_restart)
@@ -62,23 +64,23 @@ class PlayingPage(QWidget):
 
     @pyqtSlot()
     def on_click_quit(self):
-        print('quit')
+        print('quit pushed')
 
     @pyqtSlot()
     def on_click_stop(self):
-        print('stop')
+        self.mixing_system.stop_pushed()
 
     @pyqtSlot()
     def on_click_pause(self):
-        print('pause')
+        self.mixing_system.pause_pushed()
 
     @pyqtSlot()
     def on_click_play(self):
-        print('play')
+        self.mixing_system.play_pushed()
 
     @pyqtSlot()
     def on_click_restart(self):
-        print('restart')
+        print('restart pushed')
 
     def set_song(self, song):
         print("setting song: " + song)
