@@ -45,7 +45,7 @@ class Main:
         self.mixing.start()
 
         #init UI
-        x = Thread(target=self.init_UI, args=(self.shutdown,self.mixing))
+        x = Thread(target=self.init_UI)
         x.start()
 
         print("Type `quit` to quit")
@@ -96,7 +96,7 @@ class Main:
     def create_button_input(self):
         self.button_input = ButtonInput(self.shared_queues.button_input_queue)
 
-    def init_UI(self, shutdown, mixing):
+    def init_UI(self):
         app = QApplication([])
         style = """
         QWidget {
@@ -127,7 +127,7 @@ class Main:
         }
         """
         app.setStyleSheet(style)
-        window = src.user_interface.main_page.MainPage(shutdown,mixing)
+        window = src.user_interface.main_page.MainPage(self.shutdown,self.mixing,self.file_input)
         window.show()
         app.exec_()
 

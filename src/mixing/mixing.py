@@ -33,12 +33,10 @@ class Mixing(Thread):
         self.startup()
         
     def startup(self):
-        self.play()
         self.main_loop()
 
     def play(self):
         self.state = self.State.PLAY
-        # TODO: Restart stopped song
 
     def pause(self):
         self.state = self.State.PAUSE
