@@ -84,3 +84,33 @@ class TestCopyFileToQueue:
             assert actual.get().event == expected.get().event
     
 
+class TestOpenFile:
+    def test_adds_extension(self):
+        test_queue = Queue()
+        component = FileInput(test_queue)
+
+        test_file = "TestFile"
+
+        expected = test_file+".mid"
+
+        assert component.filename is None
+
+        component.openFile(test_file)
+
+        actual = component.filename
+    
+        assert actual == expected
+    
+    def test_clears_file_object(self):
+        test_queue = Queue()
+        component = FileInput(test_queue)
+
+        test_file = "TestFile"
+
+        component.fileObject= "NotARealFileObject"
+
+        component.openFile(test_file)
+
+        actual = component.fileObject
+    
+        assert actual is None
