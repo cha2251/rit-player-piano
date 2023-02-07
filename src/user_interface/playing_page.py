@@ -22,12 +22,14 @@ class PlayingPage(QWidget):
         self.height = 200
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+        self.pbar_location = 0;
 
         playButton = QPushButton('', self)
         playButton.setIcon(QIcon(r"UI_Images/play-solid.svg"))
         self.progress = QProgressBar(self)
-        self.progress.setGeometry(3, 4, 2, 2) #not working...
+        self.progress.setGeometry(200, 100, 200, 30) #not working...
         self.progress.setAlignment(Qt.AlignCenter)
+        self.progress.setFormat("")
         
 
         playButton = QToolButton()
@@ -63,9 +65,20 @@ class PlayingPage(QWidget):
         hbox.addWidget(stopButton)
         hbox.addWidget(pauseButton)
         hbox.addWidget(playButton)
+
+        ############################################################
+        # add song display here
+        ############################################################
+        song_hbox = QHBoxLayout()
+        song_hbox.setAlignment(Qt.AlignCenter)
+        song_hbox.setContentMargins(100,100,100,100)
+        song_hbox.addWidget(self.progress)
+
+
         vbox = QVBoxLayout(self)
         vbox.addWidget(self.nav_home)
-        vbox.addWidget(self.progress)
+        vbox.addLayout(song_hbox)
+        
         ############################################################
         ## vbox.addWidget()  ## ADD VISUALIZER WIDGET HERE to vbox
         ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
@@ -110,6 +123,14 @@ class PlayingPage(QWidget):
         for i in range(100):
             time.sleep(0.05)
             self.progress.setValue(i)
+            
+    def update_song_progress(self):
+        """
+        This function will be called whenever the next message
+        comes in and will update the song progress bar.
+        """
+        self.progress.setValue(self.pbar_location)
+
             
 
 
