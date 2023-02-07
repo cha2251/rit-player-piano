@@ -59,6 +59,13 @@ class MainPage(QWidget, Thread):
             QToolButton:pressed{
                 border-style: inset;
             }
+            QProgressBar{
+                background-color : rgb(255,255,255);
+                border : 1px;
+            }
+            QProgressBar::chunk{
+                background: rgb(0,0,0);
+            }
         """
         qApp.setStyleSheet(style)
 

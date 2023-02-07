@@ -19,9 +19,17 @@ class PlayingPage(QWidget):
         self.height = 200
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+        self.pbar_location = 0;
 
-        playButton = QPushButton('', self)
-        playButton.setIcon(QIcon(r"UI_Images/play-solid.svg"))
+        self.progress = QProgressBar(self)
+        self.progress.setGeometry(200, 100, 200, 30) #not working...
+        self.progress.setAlignment(Qt.AlignCenter)
+        self.progress.setFormat("")
+        
+
+        playButton = QToolButton()
+        playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        playButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "play-solid.svg")))
         playButton.setIconSize(QSize(65, 65))
         playButton.setToolTip('play song')
         playButton.clicked.connect(self.on_click_play)
@@ -52,8 +60,24 @@ class PlayingPage(QWidget):
         hbox.addWidget(stopButton)
         hbox.addWidget(pauseButton)
         hbox.addWidget(playButton)
+
+        ############################################################
+        # add song display here
+        ############################################################
+        song_hbox = QHBoxLayout()
+        song_hbox.setAlignment(Qt.AlignCenter)
+        song_hbox.setContentMargins(100,100,100,100)
+        song_hbox.addWidget(self.progress)
+
+
         vbox = QVBoxLayout(self)
         vbox.addWidget(self.nav_home)
+        vbox.addLayout(song_hbox)
+        
+        ############################################################
+        ## vbox.addWidget()  ## ADD VISUALIZER WIDGET HERE to vbox
+        ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
+        ############################################################
         vbox.addLayout(hbox)
         # vbox.addWidget(playButton)
         self.initUI()
@@ -87,6 +111,20 @@ class PlayingPage(QWidget):
         self.title = song
         self.nav_home.setText("SONG: " + song)
         self.setWindowTitle("Player Piano: " + song)
+
+    def progress_action(self):
+        for i in range(100):
+            time.sleep(0.05)
+            self.progress.setValue(i)
+            
+    def update_song_progress(self):
+        """
+        This function will be called whenever the next message
+        comes in and will update the song progress bar.
+        """
+        self.progress.setValue(self.pbar_location)
+
+            
 
 
 if __name__ == '__main__':
