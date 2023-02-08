@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLay
 
 class HomePage(QWidget):
 
-    MIDI_FILE_PATH = "MIDI_FILES" # Path to check for midi files to display. For now just checks folder in same directory
+    MIDI_FILE_PATH = "MIDI_Files" # Path to check for midi files to display. For now just checks folder in same directory
 
     def __init__(self):
         super().__init__()
