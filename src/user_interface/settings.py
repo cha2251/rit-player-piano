@@ -9,7 +9,7 @@ class SettingsPage(QWidget):
     def __init__(self):
         super().__init__()
         self.nav_home = QPushButton("Home")
-        self.title = 'PLayer Piano'
+        self.title = 'Player Piano'
         self.left = 100
         self.top = 50
         self.width = 320
