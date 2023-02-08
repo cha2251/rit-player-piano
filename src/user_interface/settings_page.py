@@ -3,8 +3,8 @@ import sys
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
-    QSizePolicy, QToolButton
-from PyQt5.QtCore import pyqtSlot, Qt, QSize
+    QSizePolicy, QToolButton, QStackedLayout, QGridLayout
+from PyQt5.QtCore import pyqtSlot, Qt, QSize, QRect
 
 
 class SettingsPage(QWidget):
@@ -33,15 +33,8 @@ class SettingsPage(QWidget):
         # button.setToolTip('This is an example button')
         # button.clicked.connect(self.on_click)
 
-        # quit_button = QPushButton("Exit", self)
-
-        ##### drop1 = Draggable("first", "second") # don't do this it wont work??
-        drop1 = ""
-        drop1 = QLabel("STUFF")
-        drop1.setAcceptDrops(True)
-
         title = QLabel("SETTINGS")
-        title.setAlignment(Qt.AlignLeft)
+        title.setAlignment(Qt.AlignCenter)
         # title.setAlignment(Qt.AlignTop)
         title_spacer = QSpacerItem(1000, 5, QSizePolicy.Expanding)
 
@@ -50,22 +43,119 @@ class SettingsPage(QWidget):
         hbox.addSpacerItem(title_spacer)
         hbox.addWidget(title)
         hbox.addSpacerItem(title_spacer)
-        hbox.addWidget(drop1)
-        hbox.addSpacerItem(title_spacer)
+        #hbox.addSpacerItem(title_spacer)
 
 
         vbox = QVBoxLayout(self)
+        vbox.setAlignment(Qt.AlignTop)
         vbox.addLayout(hbox)
-        spacer = QSpacerItem(100, 200, QSizePolicy.Expanding)
+        spacer = QSpacerItem(300, 200, QSizePolicy.Expanding)
         vbox.addSpacerItem(spacer)
         # v, h = self.get_current_songs()
         # vbox.addLayout(v)
-        spacer_bot = QSpacerItem(100, 1000, QSizePolicy.Expanding)
-        vbox.addSpacerItem(spacer_bot)
+        ##spacer_bot = QSpacerItem(100, 1000, QSizePolicy.Expanding)
+        ##vbox.addSpacerItem(spacer_bot)
         # vbox.addLayout(h)
         # vbox.addLayout(hbox)
         # vbox.addWidget(button)
         # vbox.setAlignment(Qt.AlignCenter)
+
+
+        ##piano = QHBoxLayout()
+        ##group = QStackedLayout()
+        ##bKeys = QHBoxLayout()
+        ##wKeys = QHBoxLayout()
+        ##for i in range(0, 3):
+        ##    wKey = QToolButton()
+        ##    wKey.setAutoFillBackground(True)
+        ##    wKey.setFixedWidth(100)
+        ##    wKey.setFixedHeight(500)
+        ##    wKey.setStyleSheet("""
+        ##        background: #ffffff;
+        ##    """)
+        ##    wKeys.addWidget(wKey)
+
+        ##for i in range(0, 3):
+        ##    bKey = QToolButton()
+        ##    bKey.setAutoFillBackground(True)
+        ##    bKey.setFixedWidth(100)
+        ##    bKey.setFixedHeight(500)
+        ##    bKey.setStyleSheet("""
+        ##        background: #ffffff;
+        ##    """)
+        ##    bKeys.addWidget(bKey)
+
+        ##group.addWidget(wKeys)
+        ##group.addWidget(bKeys)
+
+        ##piano.addWidget(group)
+
+        piano = QHBoxLayout()
+        piano.setAlignment(Qt.AlignTop)
+        piano.setSpacing(-50)
+        for i in range(0, 8):
+            wKey = QToolButton()
+            wKey.setAutoFillBackground(True)
+            wKey.setFixedWidth(100)
+            wKey.setFixedHeight(500)
+            wKey.move(50, 100)
+            wKey.setStyleSheet("""
+                background: #ffffff;
+            """)
+            #piano.addWidget(wKey)
+            if i != 2 and i != 5:
+                bKey = QToolButton()
+                bKey.setAutoFillBackground(True)
+                bKey.setFixedWidth(100)
+                bKey.setFixedHeight(250)
+                bKey.setStyleSheet("""
+                    background: #000000;
+                """)
+                piano.addWidget(bKey)
+
+        wKey = QToolButton()
+        wKey.setAutoFillBackground(True)
+        wKey.setFixedWidth(100)
+        wKey.setFixedHeight(500)
+        wKey.move(50, 100)
+        wKey.setStyleSheet("""
+            background: #ffffff;
+        """)
+        #vbox.addLayout(piano)
+        aaa = QGridLayout()
+        aaa.setAlignment(Qt.AlignTop)
+
+        aab = QToolButton()
+        aab.setAutoFillBackground(True)
+        aab.setFixedWidth(100)
+        aab.setFixedHeight(250)
+        aab.setStyleSheet("""
+                    background: #000000;
+                    """)
+        aaa.addWidget(aab,0,1)
+
+        for i in range(0, 8):
+            aac = QToolButton()
+            aac.setAutoFillBackground(True)
+            aac.setFixedWidth(100)
+            aac.setFixedHeight(250)
+            aac.setStyleSheet("""
+                    background: #aaaaaa;
+                    """)
+            aaa.addWidget(aac,1,i*2+1)
+
+            aab = QToolButton()
+            aab.setAutoFillBackground(True)
+            aab.setFixedWidth(100)
+            aab.setFixedHeight(150)
+            aab.setStyleSheet("""
+                        background: #000000;
+                        """)
+            aaa.addWidget(aab,1,i*2)
+            aaa.setAlignment(aab,Qt.AlignTop)
+
+        vbox.addLayout(aaa)
+
         self.initUI()
 
     def initUI(self):
