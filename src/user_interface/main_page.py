@@ -9,6 +9,7 @@ from src.user_interface.settings_page import SettingsPage
 
 class MainPage(QWidget, Thread):
 
+<<<<<<< HEAD
     def __init__(self, shutdown):
         super().__init__()
         Thread.__init__(self)
@@ -63,6 +64,14 @@ class MainPage(QWidget, Thread):
         qApp.setStyleSheet(style)
 
         self.shutdown = shutdown
+=======
+    def __init__(self, shutdown, mixing_system, file_input):
+        super().__init__()
+        Thread.__init__(self)
+        self.shutdown = shutdown
+        self.mixing_system = mixing_system
+        self.file_input = file_input
+>>>>>>> main
 
         self.title = 'Player Piano'
         self.left = 100
@@ -77,7 +86,11 @@ class MainPage(QWidget, Thread):
         self.home_page.nav_settings.clicked.connect(self.go_to_settings_page)
         self.home_page.pick_song_lambda = lambda song: self.update_playing_page_song(song)
 
+<<<<<<< HEAD
         self.play_page = PlayingPage()
+=======
+        self.play_page = PlayingPage(mixing_system=self.mixing_system)
+>>>>>>> main
         self.play_page.nav_home.clicked.connect(self.go_to_home_page)
 
         self.settings_page = SettingsPage()
@@ -89,8 +102,13 @@ class MainPage(QWidget, Thread):
         self.stackLayout.addWidget(self.play_page)
         self.stackLayout.addWidget(self.settings_page)
 
+<<<<<<< HEAD
         self.showMaximized()
         # self.showFullScreen()
+=======
+        # self.showMaximized()
+        self.show()
+>>>>>>> main
 
     def go_to_home_page(self):
         self.stackLayout.setCurrentIndex(0)
@@ -103,7 +121,11 @@ class MainPage(QWidget, Thread):
 
     def update_playing_page_song(self, song_name):
         self.play_page.set_song(song_name)
+<<<<<<< HEAD
         print("MAIN UPDATE SONG NAME")
+=======
+        self.file_input.openFile(song_name)
+>>>>>>> main
 
     def closeEvent(self, event):
         self.shutdown()
@@ -139,6 +161,7 @@ if __name__ == '__main__':
         QPushButton:pressed{
             border-style: inset;
         }
+<<<<<<< HEAD
         QToolButton{
             color: #fff;
             background-color: #5b2185;
@@ -160,6 +183,10 @@ if __name__ == '__main__':
         }
     """
     #app.setStyleSheet(style)
+=======
+    """
+    app.setStyleSheet(style)
+>>>>>>> main
     window = MainPage(5)
     window.show()
     app.exec_()

@@ -1,5 +1,5 @@
 import sys
-
+import os
 from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QFileDialog
@@ -7,12 +7,21 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLay
 
 class HomePage(QWidget):
 
+<<<<<<< HEAD
+=======
+    MIDI_FILE_PATH = "MIDI_Files" # Path to check for midi files to display. For now just checks folder in same directory
+
+>>>>>>> main
     def __init__(self):
         super().__init__()
         self.nav_play = QPushButton("Play")
         self.nav_settings = QPushButton("Settings")
         self.pick_song_lambda = None
+<<<<<<< HEAD
         self.title = 'PLayer Piano'
+=======
+        self.title = 'Player Piano'
+>>>>>>> main
         self.left = 100
         self.top = 50
         self.width = 320
@@ -73,6 +82,10 @@ class HomePage(QWidget):
         vbox = QVBoxLayout()
         hbox = QHBoxLayout()
 
+<<<<<<< HEAD
+=======
+        ##vbox.setAlignment(Qt.AlignRight)
+>>>>>>> main
         vbox.addSpacerItem(QSpacerItem(100, 100, QSizePolicy.Expanding))
         hbox.setAlignment(Qt.AlignCenter)
         hbox.addStretch()
@@ -82,8 +95,15 @@ class HomePage(QWidget):
 
         hbox.addWidget(button)
         stuffs = [hbox]
+<<<<<<< HEAD
         # get list of songs
         songs = ["Ode to joy", "Harry Potter", "song 3", "song 4"]
+=======
+
+
+        # get list of songs
+        songs = self.get_songs_from_directory()
+>>>>>>> main
         count = 0
         for song in songs:
             if count > 20:
@@ -99,8 +119,25 @@ class HomePage(QWidget):
         bigHbox.addStretch()
         return bigHbox
 
+<<<<<<< HEAD
     def song_on_click(self, song_name):
         print("Song name: " + song_name)
+=======
+    def get_songs_from_directory(self):
+        try:
+            songs = os.listdir(self.MIDI_FILE_PATH)
+            filteredSongs = []
+            for song in songs: # Remove .mid extension
+                filteredSongs.append(song.replace(".mid", ""))
+            return filteredSongs
+        except FileNotFoundError:
+            print("ERROR: Could not find directory at path: "+self.MIDI_FILE_PATH)
+            return []
+
+    def song_on_click(self, song_name):
+        print("Song name: " + song_name)
+        # self.nav_play.set_song(song_name)
+>>>>>>> main
         self.pick_song_lambda(song_name)
         self.nav_play.click()
 
