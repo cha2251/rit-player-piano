@@ -8,7 +8,7 @@ class VisualizationWidget(QWidget):
     def __init__(self, refreshRate=30, parent=None, output=None):
         super().__init__(parent=parent)
 
-        self.notes_widget = NotesWidget(refreshRate=refreshRate, parent=self)
+        self.notes_widget = NotesWidget(refreshRate=refreshRate, parent=self, output=output)
         self.piano_widget = PianoWidget(refreshRate=refreshRate, parent=self, output=output)
 
         hbox = QHBoxLayout(self)

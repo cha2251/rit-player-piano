@@ -3,14 +3,14 @@ from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QSize, QTimer
 
 class PianoWidget(QWidget):
-    def __init__(self, refreshRate=24, parent=None, output=None):
+    def __init__(self, refreshRate=60, parent=None, output=None):
         super().__init__(parent=parent)
 
         self.timer = QTimer(self, timeout=self.update, interval=(1000 / refreshRate))
         self.timer.start()
 
         self.border_size = 3
-        self.key_width = 48
+        self.key_width = 36
         self.key_height = self.key_width * 4
 
         self.black_key_width = self.key_width * 0.66667
@@ -53,7 +53,7 @@ class PianoWidget(QWidget):
                 y,
                 self.key_width - self.border_size * 2,
                 self.key_height,
-                Qt.yellow if note in playing_notes else Qt.white,
+                (QColor(0, 179, 255) if note < 60 else QColor(0, 255, 119)) if note in playing_notes else Qt.white,
             )
 
         # Draw the black keys
@@ -80,7 +80,7 @@ class PianoWidget(QWidget):
                 y,
                 self.black_key_width - self.border_size * 2,
                 self.black_key_height - self.border_size / 2,
-                Qt.yellow if note in playing_notes else Qt.black,
+                 (QColor(0, 179, 255) if note < 60 else QColor(0, 255, 119)) if note in playing_notes else Qt.black,
             )
 
     def sizeHint(self):
