@@ -1,6 +1,5 @@
 PyQt5
 matplotlib
-numpy
 altgraph==0.17.3
 attrs==22.1.0
 beautifulsoup4==4.11.1

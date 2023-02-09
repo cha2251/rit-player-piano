@@ -90,70 +90,79 @@ class SettingsPage(QWidget):
 
         ##piano.addWidget(group)
 
-        piano = QHBoxLayout()
-        piano.setAlignment(Qt.AlignTop)
-        piano.setSpacing(-50)
-        for i in range(0, 8):
-            wKey = QToolButton()
-            wKey.setAutoFillBackground(True)
-            wKey.setFixedWidth(100)
-            wKey.setFixedHeight(500)
-            wKey.move(50, 100)
-            wKey.setStyleSheet("""
-                background: #ffffff;
-            """)
-            #piano.addWidget(wKey)
-            if i != 2 and i != 5:
-                bKey = QToolButton()
-                bKey.setAutoFillBackground(True)
-                bKey.setFixedWidth(100)
-                bKey.setFixedHeight(250)
-                bKey.setStyleSheet("""
-                    background: #000000;
-                """)
-                piano.addWidget(bKey)
+        ####  piano = QHBoxLayout()
+        ####  piano.setAlignment(Qt.AlignTop)
+        ####  piano.setSpacing(-50)
+        ####  for i in range(0, 8):
+        ####      wKey = QToolButton()
+        ####      wKey.setAutoFillBackground(True)
+        ####      wKey.setFixedWidth(100)
+        ####      wKey.setFixedHeight(500)
+        ####      wKey.move(50, 100)
+        ####      wKey.setStyleSheet("""
+        ####          background: #ffffff;
+        ####      """)
+        ####      #piano.addWidget(wKey)
+        ####      if i != 2 and i != 5:
+        ####          bKey = QToolButton()
+        ####          bKey.setAutoFillBackground(True)
+        ####          bKey.setFixedWidth(100)
+        ####          bKey.setFixedHeight(250)
+        ####          bKey.setStyleSheet("""
+        ####              background: #000000;
+        ####          """)
+        ####          piano.addWidget(bKey)
 
-        wKey = QToolButton()
-        wKey.setAutoFillBackground(True)
-        wKey.setFixedWidth(100)
-        wKey.setFixedHeight(500)
-        wKey.move(50, 100)
-        wKey.setStyleSheet("""
-            background: #ffffff;
-        """)
+        ####  wKey = QToolButton()
+        ####  wKey.setAutoFillBackground(True)
+        ####  wKey.setFixedWidth(100)
+        ####  wKey.setFixedHeight(500)
+        ####  wKey.move(50, 100)
+        ####  wKey.setStyleSheet("""
+        ####      background: #ffffff;
+        ####  """)
         #vbox.addLayout(piano)
         aaa = QGridLayout()
         aaa.setAlignment(Qt.AlignTop)
 
-        aab = QToolButton()
-        aab.setAutoFillBackground(True)
-        aab.setFixedWidth(100)
-        aab.setFixedHeight(250)
-        aab.setStyleSheet("""
-                    background: #000000;
-                    """)
-        aaa.addWidget(aab,0,1)
+        ######aab = QToolButton()
+        ######aab.setAutoFillBackground(True)
+        ######aab.setFixedWidth(100)
+        ######aab.setFixedHeight(250)
+        ######aab.setStyleSheet("""
+        ######            background: #000000;
+        ######            """)
+        ######aaa.addWidget(aab,0,1)
 
-        for i in range(0, 8):
+        for i in range(0, 14):
             aac = QToolButton()
             aac.setAutoFillBackground(True)
             aac.setFixedWidth(100)
-            aac.setFixedHeight(250)
+            aac.setFixedHeight(400)
             aac.setStyleSheet("""
-                    background: #aaaaaa;
+                    background: #cccccc;
                     """)
             aaa.addWidget(aac,1,i*2+1)
 
-            aab = QToolButton()
-            aab.setAutoFillBackground(True)
-            aab.setFixedWidth(100)
-            aab.setFixedHeight(150)
-            aab.setStyleSheet("""
-                        background: #000000;
-                        """)
-            aaa.addWidget(aab,1,i*2)
-            aaa.setAlignment(aab,Qt.AlignTop)
+            if i != 0 and i != 3 and i != 7 and i != 10:
+                aab = QToolButton()
+                aab.setAutoFillBackground(True)
+                aab.setFixedSize(25, 200)
+                aab.setStyleSheet("""
+                            background: #000000;
+                            selection-color: #999999;
+                            hover {background-color: #00ff00;}
+                            """)
+                aaa.addWidget(aab, 1, i*2)
+                aaa.setAlignment(aab, Qt.AlignTop)
+            elif i != 0:
+                s = QToolButton()
+                s.setFixedSize(25, 200)
+                s.setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+                aaa.addWidget(s, 1, i*2)
+                aaa.setAlignment(s, Qt.AlignTop)
 
+        aaa.setSpacing(10)
         vbox.addLayout(aaa)
 
         self.initUI()
