@@ -13,10 +13,14 @@ class pianoKey(QToolButton):
 
     def dragEnterEvent(self, e):
         print("pianoKey ENTER EVENT")
+        print(e)
+        print("pianoKey ENTER END")
         e.accept()
 
     def dropEvent(self, e):
         print("pianoKey DROP EVENT")
+        print(e.mimeData().text())
+        print("pianoKey DROP END")
         e.accept()
         # if e.mimeData().hasurls():
         #     e.accept()

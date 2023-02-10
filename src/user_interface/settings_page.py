@@ -4,7 +4,7 @@ import sys
 from PyQt5.QtGui import QIcon, QDrag
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QToolButton, QStackedLayout, QGridLayout
-from PyQt5.QtCore import pyqtSlot, Qt, QSize, QRect
+from PyQt5.QtCore import pyqtSlot, Qt, QSize, QRect, QMimeData
 
 from src.user_interface.DragButton import DragButton
 from src.user_interface.pianoKey import pianoKey
@@ -69,7 +69,9 @@ class SettingsPage(QWidget):
         ######vbox.addLayout(icons)
 
         iconsList = QHBoxLayout()
-        arrow_down = DragButton()
+        arrow_down_mime = QMimeData()
+        arrow_down_mime.setText("button-arrow-down.svg")
+        arrow_down = DragButton(arrow_down_mime)
         arrow_down.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-down.svg")))
         iconsList.addWidget(arrow_down)
 

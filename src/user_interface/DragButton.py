@@ -4,11 +4,14 @@ from PyQt5.QtWidgets import QToolButton
 
 
 class DragButton(QToolButton):
+    def __init__(self, qMimeData):
+        super().__init__()
+        self.mimeData = qMimeData
 
     def mouseMoveEvent(self, e):
         if e.buttons() == Qt.LeftButton:
             drag = QDrag(self)
-            mime = QMimeData()
+            mime = self.mimeData
             drag.setMimeData(mime)
 
             pixmap = QPixmap(self.size())
