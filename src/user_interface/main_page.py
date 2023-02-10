@@ -1,6 +1,6 @@
 from threading import Thread
 
-from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout, qApp
 
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
