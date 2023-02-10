@@ -1,6 +1,6 @@
 from threading import Thread
 
-from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout, qApp
 
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
@@ -12,6 +12,63 @@ class MainPage(QWidget, Thread):
     def __init__(self, shutdown, mixing_system, file_input):
         super().__init__()
         Thread.__init__(self)
+
+        style = """
+            QWidget {
+                background: #2a0b40;
+            }
+            QLabel{
+                color: #fff;
+                font: 40px;
+            }
+            QPushButton{
+                color: #fff;
+                background-color: #5b2185;
+                border-style: outset;
+                border-width: 2px;
+                border-color: #792cb0;
+                max-width: 50em;
+                min-width: 5em;
+                padding: 5px;
+                font-family: "Times New Roman", Times, serif;
+                font: bold 15px;
+                border-radius: 10px;
+            }
+            QPushButton:hover{
+                background: #792cb0;
+            }
+            QPushButton:pressed{
+                border-style: inset;
+            }
+            QToolButton{
+                color: #fff;
+                background-color: #5b2185;
+                border-style: outset;
+                border-width: 2px;
+                border-color: #792cb0;
+                max-width: 25;
+                min-width: 5em;
+                padding: 5px;
+                font-family: "Times New Roman", Times, serif;
+                font: bold 15px;
+                border-radius: 10px;
+            }
+            QToolButton:hover{
+                background: #792cb0;
+            }
+            QToolButton:pressed{
+                border-style: inset;
+            }
+            QProgressBar{
+                background-color : rgb(255,255,255);
+                border : 1px;
+            }
+            QProgressBar::chunk{
+                background: rgb(0,0,0);
+            }
+        """
+        qApp.setStyleSheet(style)
+
         self.shutdown = shutdown
         self.mixing_system = mixing_system
         self.file_input = file_input
