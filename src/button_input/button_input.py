@@ -2,7 +2,6 @@ import queue
 import time
 from threading import Thread
 from pynput import keyboard
-
 import mido
 
 from src.common.midi_event import MidiEvent

@@ -85,6 +85,11 @@ class MIDIFileObject:
             return None
         
 
+    def calc_time_delay(self):
+        if self.curr_tempo is None or self.curr_time_signature is None:
+            return None
+        
+
     def parse_midi_file(self, file_name):
         """Parse the designated MIDI file and retrieve the selected track.
         TODO: implement input handling

@@ -7,9 +7,10 @@ from src.user_interface.settings import SettingsPage
 
 class MainPage(QWidget, Thread):
 
-    def __init__(self, shutdown):
+    def __init__(self, shutdown, mixing_system, file_input):
         super().__init__()
         Thread.__init__(self)
+
         style = """
             QWidget {
                 background: #2a0b40;
@@ -56,10 +57,19 @@ class MainPage(QWidget, Thread):
             QToolButton:pressed{
                 border-style: inset;
             }
+            QProgressBar{
+                background-color : rgb(255,255,255);
+                border : 1px;
+            }
+            QProgressBar::chunk{
+                background: rgb(0,0,0);
+            }
         """
         qApp.setStyleSheet(style)
 
         self.shutdown = shutdown
+        self.mixing_system = mixing_system
+        self.file_input = file_input
 
         self.title = 'Player Piano'
         self.left = 100
@@ -74,7 +84,7 @@ class MainPage(QWidget, Thread):
         self.home_page.nav_settings.clicked.connect(self.go_to_settings_page)
         self.home_page.pick_song_lambda = lambda song: self.update_playing_page_song(song)
 
-        self.play_page = PlayingPage()
+        self.play_page = PlayingPage(mixing_system=self.mixing_system)
         self.play_page.nav_home.clicked.connect(self.go_to_home_page)
 
         self.settings_page = SettingsPage()
@@ -100,7 +110,7 @@ class MainPage(QWidget, Thread):
 
     def update_playing_page_song(self, song_name):
         self.play_page.set_song(song_name)
-        print("MAIN UPDATE SONG NAME")
+        self.file_input.openFile(song_name)
 
     def closeEvent(self, event):
         self.shutdown()
