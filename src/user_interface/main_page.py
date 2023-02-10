@@ -1,7 +1,5 @@
 from threading import Thread
-
 from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout, qApp
-
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
 from src.user_interface.settings import SettingsPage
@@ -98,8 +96,8 @@ class MainPage(QWidget, Thread):
         self.stackLayout.addWidget(self.play_page)
         self.stackLayout.addWidget(self.settings_page)
 
-        # self.showMaximized()
-        self.show()
+        self.showMaximized()
+        # self.showFullScreen()
 
     def go_to_home_page(self):
         self.stackLayout.setCurrentIndex(0)
@@ -148,8 +146,27 @@ if __name__ == '__main__':
         QPushButton:pressed{
             border-style: inset;
         }
+        QToolButton{
+            color: #fff;
+            background-color: #5b2185;
+            border-style: outset;
+            border-width: 2px;
+            border-color: #792cb0;
+            max-width: 25;
+            min-width: 5em;
+            padding: 5px;
+            font-family: "Times New Roman", Times, serif;
+            font: bold 15px;
+            border-radius: 10px;
+        }
+        QToolButton:hover{
+            background: #792cb0;
+        }
+        QToolButton:pressed{
+            border-style: inset;
+        }
     """
-    app.setStyleSheet(style)
+    #app.setStyleSheet(style)
     window = MainPage(5)
     window.show()
     app.exec_()

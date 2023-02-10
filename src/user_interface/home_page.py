@@ -74,8 +74,7 @@ class HomePage(QWidget):
         bigHbox = QHBoxLayout()
         vbox = QVBoxLayout()
         hbox = QHBoxLayout()
-
-        ##vbox.setAlignment(Qt.AlignRight)
+        
         vbox.addSpacerItem(QSpacerItem(100, 100, QSizePolicy.Expanding))
         hbox.setAlignment(Qt.AlignCenter)
         hbox.addStretch()
@@ -117,7 +116,6 @@ class HomePage(QWidget):
 
     def song_on_click(self, song_name):
         print("Song name: " + song_name)
-        # self.nav_play.set_song(song_name)
         self.pick_song_lambda(song_name)
         self.nav_play.click()
 

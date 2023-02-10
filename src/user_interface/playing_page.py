@@ -1,7 +1,6 @@
 import os
 import sys
 from src.mixing.mixing import Mixing
-#     QSizePolicy
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QLabel, QToolButton, QProgressBar
 from PyQt5.QtGui import QIcon
@@ -12,14 +11,19 @@ import time
 class PlayingPage(QWidget):
     def __init__(self, mixing_system, song_name="DEFAULT"):
         super().__init__()
+        self.nav_home = QToolButton()
+        self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        self.nav_home.setIconSize(QSize(55, 55))
+        self.nav_home.setText("back")
+        self.nav_home.setIcon(QIcon(r"../../UI_Images/back-arrow.svg"))
         self.mixing_system = mixing_system
         self.song_name = song_name
-        self.nav_home = QPushButton("LINK: " + song_name)
         self.title = "TITLE: "
         self.left = 100
         self.top = 50
         self.width = 320
         self.height = 200
+        self.title = "RIT Player Piano"
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.pbar_location = 0;
@@ -32,30 +36,36 @@ class PlayingPage(QWidget):
         #self.progress.setFormat("")
         self.progress_label = QLabel(self)
         self.progress_label.setText("0:00")
-        
 
         playButton = QToolButton()
         playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         playButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "play-solid.svg")))
         playButton.setIconSize(QSize(65, 65))
-        playButton.setToolTip('play song')
+        playButton.setText("play")
+        playButton.setToolTip("play song")
         playButton.clicked.connect(self.on_click_play)
 
-        stopButton = QPushButton('', self)
-        stopButton.setIcon(QIcon(r"UI_Images/stop-solid.svg"))
+        stopButton = QToolButton()
+        stopButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        stopButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "stop-solid.svg")))
         stopButton.setIconSize(QSize(65, 65))
+        stopButton.setText('stop')
         stopButton.setToolTip('stop song')
         stopButton.clicked.connect(self.on_click_stop)
 
-        pauseButton = QPushButton('', self)
-        pauseButton.setIcon(QIcon(r"UI_Images/pause-solid.svg"))
+        pauseButton = QToolButton()
+        pauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        pauseButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "pause-solid.svg")))
         pauseButton.setIconSize(QSize(65, 65))
+        pauseButton.setText('pause')
         pauseButton.setToolTip('pause song')
         pauseButton.clicked.connect(self.on_click_pause)
 
-        restartButton = QPushButton('', self)
-        restartButton.setIcon(QIcon(r"UI_Images/rotate-left-solid.svg"))
+        restartButton = QToolButton()
+        restartButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        restartButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "rotate-left-solid.svg")))
         restartButton.setIconSize(QSize(65, 65))
+        restartButton.setText('restart')
         restartButton.setToolTip('restart song')
         restartButton.clicked.connect(self.on_click_restart)
 
@@ -87,7 +97,7 @@ class PlayingPage(QWidget):
         ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
         ############################################################
         vbox.addLayout(hbox)
-        # vbox.addWidget(playButton)
+
         self.initUI()
 
     def initUI(self):
@@ -119,7 +129,7 @@ class PlayingPage(QWidget):
     def set_song(self, song):
         print("setting song: " + song)
         self.title = song
-        self.nav_home.setText("SONG: " + song)
+        ##self.nav_home.setText("SONG: " + song)
         self.setWindowTitle("Player Piano: " + song)
 
     def progress_action(self):
