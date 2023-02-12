@@ -22,11 +22,13 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
+Uninstallable=yes
+UninstallDisplayName={#MyAppName}
+UninstallDisplayIcon={#MyAppName}
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=C:\Users\samod\Documents\GitHub\rit-player-piano\installer
 OutputBaseFilename=RIT Player Piano Installer
 Compression=lzma
 SolidCompression=yes
@@ -39,10 +41,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-; Source: "C:\Users\samod\Documents\GitHub\rit-player-piano\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\README.md"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\MIDI_Files\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\MIDI_Files\*"; DestDir: "{app}\MIDI_Files"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
@@ -58,4 +59,15 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+
+[Code]
+
+function InitializeSetup: Boolean;
+begin
+  Log('InitializeSetup called');
+  Result := MsgBox('InitializeSetup:' #13#13 'Install RIT Player Piano -Version: {#MyAppVersion}', mbConfirmation, MB_YESNO) = idYes;
+  if Result = False then
+    MsgBox('InitializeSetup:' #13#13 'Ok, bye bye.', mbInformation, MB_OK);
+end;
 
