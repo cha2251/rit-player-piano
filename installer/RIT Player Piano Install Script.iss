@@ -33,6 +33,7 @@ OutputBaseFilename=RIT Player Piano Installer
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+InfoAfterFile=Readme.txt
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -42,7 +43,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\README.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Readme.txt"; DestDir: "{app}"; Flags: ignoreversion isreadme
 Source: "..\MIDI_Files\*"; DestDir: "{app}\MIDI_Files"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -63,6 +64,19 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 
 [Code]
 
+function CreateInfoFile: Boolean;
+var
+  fileName: String;
+  fileContent: String;
+begin
+  fileName := ExpandConstant('{app}\Info.txt');
+  fileContent := '{#MyAppName}' + 
+                  '{#MyAppVersion}';
+  
+  SaveStringToFile(fileName, fileContent, False);
+
+end;
+
 function InitializeSetup: Boolean;
 begin
   Log('InitializeSetup called');
@@ -70,4 +84,17 @@ begin
   if Result = False then
     MsgBox('InitializeSetup:' #13#13 'Ok, bye bye.', mbInformation, MB_OK);
 end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssPostInstall then
+  begin
+    CreateInfoFile();
+  end;
+end;
+
+
+
+
+
 
