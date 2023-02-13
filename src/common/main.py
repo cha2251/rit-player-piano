@@ -1,3 +1,4 @@
+import multiprocessing
 import sys
 import time
 from threading import Thread
@@ -134,5 +135,6 @@ class Main:
 
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support() # Needed for mulitple processors with pyinstaller
     main = Main()
     main.main()

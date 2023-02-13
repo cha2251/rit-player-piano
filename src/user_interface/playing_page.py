@@ -28,8 +28,6 @@ class PlayingPage(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.pbar_location = 0;
 
-        playButton = QPushButton('', self)
-        playButton.setIcon(QIcon(r"UI_Images/play-solid.svg"))
         self.progress = QProgressBar(self)
         self.progress.setGeometry(200, 100, 200, 30)
         #self.progress.setAlignment(Qt.AlignRight)
