@@ -25,7 +25,7 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: |
-          pyinstaller src/common/main.py --onefile --clean --icon=PlayerPianoIcon.ico
+            pyinstaller src/common/main.py --onefile --clean --icon=PlayerPianoIcon.ico
       - name: Fix Directory Structure
         run: |
           mv dist/main PlayerPiano
