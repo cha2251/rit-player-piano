@@ -45,6 +45,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "..\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Readme.txt"; DestDir: "{app}"; Flags: ignoreversion isreadme
 Source: "..\MIDI_Files\*"; DestDir: "{app}\MIDI_Files"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\UI_Images\*"; DestDir: "{app}\UI_Images"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
@@ -73,7 +74,7 @@ begin
   fileContent := '{#MyAppName}' + 
                   '{#MyAppVersion}';
   
-  SaveStringToFile(fileName, fileContent, False);
+  {SaveStringToFile(fileName, fileContent, False);}
 
 end;
 
