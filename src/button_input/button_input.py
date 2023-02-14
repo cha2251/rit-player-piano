@@ -1,6 +1,5 @@
 import queue
 import time
-from threading import Thread
 from pynput import keyboard
 import mido
 
@@ -10,8 +9,8 @@ from src.common.midi_event import MidiEvent
 class ButtonInput:
     button_input_queue: queue.Queue
     keyMap = dict
-    default = {'q': 55, 'w': 56, 'e': 57, 'r': 58, 't': 59,
-               'y': 60, 'u': 61, 'i': 62, 'o': 63, 'p': 64}
+    default = {'q': [55], 'w': [56], 'e': [57], 'r': [58], 't': [59],
+               'y': [60], 'u': [61], 'i': [62], 'o': [63], 'p': [64]}
 
     """ Sets initial values of Thread
     button_input_queue: global queue responsible for carrying midi events to mixing subsystem
@@ -32,8 +31,8 @@ class ButtonInput:
         self.keyMap = keyMap
 
     # Updates a single key's mapping or adds a new key mapping if the key lacks a map
-    def change_key(self, key, note):
-        self.keyMap[key] = note
+    def change_key(self, key, notes):
+        self.keyMap[key] = notes
 
     # Removes an unneeded key from the key map
     def delete_key(self, key):
@@ -50,9 +49,9 @@ class ButtonInput:
         except:
             k = key.name
         if k in self.keyMap.keys():
-            note = self.keyMap[k]
-            self.button_input_queue.put(
-                MidiEvent(mido.Message('note_on', note=note, velocity=120), time.time()))
+            for note in self.keyMap[k]:
+                self.button_input_queue.put(
+                    MidiEvent(mido.Message('note_on', note=note, velocity=120), time.time()))
 
     # Reacts to key releases and sends a midi event if the key is mapped
     def on_release(self, key):
@@ -61,9 +60,9 @@ class ButtonInput:
         except:
             k = key.name
         if k in self.keyMap.keys():
-            note = self.keyMap[k]
-            self.button_input_queue.put(
-                MidiEvent(mido.Message('note_off', note=note, velocity=120), time.time()))
+            for note in self.keyMap[k]:
+                self.button_input_queue.put(
+                    MidiEvent(mido.Message('note_off', note=note, velocity=120), time.time()))
 
     # Stops listener thread
     def deactivate(self):

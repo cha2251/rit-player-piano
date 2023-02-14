@@ -10,8 +10,8 @@ class TestCreate:
         testQueues = SharedQueues
         testQueues.create_queues(testQueues)
         component = ButtonInput(testQueues.button_input_queue)
-        testDict = {'q': 55, 'w': 56, 'e': 57, 'r': 58, 't': 59,
-                    'y': 60, 'u': 61, 'i': 62, 'o': 63, 'p': 64}
+        testDict = {'q': [55], 'w': [56], 'e': [57], 'r': [58], 't': [59],
+                    'y': [60], 'u': [61], 'i': [62], 'o': [63], 'p': [64]}
 
         expected = testDict
         actual = component.keyMap
@@ -22,7 +22,7 @@ class TestCreate:
     def test_dict_preset(self):
         testQueues = SharedQueues
         testQueues.create_queues(testQueues)
-        testDict = {'q': 1, 'w': 2}
+        testDict = {'q': [1], 'w': [2]}
         component = ButtonInput(testQueues.button_input_queue, testDict)
 
         expected = testDict
@@ -36,7 +36,7 @@ class TestModify:
         testQueues = SharedQueues
         testQueues.create_queues(testQueues)
         component = ButtonInput(testQueues.button_input_queue)
-        testDict = {'q': 1, 'w': 2}
+        testDict = {'q': [1], 'w': [2]}
 
         assert component.keyMap != testDict
 
@@ -71,3 +71,17 @@ class TestRun:
         component.deactivate()
 
         assert component.button_input_queue.empty() is False
+
+    @pytest.mark.timeout(1)
+    def test_play_chord(self):
+        testQueues = SharedQueues
+        testQueues.create_queues(testQueues)
+        testDict = {'q': [1, 2]}
+        component = ButtonInput(testQueues.button_input_queue, testDict)
+
+        component.run()
+        component.on_press(keyboard.KeyCode.from_char('q'))
+        component.on_release(keyboard.KeyCode.from_char('q'))
+        component.deactivate()
+
+        assert component.button_input_queue.qsize() == 4
