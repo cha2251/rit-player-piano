@@ -3,6 +3,7 @@ import sys
 import time
 from threading import Thread
 from PyQt5.QtWidgets import QApplication
+from src.communication.comm_system import CommSystem
 import src.user_interface.main_page
 from src.common.midi_event import MidiEvent
 from src.mixing.mixing import Mixing
@@ -10,17 +11,20 @@ from src.output_queue.output_queue import OutputQueue
 from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
 from src.button_input.button_input import ButtonInput
+from src.communication.process_queues import ProcessQueues
 import mido
 import mido.backends.rtmidi  # Needed for windows builds w/ pyinstaller
 
 CONSOLE_MODE = True # Set to True to allow for console commands
 
 class Main:
+    process_queues = None
     shared_queues = None
     mixing = None
     file_input = None
     button_input = None
     output = None
+    comm_system = None
 
     def __init__(self):
         pass
@@ -31,6 +35,8 @@ class Main:
 
         print("Creating Shared Queues")
         self.create_queues()
+        print("Creating Comm Subsystem")
+        self.create_comm()
         print("Creating Output Subsystem")
         self.create_output()
         print("Creating File Subsystem")
@@ -78,7 +84,11 @@ class Main:
         self.mixing.deactivate()
         self.file_input.deactivate()
         self.shared_queues.deactivate()
+        self.comm_system.deactivate()
         print("System Shutdown Succesfully")
+
+    def create_comm(self):
+        self.comm_system = CommSystem(self.process_queues)
 
     def create_mixing(self):
         self.mixing = Mixing(self.shared_queues)
@@ -90,6 +100,7 @@ class Main:
     def create_queues(self):
         self.shared_queues = SharedQueues()
         self.shared_queues.create_queues()
+        self.process_queues = ProcessQueues()
 
     def create_file_input(self):
         self.file_input = FileInput(self.shared_queues.file_input_queue)
