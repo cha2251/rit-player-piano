@@ -55,25 +55,31 @@ class SettingsPage(QWidget):
         spacer = QSpacerItem(300, 200, QSizePolicy.Expanding)
         vbox.addSpacerItem(spacer)
 
-        ######icons = QHBoxLayout()
-        ######arrow_icon = QDrag(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-up.svg")))
-        ######arrow_up = QToolButton(arrow_icon)
-        ########arrow_up = QToolButton()
-        ########arrow_up.setToolButtonStyle(Qt.ToolButtonIconOnly)
-        ########arrow_up.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-up.svg")))
-        ########arrow_up.setIconSize(QSize(65, 65))
-
-
-        ######icons.addWidget(arrow_up)
-
-        ######vbox.addLayout(icons)
-
         iconsList = QHBoxLayout()
+
         arrow_down_mime = QMimeData()
         arrow_down_mime.setText("button-arrow-down.svg")
         arrow_down = DragButton(arrow_down_mime)
         arrow_down.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-down.svg")))
         iconsList.addWidget(arrow_down)
+
+        arrow_up_mime = QMimeData()
+        arrow_up_mime.setText("button-arrow-up.svg")
+        arrow_up = DragButton(arrow_down_mime)
+        arrow_up.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-up.svg")))
+        iconsList.addWidget(arrow_up)
+
+        arrow_right_mime = QMimeData()
+        arrow_right_mime.setText("button-arrow-right.svg")
+        arrow_right = DragButton(arrow_down_mime)
+        arrow_right.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-right.svg")))
+        iconsList.addWidget(arrow_right)
+
+        arrow_left_mime = QMimeData()
+        arrow_left_mime.setText("button-arrow-left.svg")
+        arrow_left = DragButton(arrow_down_mime)
+        arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-left.svg")))
+        iconsList.addWidget(arrow_left)
 
         vbox.addLayout(iconsList)
         # CREATE PIANO
@@ -87,8 +93,9 @@ class SettingsPage(QWidget):
             aac.setAcceptDrops(True)
             aac.setStyleSheet("""
                     background: #cccccc;
+                    icon-size: 75px;
                     """)
-            aaa.addWidget(aac,1,i*2+1)
+            aaa.addWidget(aac, 1, i*2+1)
 
             if i != 0 and i != 3 and i != 7 and i != 10:
                 aab = pianoKey()
@@ -127,23 +134,28 @@ class SettingsPage(QWidget):
 
     def show_song_page(self, page_num):
         pass
-    def dragEnterEvent(self, e):
-        e.accept()
 
-    def dropEvent(self, e):
-        pos = e.pos()
-        widget = e.source()
+####    def dragEnterEvent(self, e):
+####        pass
+####        # do nothing??
+####        ##e.accept()
 
-        # for n in range(self.blayout.count()):
-        #     # Get the widget at each index in turn.
-        #     w = self.blayout.itemAt(n).widget()
-        #     if pos.x() < w.x() + w.size().width() // 2:
-        #         # We didn't drag past this widget.
-        #         # insert to the left of it.
-        #         self.blayout.insertWidget(n-1, widget)
-        #         break
+####    def dropEvent(self, e):
+####        print("DROP EVENT1")
+####        ##pos = e.pos()
+####        ##widget = e.source()
+####
+####        # for n in range(self.blayout.count()):
+####        #     # Get the widget at each index in turn.
+####        #     w = self.blayout.itemAt(n).widget()
+####        #     if pos.x() < w.x() + w.size().width() // 2:
+####        #         # We didn't drag past this widget.
+####        #         # insert to the left of it.
+####        #         self.blayout.insertWidget(n-1, widget)
+####        #         break
+####
+####        ##e.accept()
 
-        e.accept()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

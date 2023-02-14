@@ -10,6 +10,7 @@ class DragButton(QToolButton):
 
     def mouseMoveEvent(self, e):
         if e.buttons() == Qt.LeftButton:
+
             drag = QDrag(self)
             mime = self.mimeData
             drag.setMimeData(mime)
@@ -18,4 +19,4 @@ class DragButton(QToolButton):
             self.render(pixmap)
             drag.setPixmap(pixmap)
 
-            drag.exec_(Qt.MoveAction)
+            drag.exec_(Qt.CopyAction)

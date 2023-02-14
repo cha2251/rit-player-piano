@@ -12,15 +12,16 @@ class pianoKey(QToolButton):
         self.setAcceptDrops(True)
 
     def dragEnterEvent(self, e):
-        print("pianoKey ENTER EVENT")
-        print(e)
-        print("pianoKey ENTER END")
         e.accept()
 
     def dropEvent(self, e):
         print("pianoKey DROP EVENT")
+        print(e.source())
         print(e.mimeData().text())
         print("pianoKey DROP END")
+        file = e.mimeData().text()
+        variant = QVariantMap()
+        self.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", file),))
         e.accept()
         # if e.mimeData().hasurls():
         #     e.accept()
