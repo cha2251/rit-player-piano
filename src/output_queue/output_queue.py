@@ -23,7 +23,8 @@ class OutputQueue():
 
         self._notePlayingSet = Manager().dict()
 
-        self._outputSystem = Process(target=_runOutputQueue, args=(inputQueue, self._selectDeviceString, self._notePlayingSet, self._processShouldRun,))
+        self._queue = inputQueue
+        self._outputSystem = Process(target=_runOutputQueue, args=(self._queue, self._selectDeviceString, self._notePlayingSet, self._processShouldRun,))
 
     def start(self):
         self._processShouldRun.value = True
@@ -51,6 +52,9 @@ class OutputQueue():
 
     def get_playing_notes(self):
         return list(self._notePlayingSet.keys())
+
+    def get_queue(self):
+        return self._queue
 
 class OutputQueueProcess():
     def __init__(self, inputQueue, selectDeviceString, _notePlayingSet, running):
