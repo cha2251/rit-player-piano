@@ -14,7 +14,7 @@ class VisualizationConfig:
         self.key_border_size = 3 # In pixels
         self.note_width_mult = 0.67 # How much of the key width a note should take up vs a piano key
 
-        self.octaves = 4 # How many octaves to render. Don't touch this for now, it doesn't like being touched
+        self.octaves = 7 # How many octaves to render. Don't touch this for now, it doesn't like being touched
         self.display_lead_time = 3 # How long a note takes to travel down the screen in seconds
 
         self.left_hand_color = QColor(0, 179, 255, 255)

@@ -96,17 +96,19 @@ class OutputQueueProcess():
         now = time.time()
 
         try:
-            while not self.queue.empty() and now >= self.queue.peek().timestamp:
+            while now >= self.queue.peek().timestamp:
                 midiEvent = self.queue.get()
 
-            if midiEvent.event.type == 'note_off' or midiEvent.event.velocity == 0:
-                if midiEvent.event.note in self._notePlayingSet.keys():
-                    del self._notePlayingSet[midiEvent.event.note]
-            elif midiEvent.event.type == 'note_on':
-                self._notePlayingSet[midiEvent.event.note] = True
+                if midiEvent.event.type == 'note_off' or midiEvent.event.velocity == 0:
+                    if midiEvent.event.note in self._notePlayingSet.keys():
+                        del self._notePlayingSet[midiEvent.event.note]
+                elif midiEvent.event.type == 'note_on':
+                    self._notePlayingSet[midiEvent.event.note] = True
 
-            self._open_port.send(midiEvent.event)
+                self._open_port.send(midiEvent.event)
         except IndexError:
+            pass # Expected when the queue is empty
+        except AttributeError:
             pass # Expected when the queue is empty
 
     def run(self):

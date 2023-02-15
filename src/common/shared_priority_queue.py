@@ -25,10 +25,11 @@ class PeekingPriorityQueue(queue.Queue):
             return heappop(self.queue)
 
     def peek(self):
-        try:
-            return self.queue[0]
-        except:
-            return None
+        with self.accessLock:
+            try:
+                return self.queue[0]
+            except:
+                return None
 
     def get_and_clear_queue(self):
         with self.accessLock:
@@ -43,10 +44,11 @@ class PeekingPriorityQueue(queue.Queue):
         return copy.copy(self.queue)
 
     def peekn(self, n):
-        try:
-            return nsmallest(n, self.queue)
-        except:
-            return None
+        with self.accessLock:
+            try:
+                return nsmallest(n, self.queue)
+            except:
+                return None
 
     def copy(self):
         # new_queue = PeekingPriorityQueue()
