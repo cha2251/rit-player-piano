@@ -85,17 +85,32 @@ class SettingsPage(QWidget):
         # CREATE PIANO
         aaa = QGridLayout()
         aaa.setAlignment(Qt.AlignTop)
+        aaa.setSpacing(0)
         for i in range(0, 14):
+            # Solid white boxes that are part of the piano keys inbetween the black keys
+            # This is here to better align the icons on the white keys to the bottom of the key
+            s = QToolButton()
+            s.setFixedSize(25, 400)
+            s.setStyleSheet("""
+                background: #cccccc;
+                border-color: rgba(255, 255, 255, 0);
+                """)
+            aaa.addWidget(s, 0, i*2+1)
+            aaa.setAlignment(s, Qt.AlignTop)
+
+            # white keys
             aac = pianoKey()
             aac.setAutoFillBackground(True)
-            aac.setFixedWidth(100)
-            aac.setFixedHeight(400)
+            aac.setFixedSize(25, 200)
             aac.setAcceptDrops(True)
             aac.setStyleSheet("""
-                    background: #cccccc;
+                background: #cccccc;
+                border-color: rgba(255, 255, 255, 0);
                     icon-size: 75px;
                     """)
-            aaa.addWidget(aac, 1, i*2+1)
+            aaa.addWidget(aac, 0, i*2+1)
+            aaa.setAlignment(aac, Qt.AlignBottom)
+
 
             if i != 0 and i != 3 and i != 7 and i != 10:
                 aab = pianoKey()
@@ -105,9 +120,10 @@ class SettingsPage(QWidget):
                 aab.setStyleSheet("""
                             background: #000000;
                             selection-color: #999999;
+                            border-color: rgba(255, 255, 255, 0);
                             hover {background-color: #00ff00;}
                             """)
-                aaa.addWidget(aab, 1, i*2)
+                aaa.addWidget(aab, 0, i*2)
                 aaa.setAlignment(aab, Qt.AlignTop)
             elif i != 0:
                 s = QToolButton()
@@ -116,7 +132,7 @@ class SettingsPage(QWidget):
                 background-color: rgba(255, 255, 255, 0);
                 border-color: rgba(255, 255, 255, 0);
                 """)
-                aaa.addWidget(s, 1, i*2)
+                aaa.addWidget(s, 0, i*2)
                 aaa.setAlignment(s, Qt.AlignTop)
 
         aaa.setSpacing(10)

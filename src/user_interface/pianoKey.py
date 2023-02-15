@@ -20,7 +20,6 @@ class pianoKey(QToolButton):
         print(e.mimeData().text())
         print("pianoKey DROP END")
         file = e.mimeData().text()
-        variant = QVariantMap()
         self.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", file),))
         e.accept()
         # if e.mimeData().hasurls():
