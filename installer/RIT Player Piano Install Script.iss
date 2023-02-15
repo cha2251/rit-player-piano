@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "RIT Player Piano"
-#define MyAppVersion "0.01"
+#define MyAppVersion "0.0.1"
 #define MyAppPublisher "Team Code to Joy"
 #define MyAppURL "https://cha2251.github.io/rit-player-piano/"
 #define MyAppExeName "main.exe"
