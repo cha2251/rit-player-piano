@@ -22,8 +22,10 @@ jobs:
           pip install flake8 pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Build with Pyinstaller
-        run: |
-          pyinstaller src/common/main.py --onefile --clean --icon=PlayerPianoIcon.ico
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: |
+            pyinstaller src/common/main.py --onefile --clean --icon=PlayerPianoIcon.ico
       - name: Fix Directory Structure
         run: |
           mv dist/main PlayerPiano
@@ -53,8 +55,10 @@ jobs:
           pip install flake8 pytest
           pip install -r requirements.txt
       - name: Build with Pyinstaller
-        run: |
-          pyinstaller.exe src\common\main.py --onefile --clean --icon=PlayerPianoIcon.ico
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: |
+            pyinstaller.exe src\common\main.py --onefile --clean --icon=PlayerPianoIcon.ico
       - name: Fix Directory Structure
         run: |
           mv dist\main.exe PlayerPiano.exe

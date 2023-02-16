@@ -150,27 +150,6 @@ class SettingsPage(QWidget):
     def show_song_page(self, page_num):
         pass
 
-####    def dragEnterEvent(self, e):
-####        pass
-####        # do nothing??
-####        ##e.accept()
-
-####    def dropEvent(self, e):
-####        print("DROP EVENT1")
-####        ##pos = e.pos()
-####        ##widget = e.source()
-####
-####        # for n in range(self.blayout.count()):
-####        #     # Get the widget at each index in turn.
-####        #     w = self.blayout.itemAt(n).widget()
-####        #     if pos.x() < w.x() + w.size().width() // 2:
-####        #         # We didn't drag past this widget.
-####        #         # insert to the left of it.
-####        #         self.blayout.insertWidget(n-1, widget)
-####        #         break
-####
-####        ##e.accept()
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

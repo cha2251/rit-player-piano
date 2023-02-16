@@ -4,7 +4,6 @@ from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QFileDialog
 
-
 class HomePage(QWidget):
 
     MIDI_FILE_PATH = "MIDI_Files" # Path to check for midi files to display. For now just checks folder in same directory
@@ -74,8 +73,7 @@ class HomePage(QWidget):
         bigHbox = QHBoxLayout()
         vbox = QVBoxLayout()
         hbox = QHBoxLayout()
-
-        ##vbox.setAlignment(Qt.AlignRight)
+        
         vbox.addSpacerItem(QSpacerItem(100, 100, QSizePolicy.Expanding))
         hbox.setAlignment(Qt.AlignCenter)
         hbox.addStretch()
@@ -84,6 +82,7 @@ class HomePage(QWidget):
         button.clicked.connect(lambda: self.show_song_page(1))
 
         hbox.addWidget(button)
+
         stuffs = [hbox]
 
 
@@ -117,7 +116,6 @@ class HomePage(QWidget):
 
     def song_on_click(self, song_name):
         print("Song name: " + song_name)
-        # self.nav_play.set_song(song_name)
         self.pick_song_lambda(song_name)
         self.nav_play.click()
 

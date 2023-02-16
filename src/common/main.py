@@ -1,3 +1,4 @@
+import multiprocessing
 import sys
 import time
 from threading import Thread
@@ -130,11 +131,12 @@ class Main:
         }
         """
         app.setStyleSheet(style)
-        window = src.user_interface.main_page.MainPage(self.shutdown, self.mixing, self.file_input)
+        window = src.user_interface.main_page.MainPage(self.shutdown,self.mixing,self.file_input,self.output)
         window.show()
         app.exec_()
 
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support() # Needed for mulitple processors with pyinstaller
     main = Main()
     main.main()

@@ -1,38 +1,40 @@
 import os
 import sys
 from src.mixing.mixing import Mixing
-#     QSizePolicy
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QLabel, QToolButton, QProgressBar
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
 
+from src.user_interface.visualization.visualization import VisualizationWidget
 
 class PlayingPage(QWidget):
-    def __init__(self, mixing_system, song_name="DEFAULT"):
+    def __init__(self, mixing_system, output, song_name="DEFAULT"):
         super().__init__()
+        self.nav_home = QToolButton()
+        self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        self.nav_home.setIconSize(QSize(55, 55))
+        self.nav_home.setText("back")
+        self.nav_home.setIcon(QIcon(r"../../UI_Images/back-arrow.svg"))
         self.mixing_system = mixing_system
         self.song_name = song_name
-        self.nav_home = QPushButton("LINK: " + song_name)
         self.title = "TITLE: "
         self.left = 100
         self.top = 50
         self.width = 320
         self.height = 200
+        self.title = "RIT Player Piano"
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.pbar_location = 0;
 
-        playButton = QPushButton('', self)
-        playButton.setIcon(QIcon(r"UI_Images/play-solid.svg"))
         self.progress = QProgressBar(self)
         self.progress.setGeometry(200, 100, 200, 30)
         #self.progress.setAlignment(Qt.AlignRight)
         #self.progress.setFormat("")
         self.progress_label = QLabel(self)
         self.progress_label.setText("0:00")
-        
 
         playButton = QToolButton()
         playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -88,12 +90,14 @@ class PlayingPage(QWidget):
         vbox = QVBoxLayout(self)
         vbox.addWidget(self.nav_home)
         vbox.addLayout(song_hbox)
-        
+
         ############################################################
-        ## vbox.addWidget()  ## ADD VISUALIZER WIDGET HERE to vbox
         ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
         ############################################################
+
+        vbox.addWidget(VisualizationWidget(parent=self, output=output))
         vbox.addLayout(hbox)
+
         self.initUI()
 
     def initUI(self):
@@ -142,10 +146,6 @@ class PlayingPage(QWidget):
         comes in and will update the song progress bar.
         """
         self.progress.setValue(self.pbar_location)
-
-        
-
-            
 
 
 # if __name__ == '__main__':
