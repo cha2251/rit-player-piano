@@ -12,7 +12,8 @@ from src.button_input.button_input import ButtonInput
 import mido
 import mido.backends.rtmidi  # Needed for windows builds w/ pyinstaller
 
-CONSOLE_MODE = True # Set to True to allow for console commands
+CONSOLE_MODE = True  # Set to True to allow for console commands
+
 
 class Main:
     shared_queues = None
@@ -44,25 +45,17 @@ class Main:
         self.button_input.run()
         self.mixing.start()
 
-        #init UI
+        # init UI
         x = Thread(target=self.init_UI)
         x.start()
 
-        #init UI
+        # init UI
         x = Thread(target=self.init_UI, args=(self.shutdown,))
         x.start()
 
-
         print("Type `quit` to quit")
 
-<<<<<<< HEAD
-        while(True):
-            if (False and input() == 'quit') or not x.is_alive():  # Change false when developing in console mode
-                break
-            # self.shared_queues.button_input_queue.put(MidiEvent(mido.Message('note_on',note=90,velocity=120),time.time()))
-        
-=======
-        while(CONSOLE_MODE and x.is_alive()):
+        while (CONSOLE_MODE and x.is_alive()):
             command = input()
             if command == 'quit':
                 break
@@ -76,13 +69,10 @@ class Main:
             if command == 'stop':
                 self.mixing.stop_pushed()
 
-        while(x.is_alive()): # Do not shutdown until UI is closed
+        while (x.is_alive()):  # Do not shutdown until UI is closed
             pass
 
->>>>>>> main
         self.shutdown()
-        
-        
 
     def shutdown(self):
         self.output.deactivate()
@@ -106,14 +96,10 @@ class Main:
     def create_file_input(self):
         self.file_input = FileInput(self.shared_queues.file_input_queue)
 
-<<<<<<< HEAD
-    def init_UI(self, shutdown):
-=======
     def create_button_input(self):
         self.button_input = ButtonInput(self.shared_queues.button_input_queue)
 
     def init_UI(self):
->>>>>>> main
         app = QApplication([])
         style = """
         QWidget {
@@ -144,14 +130,9 @@ class Main:
         }
         """
         app.setStyleSheet(style)
-<<<<<<< HEAD
-        window = src.user_interface.main_page.MainPage(shutdown)
-=======
-        window = src.user_interface.main_page.MainPage(self.shutdown,self.mixing,self.file_input)
->>>>>>> main
+        window = src.user_interface.main_page.MainPage(self.shutdown, self.mixing, self.file_input)
         window.show()
         app.exec_()
-
 
 
 if __name__ == "__main__":

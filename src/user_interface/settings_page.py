@@ -111,7 +111,6 @@ class SettingsPage(QWidget):
             aaa.addWidget(aac, 0, i*2+1)
             aaa.setAlignment(aac, Qt.AlignBottom)
 
-
             if i != 0 and i != 3 and i != 7 and i != 10:
                 aab = pianoKey()
                 aab.setAutoFillBackground(True)
