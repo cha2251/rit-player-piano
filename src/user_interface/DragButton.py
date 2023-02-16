@@ -12,6 +12,9 @@ class DragButton(QToolButton):
         if e.buttons() == Qt.LeftButton:
 
             drag = QDrag(self)
+            if self.mimeData is None:
+                print("POSA HERE MIMEDATA NONE")
+                self.mimeData = "POSA MIMEDATA CUSTOM"
             mime = self.mimeData
             drag.setMimeData(mime)
 
