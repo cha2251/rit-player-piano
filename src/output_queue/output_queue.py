@@ -109,7 +109,7 @@ class OutputQueueProcess():
         except IndexError:
             pass # Expected when the queue is empty
         except AttributeError:
-            pass # Expected when the queue is empty
+            pass # Expected when the queue wasn't empty, but got preempted and becomes empty mid-way through the loop
 
     def run(self):
         while self._running.value:

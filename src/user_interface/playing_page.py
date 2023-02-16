@@ -10,7 +10,7 @@ import time
 from src.user_interface.visualization.visualization import VisualizationWidget
 
 class PlayingPage(QWidget):
-    def __init__(self, mixing_system, output=None, song_name="DEFAULT"):
+    def __init__(self, mixing_system, output, song_name="DEFAULT"):
         super().__init__()
         self.nav_home = QToolButton()
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)

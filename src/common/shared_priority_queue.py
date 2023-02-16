@@ -40,8 +40,6 @@ class PeekingPriorityQueue(queue.Queue):
     def set_queue(self, queue):
         with self.accessLock:
             self.queue = deepcopy(queue)
-    def copy_of_queue(self):
-        return copy.copy(self.queue)
 
     def peekn(self, n):
         with self.accessLock:
@@ -50,11 +48,6 @@ class PeekingPriorityQueue(queue.Queue):
             except:
                 return None
 
-    def copy(self):
-        # new_queue = PeekingPriorityQueue()
-        # new_queue.queue = self.queue.copy()
-
-        return self.queue.copy()
 
 class SharedQueueSyncManager(SyncManager):
     '''Manages the synchronization of Python objects in between processes'''
