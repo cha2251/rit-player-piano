@@ -7,9 +7,10 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
 
+from src.user_interface.visualization.visualization import VisualizationWidget
 
 class PlayingPage(QWidget):
-    def __init__(self, mixing_system, song_name="DEFAULT"):
+    def __init__(self, mixing_system, output, song_name="DEFAULT"):
         super().__init__()
         self.nav_home = QToolButton()
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -89,11 +90,12 @@ class PlayingPage(QWidget):
         vbox = QVBoxLayout(self)
         vbox.addWidget(self.nav_home)
         vbox.addLayout(song_hbox)
-        
+
         ############################################################
-        ## vbox.addWidget()  ## ADD VISUALIZER WIDGET HERE to vbox
         ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
         ############################################################
+
+        vbox.addWidget(VisualizationWidget(parent=self, output=output))
         vbox.addLayout(hbox)
 
         self.initUI()

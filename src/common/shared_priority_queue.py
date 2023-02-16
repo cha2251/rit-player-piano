@@ -1,6 +1,7 @@
 from copy import deepcopy
 import queue
-from heapq import heappush, heappop
+import copy
+from heapq import heappush, heappop, nsmallest
 from multiprocessing.managers import SyncManager
 from threading import Lock
 
@@ -24,17 +25,29 @@ class PeekingPriorityQueue(queue.Queue):
             return heappop(self.queue)
 
     def peek(self):
-        return self.queue[0]
+        with self.accessLock:
+            try:
+                return self.queue[0]
+            except:
+                return None
 
     def get_and_clear_queue(self):
         with self.accessLock:
             val = deepcopy(self.queue)
             self.queue.clear()
             return val
-    
+
     def set_queue(self, queue):
         with self.accessLock:
             self.queue = deepcopy(queue)
+
+    def peekn(self, n):
+        with self.accessLock:
+            try:
+                return nsmallest(n, self.queue)
+            except:
+                return None
+
 
 class SharedQueueSyncManager(SyncManager):
     '''Manages the synchronization of Python objects in between processes'''
