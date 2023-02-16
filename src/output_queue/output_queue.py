@@ -21,7 +21,7 @@ class OutputQueue():
         # switch to a different output device. A value other than None indicates a device change
         self._selectDeviceString = Manager().Value('c_char_p', None)
 
-        self._notePlayingSet = Manager().dict()
+        self._notePlayingSet = Manager().dict() # Create a new dictionary that can be shared between processes
 
         self._queue = inputQueue
         self._outputSystem = Process(target=_runOutputQueue, args=(self._queue, self._selectDeviceString, self._notePlayingSet, self._processShouldRun,))
