@@ -3,7 +3,7 @@ import time
 from src.communication.process_queues import ProcessQueues
 
 
-class CommSystem(Thread):
+class CommSystem():
 
     def __init__(self, process_queues:ProcessQueues):
         Thread.__init__(self)
