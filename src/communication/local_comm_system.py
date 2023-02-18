@@ -12,11 +12,14 @@ class LocalCommSystem(Thread):
 
     # Overwrite new to only create an instance of this class
     # if there is not one already. If there is an instance
-    # return a refernece to that instead
+    # return a refernece to that instead. Implemented only
+    # in children of this class
+    ''''
     def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super(LocalCommSystem, cls).__new__(cls)
         return cls.instance
+    '''
     
     def send(self, message : Message):
         self.output_queue.put(message)
@@ -43,3 +46,7 @@ class LocalCommSystem(Thread):
     
     def deactivate(self):
         self.active = False
+
+    def run(self):
+        self.active = True
+        self.checkMessages()
