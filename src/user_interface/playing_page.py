@@ -1,22 +1,23 @@
 import os
 import sys
-from src.mixing.mixing import Mixing
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QLabel, QToolButton, QProgressBar
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
+from src.communication.messages import Message, MessageType, State
+
+from src.user_interface.ui_comm import UICommSystem
 
 
 class PlayingPage(QWidget):
-    def __init__(self, mixing_system, song_name="DEFAULT"):
+    def __init__(self, song_name="DEFAULT"):
         super().__init__()
         self.nav_home = QToolButton()
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.nav_home.setIconSize(QSize(55, 55))
         self.nav_home.setText("back")
         self.nav_home.setIcon(QIcon(r"../../UI_Images/back-arrow.svg"))
-        self.mixing_system = mixing_system
         self.song_name = song_name
         self.title = "TITLE: "
         self.left = 100
@@ -26,7 +27,8 @@ class PlayingPage(QWidget):
         self.title = "RIT Player Piano"
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
-        self.pbar_location = 0;
+        self.pbar_location = 0
+        self.comm_system = UICommSystem()
 
         self.progress = QProgressBar(self)
         self.progress.setGeometry(200, 100, 200, 30)
@@ -108,16 +110,15 @@ class PlayingPage(QWidget):
 
     @pyqtSlot()
     def on_click_stop(self):
-        self.mixing_system.stop_pushed()
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,State.STOP))
 
     @pyqtSlot()
     def on_click_pause(self):
-        self.mixing_system.pause_pushed()
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,State.PAUSE))
 
     @pyqtSlot()
     def on_click_play(self):
-        self.mixing_system.play_pushed()
-        print('play')
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,State.PLAY))
         self.progress_action()
 
     @pyqtSlot()

@@ -1,13 +1,15 @@
 from threading import Thread
 from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout, qApp
+from src.communication.messages import Message, MessageType
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
 from src.user_interface.settings import SettingsPage
+from src.user_interface.ui_comm import UICommSystem
 
 
 class MainPage(QWidget, Thread):
 
-    def __init__(self, shutdown, mixing_system, file_input):
+    def __init__(self, shutdown):
         super().__init__()
         Thread.__init__(self)
 
@@ -67,9 +69,9 @@ class MainPage(QWidget, Thread):
         """
         qApp.setStyleSheet(style)
 
+        self.comm_system = UICommSystem()
+
         self.shutdown = shutdown
-        self.mixing_system = mixing_system
-        self.file_input = file_input
 
         self.title = 'Player Piano'
         self.left = 100
@@ -84,7 +86,7 @@ class MainPage(QWidget, Thread):
         self.home_page.nav_settings.clicked.connect(self.go_to_settings_page)
         self.home_page.pick_song_lambda = lambda song: self.update_playing_page_song(song)
 
-        self.play_page = PlayingPage(mixing_system=self.mixing_system)
+        self.play_page = PlayingPage()
         self.play_page.nav_home.clicked.connect(self.go_to_home_page)
 
         self.settings_page = SettingsPage()
@@ -110,7 +112,7 @@ class MainPage(QWidget, Thread):
 
     def update_playing_page_song(self, song_name):
         self.play_page.set_song(song_name)
-        self.file_input.openFile(song_name)
+        self.comm_system.send(Message(MessageType.SONG_UPDATE,song_name))
 
     def closeEvent(self, event):
         self.shutdown()

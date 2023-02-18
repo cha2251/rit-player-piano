@@ -5,11 +5,12 @@ from src.communication.messages import Message, MessageType
 
 
 class LocalCommSystem(Thread):
-    handler_map = {MessageType : []} # Map of message types with list of function calls
-    input_queue : queue.Queue
-    output_queue : queue.Queue
-    active = False
-    accessLock = Lock()
+    def __init__(self):
+        self.handler_map = {MessageType : []} # Map of message types with list of function calls
+        self.input_queue = queue.Queue()
+        self.output_queue = queue.Queue()
+        self.active = False
+        self.accessLock = Lock()
 
     # Overwrite new to only create an instance of this class
     # if there is not one already. If there is an instance

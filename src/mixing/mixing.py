@@ -118,7 +118,7 @@ class Mixing(Thread):
                 time.sleep(0)
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
-            if(self.state == self.State.PLAY):
+            if(self.state == State.PLAY):
                 try:
                     event = self.file_input_queue.get_nowait()
                     event.addTime(self.total_pause_time)

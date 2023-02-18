@@ -1,10 +1,10 @@
+from queue import Empty
 from threading import Thread
 import time
 from src.communication.process_queues import ProcessQueues
 
 
-class CommSystem():
-
+class CommSystem(Thread):
     def __init__(self, process_queues:ProcessQueues):
         Thread.__init__(self)
         self.active = False
@@ -23,7 +23,7 @@ class CommSystem():
                 try:
                     message = queue.get_nowait()
                     self.send_message(message)
-                except queue.Empty:
+                except Empty:
                     pass # Expected if we dont have anything in the queue
             time.sleep(0)
     

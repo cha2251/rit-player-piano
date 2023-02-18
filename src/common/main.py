@@ -46,6 +46,7 @@ class Main:
         print("Creating Mixing Subsystem")
         self.create_mixing()
 
+        self.comm_system.start()
         self.output.start()
         self.file_input.start()
         self.button_input.run()
@@ -139,7 +140,7 @@ class Main:
         }
         """
         app.setStyleSheet(style)
-        window = src.user_interface.main_page.MainPage(self.shutdown,self.mixing,self.file_input)
+        window = src.user_interface.main_page.MainPage(self.shutdown)
         window.show()
         app.exec_()
 
