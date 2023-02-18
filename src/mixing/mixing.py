@@ -38,6 +38,7 @@ class Mixing(Thread):
     def registerCallbacks(self):
         self.comm_system.registerListner(MessageType.STATE_UPDATE, self.stateChanged)
         self.comm_system.registerListner(MessageType.MODE_UPDATE, self.modeChanged)
+        self.comm_system.registerListner(MessageType.SONG_UPDATE, self.songChanged)
 
     def stateChanged(self, message : Message):
         if message.data == State.PLAY:
@@ -46,6 +47,9 @@ class Mixing(Thread):
             self.pause_pushed()
         if message.data == State.STOP:
             self.stop_pushed()
+
+    def songChanged(self, message : Message):
+        self.stop_pushed() # Mixing does not care about song name, but should stop current song
 
     def modeChanged(self, message : Message):
         pass #TODO Implement when mutiple play modes are enabled

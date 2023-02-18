@@ -5,8 +5,8 @@ class MessageType(Enum):
     OUTPUT_QUEUE_UPDATE = 2
     STATE_UPDATE = 3
     MODE_UPDATE = 4
-    BUTTON_CONFIG = 5
-    SONG_CHANGE = 6
+    BUTTON_CONFIG_UPDATE = 5
+    SONG_UPDATE = 6
 
 class State(Enum):
     PLAY = 1
