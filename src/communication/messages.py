@@ -8,6 +8,11 @@ class MessageType(Enum):
     BUTTON_CONFIG = 5
     SONG_CHANGE = 6
 
+class State(Enum):
+    PLAY = 1
+    PAUSE = 2
+    STOP = 3
+
 class Message():
     def __init__(self, type, data):
         self.type = type

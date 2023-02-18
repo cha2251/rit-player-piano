@@ -3,14 +3,11 @@ from threading import Thread
 import time
 from src.common.midi_event import MidiEvent
 from src.common.shared_queues import SharedQueues
+from src.mixing.mixing_comm import MixingCommSystem
+from src.communication.messages import Message, MessageType, State
 import mido
 
 class Mixing(Thread):
-    class State():
-        PLAY = 1
-        PAUSE = 2
-        STOP = 3
-    
     file_input_queue: queue.Queue = None
     button_input_queue: queue.Queue = None
     mixed_output_queue: queue.PriorityQueue = None
@@ -27,19 +24,55 @@ class Mixing(Thread):
         self.file_input_queue = shared_queues.file_input_queue
         self.button_input_queue = shared_queues.button_input_queue
         self.mixed_output_queue = shared_queues.mixed_output_queue
+        self.comm_system = MixingCommSystem()
+    
     
     def run(self):
         self.active = True
         self.startup()
         
     def startup(self):
+        self.registerCallbacks()
         self.main_loop()
 
+    def registerCallbacks(self):
+        self.comm_system.registerListner(MessageType.STATE_UPDATE, self.stateChanged)
+        self.comm_system.registerListner(MessageType.MODE_UPDATE, self.modeChanged)
+
+    def stateChanged(self, message : Message):
+        if message.data == State.PLAY:
+            self.play_pushed()
+        if message.data == State.PAUSE:
+            self.pause_pushed()
+        if message.data == State.STOP:
+            self.stop_pushed()
+
+    def modeChanged(self, message : Message):
+        pass #TODO Implement when mutiple play modes are enabled
+
     def play(self):
-        self.state = self.State.PLAY
+        self.state = State.PLAY
+
+    def play_pushed(self):
+        if self.state is State.STOP:
+            self.play()
+        if self.state is State.PAUSE:
+            self.unpause()
+
+    def pause_pushed(self):
+        if self.state is State.PLAY:
+            self.pause()
+        elif self.state is State.PAUSE:
+            self.unpause()
+    
+    def stop_pushed(self):
+        if self.state is State.PLAY:
+            self.stop()
+        elif self.state is State.PAUSE:
+            self.stop()
 
     def pause(self):
-        self.state = self.State.PAUSE
+        self.state = State.PAUSE
         self.current_pause_time= time.time()
         
         self.holding_queue = self.mixed_output_queue.get_and_clear_queue()
@@ -59,10 +92,10 @@ class Mixing(Thread):
         self.holding_queue.clear()
 
         self.total_pause_time += self.current_pause_time
-        self.state = self.State.PLAY
+        self.state = State.PLAY
     
     def stop(self):
-        self.state = self.State.STOP
+        self.state = State.STOP
         self.current_pause_time = 0
         self.total_pause_time = 0
 
@@ -72,24 +105,6 @@ class Mixing(Thread):
             if(self.current_notes[note]=='note_on'):
                 event = mido.Message('note_off', note=note)
                 self.mixed_output_queue.put(MidiEvent(event, time.time()))
-    
-    def play_pushed(self):
-        if self.state is self.State.STOP:
-            self.play()
-        if self.state is self.State.PAUSE:
-            self.unpause()
-
-    def pause_pushed(self):
-        if self.state is self.State.PLAY:
-            self.pause()
-        elif self.state is self.State.PAUSE:
-            self.unpause()
-    
-    def stop_pushed(self):
-        if self.state is self.State.PLAY:
-            self.stop()
-        elif self.state is self.State.PAUSE:
-            self.stop()
     
     def main_loop(self):
         while(self.active):
