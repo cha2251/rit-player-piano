@@ -20,11 +20,14 @@ class TestSingleton:
         assert instance1 is not instance3
         assert instance2 is not instance3
     
-    def test_implemented_singleton(self):
+    def test_queues_singleton(self):
         instance1 = MixingCommSystem()
         instance2 = OutputCommSystem()
+
+        instance3 = OutputCommSystem()
 
 
         assert instance1.input_queue is not instance2.input_queue
         assert instance1.output_queue is not instance2.output_queue
+        assert instance2.output_queue is instance3.output_queue
     

@@ -1,6 +1,7 @@
 import time
 from src.common.midi_event import MidiEvent
 from src.common.shared_queues import SharedQueues
+from src.communication.messages import State
 from src.mixing.mixing import Mixing
 import pytest
 import mido
@@ -67,7 +68,7 @@ class TestRun:
 
         test_event = MidiEvent(mido.Message(type='note_on'),0)
         component.file_input_queue.put(test_event)
-        component.state = component.State.PLAY
+        component.state = State.PLAY
 
         component.start()
         component.deactivate()
@@ -85,11 +86,11 @@ class TestStateChanges:
 
         component.play()
 
-        assert component.state == component.State.PLAY
+        assert component.state == State.PLAY
 
         component.play_pushed()
 
-        assert component.state == component.State.PLAY
+        assert component.state == State.PLAY
 
     def test_play_when_paused(self):
         test_shared_queues = SharedQueues()
@@ -98,11 +99,11 @@ class TestStateChanges:
 
         component.pause()
 
-        assert component.state == component.State.PAUSE
+        assert component.state == State.PAUSE
 
         component.play_pushed()
 
-        assert component.state == component.State.PLAY
+        assert component.state == State.PLAY
     
     def test_pause_when_playing(self):
         test_shared_queues = SharedQueues()
@@ -111,11 +112,11 @@ class TestStateChanges:
 
         component.play()
 
-        assert component.state == component.State.PLAY
+        assert component.state == State.PLAY
 
         component.pause_pushed()
 
-        assert component.state == component.State.PAUSE
+        assert component.state == State.PAUSE
     
 
     def test_pause_when_paused(self):
@@ -125,11 +126,11 @@ class TestStateChanges:
 
         component.pause()
 
-        assert component.state == component.State.PAUSE
+        assert component.state == State.PAUSE
 
         component.pause_pushed()
 
-        assert component.state == component.State.PLAY
+        assert component.state == State.PLAY
     
     def test_stop_when_playing(self):
         test_shared_queues = SharedQueues()
@@ -138,11 +139,11 @@ class TestStateChanges:
 
         component.play()
 
-        assert component.state == component.State.PLAY
+        assert component.state == State.PLAY
 
         component.stop_pushed()
 
-        assert component.state == component.State.STOP
+        assert component.state == State.STOP
 
     def test_stop_when_paused(self):
         test_shared_queues = SharedQueues()
@@ -151,11 +152,11 @@ class TestStateChanges:
 
         component.pause()
 
-        assert component.state == component.State.PAUSE
+        assert component.state == State.PAUSE
 
         component.stop_pushed()
 
-        assert component.state == component.State.STOP
+        assert component.state == State.STOP
 
 class TestPause:
     def test_pause_turns_off_notes(self):
