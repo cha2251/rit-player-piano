@@ -9,19 +9,21 @@ class CommSystem(Thread):
     def __init__(self):
         Thread.__init__(self)
         self.active = False
-        self.all_queues = self.get_all_queues()
+        self.get_all_queues()
 
     def get_all_queues(self):
         mixing_comm = MixingCommSystem()
         ui_comm = UICommSystem()
         output_comm = OutputCommSystem()
-        return [
-            mixing_comm.output_queue,
+        self.out_queues = [ # Queues are named relative to local system
             mixing_comm.input_queue,
-            ui_comm.output_queue,
             ui_comm.input_queue,
-            output_comm.output_queue,
             output_comm.input_queue
+        ]
+        self.in_queues = [
+            mixing_comm.output_queue,
+            ui_comm.output_queue,
+            output_comm.output_queue,
         ]
 
     def run(self):
@@ -33,17 +35,17 @@ class CommSystem(Thread):
 
     def main_loop(self):
         while(self.active):
-            for queue in self.all_queues:
+            for queue in self.in_queues:
                 try:
                     message = queue.get_nowait()
-                    print("Message: "+message)
+                    print("Message: "+str(message))
                     self.send_message(message)
                 except Empty:
                     pass # Expected if we dont have anything in the queue
             time.sleep(0)
     
     def send_message(self, message):
-        for queue in self.all_queues:
+        for queue in self.out_queues:
             queue.put(message)
     
     def deactivate(self):
