@@ -16,12 +16,12 @@ class CommSystem(Thread):
         ui_comm = UICommSystem()
         output_comm = OutputCommSystem()
         return [
-        mixing_comm.output_queue,
-        mixing_comm.input_queue,
-        ui_comm.output_queue,
-        ui_comm.input_queue,
-        output_comm.output_queue,
-        output_comm.input_queue
+            mixing_comm.output_queue,
+            mixing_comm.input_queue,
+            ui_comm.output_queue,
+            ui_comm.input_queue,
+            output_comm.output_queue,
+            output_comm.input_queue
         ]
 
     def run(self):

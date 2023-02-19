@@ -25,6 +25,7 @@ class Mixing(Thread):
         self.button_input_queue = shared_queues.button_input_queue
         self.mixed_output_queue = shared_queues.mixed_output_queue
         self.comm_system = MixingCommSystem()
+        self.comm_system.start()
     
     
     def run(self):

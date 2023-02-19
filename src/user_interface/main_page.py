@@ -70,6 +70,7 @@ class MainPage(QWidget, Thread):
         qApp.setStyleSheet(style)
 
         self.comm_system = UICommSystem()
+        self.comm_system.start()
 
         self.shutdown = shutdown
 

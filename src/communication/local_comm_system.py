@@ -35,7 +35,7 @@ class LocalCommSystem(Thread):
 
     def callHandlers(self, message : Message):
         with self.accessLock:
-            if type in self.handler_map.keys():
+            if message.type in self.handler_map.keys():
                 for function in self.handler_map[message.type]:
                     function(message)
     
