@@ -11,7 +11,6 @@ from src.output_queue.output_queue import OutputQueue
 from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
 from src.button_input.button_input import ButtonInput
-from src.communication.process_queues import ProcessQueues
 import mido
 import mido.backends.rtmidi  # Needed for windows builds w/ pyinstaller
 
@@ -89,7 +88,7 @@ class Main:
         print("System Shutdown Succesfully")
 
     def create_comm(self):
-        self.comm_system = CommSystem(self.process_queues)
+        self.comm_system = CommSystem()
 
     def create_mixing(self):
         self.mixing = Mixing(self.shared_queues)
@@ -101,7 +100,6 @@ class Main:
     def create_queues(self):
         self.shared_queues = SharedQueues()
         self.shared_queues.create_queues()
-        self.process_queues = ProcessQueues()
 
     def create_file_input(self):
         self.file_input = FileInput(self.shared_queues.file_input_queue)

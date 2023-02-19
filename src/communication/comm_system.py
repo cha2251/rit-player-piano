@@ -1,14 +1,28 @@
 from queue import Empty
 from threading import Thread
 import time
-from src.communication.process_queues import ProcessQueues
-
+from src.mixing.mixing_comm import MixingCommSystem
+from src.output_queue.output_comm import OutputCommSystem
+from src.user_interface.ui_comm import UICommSystem
 
 class CommSystem(Thread):
-    def __init__(self, process_queues:ProcessQueues):
+    def __init__(self):
         Thread.__init__(self)
         self.active = False
-        self.all_queues = process_queues.all_queues
+        self.all_queues = self.get_all_queues()
+
+    def get_all_queues(self):
+        mixing_comm = MixingCommSystem()
+        ui_comm = UICommSystem()
+        output_comm = OutputCommSystem()
+        return [
+        mixing_comm.output_queue,
+        mixing_comm.input_queue,
+        ui_comm.output_queue,
+        ui_comm.input_queue,
+        output_comm.output_queue,
+        output_comm.input_queue
+        ]
 
     def run(self):
         self.active = True

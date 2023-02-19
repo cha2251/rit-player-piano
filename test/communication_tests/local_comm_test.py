@@ -26,7 +26,6 @@ class TestSingleton:
 
         instance3 = OutputCommSystem()
 
-
         assert instance1.input_queue is not instance2.input_queue
         assert instance1.output_queue is not instance2.output_queue
         assert instance2.output_queue is instance3.output_queue
