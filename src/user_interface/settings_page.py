@@ -88,7 +88,7 @@ class SettingsPage(QWidget):
         aaa.setSpacing(0)
         for i in range(0, 14):
             # Solid white boxes that are part of the piano keys inbetween the black keys
-            # This is here to better align the icons on the white keys to the bottom of the key
+            # This is here to align the icons on the white keys to the bottom of the key
             s = QToolButton()
             s.setFixedSize(25, 400)
             s.setStyleSheet("""
