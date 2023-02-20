@@ -8,8 +8,7 @@ from src.user_interface.ui_comm import UICommSystem
 
 
 class MainPage(QWidget, Thread):
-
-    def __init__(self, shutdown):
+    def __init__(self, shutdown, output):
         super().__init__()
         Thread.__init__(self)
 
@@ -73,6 +72,7 @@ class MainPage(QWidget, Thread):
         self.comm_system.start()
 
         self.shutdown = shutdown
+        self.output = output
 
         self.title = 'Player Piano'
         self.left = 100
@@ -87,7 +87,7 @@ class MainPage(QWidget, Thread):
         self.home_page.nav_settings.clicked.connect(self.go_to_settings_page)
         self.home_page.pick_song_lambda = lambda song: self.update_playing_page_song(song)
 
-        self.play_page = PlayingPage()
+        self.play_page = PlayingPage(output=self.output)
         self.play_page.nav_home.clicked.connect(self.go_to_home_page)
 
         self.settings_page = SettingsPage()

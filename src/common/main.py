@@ -142,7 +142,7 @@ class Main:
         }
         """
         app.setStyleSheet(style)
-        window = src.user_interface.main_page.MainPage(self.shutdown)
+        window = src.user_interface.main_page.MainPage(self.shutdown,self.output)
         window.show()
         app.exec_()
 

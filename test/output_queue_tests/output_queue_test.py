@@ -38,7 +38,7 @@ def output_queue(mocker):
 
 @pytest.fixture
 def output_queue_process(mocker):
-    output_queue = OutputQueueProcess(PeekingPriorityQueue(), multiprocessing.Queue(), multiprocessing.Manager().Value('i', False))
+    output_queue = OutputQueueProcess(PeekingPriorityQueue(), multiprocessing.Queue(), multiprocessing.Manager().dict(), multiprocessing.Manager().Value('i', False))
     dummy_port = DummyPort()
 
     mock_get_output_names = mocker.patch("mido.get_output_names")
