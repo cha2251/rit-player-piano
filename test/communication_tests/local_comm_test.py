@@ -1,3 +1,4 @@
+import pytest
 from src.communication.local_comm_system import LocalCommSystem
 from src.mixing.mixing_comm import MixingCommSystem
 from src.output_queue.output_comm import OutputCommSystem
@@ -20,7 +21,9 @@ class TestSingleton:
         assert instance1 is not instance3
         assert instance2 is not instance3
     
+    @pytest.mark.timeout(1)
     def test_queues_singleton(self):
+        
         instance1 = MixingCommSystem()
         instance2 = OutputCommSystem()
 

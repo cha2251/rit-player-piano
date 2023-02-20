@@ -5,15 +5,8 @@ from src.communication.messages import Message, MessageType
 
 
 class LocalCommSystem(Thread):
-    handler_map = {MessageType : []} # Map of message types with list of function calls
-    input_queue = queue.Queue()
-    output_queue = queue.Queue()
-    active = False
-    accessLock = Lock()
-
     def __init__(self):
         Thread.__init__(self)
-
 
     # Overwrite new to only create an instance of this class
     # if there is not one already. If there is an instance
@@ -47,9 +40,9 @@ class LocalCommSystem(Thread):
             try:
                 message = self.input_queue.get_nowait()
                 self.callHandlers(message)
-                time.sleep(0)
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
+            time.sleep(0)
     
     def deactivate(self):
         self.active = False

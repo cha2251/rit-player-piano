@@ -38,7 +38,6 @@ class CommSystem(Thread):
             for queue in self.in_queues:
                 try:
                     message = queue.get_nowait()
-                    print("Message: "+str(message))
                     self.send_message(message)
                 except Empty:
                     pass # Expected if we dont have anything in the queue
