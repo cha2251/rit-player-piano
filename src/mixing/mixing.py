@@ -14,8 +14,6 @@ class Mixing(Thread):
     holding_queue: queue.PriorityQueue = None
     active = False
     state = State.STOP
-    current_pause_time = 0
-    total_pause_time = 0
 
     current_notes = {}
 
@@ -78,7 +76,6 @@ class Mixing(Thread):
 
     def pause(self):
         self.state = State.PAUSE
-        self.current_pause_time= time.time()
         
         self.holding_queue = self.mixed_output_queue.get_and_clear_queue()
 
@@ -88,21 +85,14 @@ class Mixing(Thread):
                 self.mixed_output_queue.put(MidiEvent(event, time.time()))
     
     def unpause(self):
-        offset_time = time.time() - self.current_pause_time
-
-        for event in self.holding_queue:
-            event.addTime(offset_time)
         self.mixed_output_queue.set_queue(self.holding_queue)
 
         self.holding_queue.clear()
 
-        self.total_pause_time += self.current_pause_time
         self.state = State.PLAY
     
     def stop(self):
         self.state = State.STOP
-        self.current_pause_time = 0
-        self.total_pause_time = 0
 
         self.mixed_output_queue.get_and_clear_queue()
 
@@ -122,7 +112,6 @@ class Mixing(Thread):
             if(self.state == State.PLAY):
                 try:
                     event = self.file_input_queue.get_nowait()
-                    event.addTime(self.total_pause_time)
                     self.current_notes.update({event.event.note:event.event.type})
                     self.mixed_output_queue.put(event) # TODO CHA-PROC Switch to use Message and Comm system
                 except queue.Empty:
