@@ -124,7 +124,7 @@ class Mixing(Thread):
                     event = self.file_input_queue.get_nowait()
                     event.addTime(self.total_pause_time)
                     self.current_notes.update({event.event.note:event.event.type})
-                    self.mixed_output_queue.put(event)
+                    self.mixed_output_queue.put(event) # TODO CHA-PROC Switch to use Message and Comm system
                 except queue.Empty:
                     pass # Expected if we dont have anything in the queue
         

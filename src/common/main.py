@@ -14,15 +14,13 @@ from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
 from src.button_input.button_input import ButtonInput
 import mido
-import mido.backends.rtmidi
-
-from src.user_interface.ui_comm import UICommSystem  # Needed for windows builds w/ pyinstaller
+import mido.backends.rtmidi # Needed for windows builds w/ pyinstaller
 
 CONSOLE_MODE = True # Set to True to allow for console commands
 
 class Main:
     process_queues = None
-    shared_queues = None
+    shared_queues = None # TODO CHA-PROC Delete when processes are introduced
     mixing = None
     file_input = None
     button_input = None

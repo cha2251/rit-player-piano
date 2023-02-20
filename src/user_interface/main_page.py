@@ -8,7 +8,7 @@ from src.user_interface.ui_comm import UICommSystem
 
 
 class MainPage(QWidget, Thread):
-    def __init__(self, shutdown, output):
+    def __init__(self, shutdown, output): # TODO CHA-PROC Remove passing output system
         super().__init__()
         Thread.__init__(self)
 

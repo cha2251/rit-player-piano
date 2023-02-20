@@ -18,6 +18,16 @@ class LocalCommSystem(Thread):
             cls.instance = super(LocalCommSystem, cls).__new__(cls)
         return cls.instance
     '''
+
+    # Class variables are defined in child classes to prevent sharing
+    # They are still able to be used in this parent however
+    '''
+    handler_map = {MessageType : []} # Map of message types with list of function calls
+    input_queue = queue.Queue()
+    output_queue = queue.Queue()
+    active = False
+    accessLock = Lock()
+    '''
     
     def send(self, message : Message):
         self.output_queue.put(message)
