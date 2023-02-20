@@ -12,17 +12,22 @@ class MainPage(QWidget, Thread):
         super().__init__()
         Thread.__init__(self)
 
+        page_color = 'fbfaf4';
+        font_color = '006d7a';
+        button_color = 'e99e63';
+        button_press_color = 'c37335';
+
         style = """
             QWidget {
-                background: #2a0b40;
+                background: #"""+page_color+""";
             }
             QLabel{
-                color: #fff;
-                font: 40px;
+                color: #"""+font_color+""";
+                font: 80px;
             }
             QPushButton{
-                color: #fff;
-                background-color: #5b2185;
+                color: #"""+font_color+""";
+                background-color: #"""+button_color+""";
                 border-style: outset;
                 border-width: 2px;
                 border-color: #792cb0;
@@ -30,11 +35,11 @@ class MainPage(QWidget, Thread):
                 min-width: 5em;
                 padding: 5px;
                 font-family: "Times New Roman", Times, serif;
-                font: bold 15px;
+                font: bold 40px;
                 border-radius: 10px;
             }
             QPushButton:hover{
-                background: #792cb0;
+                background: #"""+button_press_color+""";
             }
             QPushButton:pressed{
                 border-style: inset;
@@ -124,7 +129,7 @@ if __name__ == '__main__':
     app = QApplication([])
     style = """
         QWidget {
-            background: #2a0b40;
+            background: #fbfaf4;
         }
         QLabel{
             color: #fff;
