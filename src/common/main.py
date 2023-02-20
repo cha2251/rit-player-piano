@@ -4,6 +4,8 @@ import time
 from threading import Thread
 from PyQt5.QtWidgets import QApplication
 from src.communication.comm_system import CommSystem
+from src.mixing.mixing_comm import MixingCommSystem
+from src.output_queue.output_comm import OutputCommSystem
 import src.user_interface.main_page
 from src.common.midi_event import MidiEvent
 from src.mixing.mixing import Mixing
@@ -12,7 +14,9 @@ from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
 from src.button_input.button_input import ButtonInput
 import mido
-import mido.backends.rtmidi  # Needed for windows builds w/ pyinstaller
+import mido.backends.rtmidi
+
+from src.user_interface.ui_comm import UICommSystem  # Needed for windows builds w/ pyinstaller
 
 CONSOLE_MODE = True # Set to True to allow for console commands
 

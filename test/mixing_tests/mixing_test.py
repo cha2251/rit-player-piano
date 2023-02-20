@@ -15,6 +15,8 @@ class TestCreate:
         assert component.file_input_queue is test_shared_queues.file_input_queue
         assert component.button_input_queue is test_shared_queues.button_input_queue
         assert component.mixed_output_queue is test_shared_queues.mixed_output_queue
+
+        component.deactivate()
     
 class TestDeactivate():
     def test_set_false(self):
@@ -58,7 +60,11 @@ class TestRun:
 
         actual = component.mixed_output_queue.get()
 
+        component.join()
+
         assert test_event == actual
+
+        
 
     @pytest.mark.timeout(5)
     def test_pulls_from_file(self):
@@ -92,6 +98,8 @@ class TestStateChanges:
 
         assert component.state == State.PLAY
 
+        component.deactivate()
+
     def test_play_when_paused(self):
         test_shared_queues = SharedQueues()
         test_shared_queues.create_queues()
@@ -104,6 +112,8 @@ class TestStateChanges:
         component.play_pushed()
 
         assert component.state == State.PLAY
+
+        component.deactivate()
     
     def test_pause_when_playing(self):
         test_shared_queues = SharedQueues()
@@ -117,6 +127,8 @@ class TestStateChanges:
         component.pause_pushed()
 
         assert component.state == State.PAUSE
+
+        component.deactivate()
     
 
     def test_pause_when_paused(self):
@@ -131,6 +143,8 @@ class TestStateChanges:
         component.pause_pushed()
 
         assert component.state == State.PLAY
+
+        component.deactivate()
     
     def test_stop_when_playing(self):
         test_shared_queues = SharedQueues()
@@ -145,6 +159,8 @@ class TestStateChanges:
 
         assert component.state == State.STOP
 
+        component.deactivate()
+
     def test_stop_when_paused(self):
         test_shared_queues = SharedQueues()
         test_shared_queues.create_queues()
@@ -157,6 +173,8 @@ class TestStateChanges:
         component.stop_pushed()
 
         assert component.state == State.STOP
+
+        component.deactivate()
 
 class TestPause:
     def test_pause_turns_off_notes(self):
@@ -174,3 +192,5 @@ class TestPause:
 
         assert component.mixed_output_queue.peek().event.type == 'note_off'
         assert component.mixed_output_queue.peek().event.note == testNote
+
+        component.deactivate()

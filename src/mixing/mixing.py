@@ -130,4 +130,5 @@ class Mixing(Thread):
         
 
     def deactivate(self):
+        self.comm_system.deactivate()
         self.active = False

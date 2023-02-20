@@ -12,18 +12,18 @@ class CommSystem(Thread):
         self.get_all_queues()
 
     def get_all_queues(self):
-        mixing_comm = MixingCommSystem()
-        ui_comm = UICommSystem()
-        output_comm = OutputCommSystem()
+        self.mixing_comm = MixingCommSystem()
+        self.ui_comm = UICommSystem()
+        self.output_comm = OutputCommSystem()
         self.out_queues = [ # Queues are named relative to local system
-            mixing_comm.input_queue,
-            ui_comm.input_queue,
-            output_comm.input_queue
+            self.mixing_comm.input_queue,
+            self.ui_comm.input_queue,
+            self.output_comm.input_queue
         ]
         self.in_queues = [
-            mixing_comm.output_queue,
-            ui_comm.output_queue,
-            output_comm.output_queue,
+            self.mixing_comm.output_queue,
+            self.ui_comm.output_queue,
+            self.output_comm.output_queue,
         ]
 
     def run(self):
@@ -49,3 +49,6 @@ class CommSystem(Thread):
     
     def deactivate(self):
         self.active = False
+        self.mixing_comm.deactivate()
+        self.ui_comm.deactivate()
+        self.output_comm.deactivate()
