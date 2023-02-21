@@ -108,8 +108,8 @@ class MIDIFileObject:
         file_location = 'MIDI_Files/{}'.format(file_name)
         mid_fi = mido.MidiFile(file_location)
         
-        start_time = time.time()+self.STARTUP_DELAY
-        curr_time = start_time
+        # start_time = time.time()+self.STARTUP_DELAY
+        curr_time = 0
 
         tempo = self.DEFAULT_TEMPO # Tempo changes as we go, so default till first tempo event
         ticks_per_beat = mid_fi.ticks_per_beat # Ticks Per Beat is only in header
