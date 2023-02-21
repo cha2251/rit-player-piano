@@ -130,7 +130,7 @@ class TestRun:
         past_messages = []
 
         for i in range(expected_past_messages):
-            test_message = MidiEvent(mido.Message('note_on', note=60), i * 10)
+            test_message = MidiEvent(mido.Message('note_on', note=60), 0)
             past_messages += [test_message]
             output_queue_process.queue.put(test_message)
 
@@ -138,7 +138,8 @@ class TestRun:
             output_queue_process.queue.put(MidiEvent(mido.Message('note_on', note=60), FAR_FUTURE_TIMESTAMP + i * 10))
 
         output_queue_process.select_device(DUMMY_PORT_NAME)
-        output_queue_process._check_priority_queue()
+        for i in range(expected_past_messages + expected_future_messages + 1):
+            output_queue_process._check_priority_queue()
 
         actual_sent_messages = len(output_queue_process._open_port.sent_messages)
         actual_unsent_messages = output_queue_process.queue.qsize()

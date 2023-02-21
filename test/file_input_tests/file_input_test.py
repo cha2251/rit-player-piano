@@ -1,6 +1,7 @@
 from queue import Queue
 import time
 from src.common.midi_event import MidiEvent
+from src.communication.messages import Message, MessageType
 from src.file_input.MIDI_file_class import MIDIFileObject
 from src.file_input.file_input import FileInput
 import pytest
@@ -95,7 +96,7 @@ class TestOpenFile:
 
         assert component.filename is None
 
-        component.openFile(test_file)
+        component.openFile(Message(MessageType.SONG_UPDATE,test_file))
 
         actual = component.filename
     
@@ -109,7 +110,7 @@ class TestOpenFile:
 
         component.fileObject= "NotARealFileObject"
 
-        component.openFile(test_file)
+        component.openFile(Message(MessageType.SONG_UPDATE,test_file))
 
         actual = component.fileObject
     

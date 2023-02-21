@@ -3,6 +3,9 @@ import sys
 import time
 from threading import Thread
 from PyQt5.QtWidgets import QApplication
+from src.communication.comm_system import CommSystem
+from src.mixing.mixing_comm import MixingCommSystem
+from src.output_queue.output_comm import OutputCommSystem
 import src.user_interface.main_page
 from src.common.midi_event import MidiEvent
 from src.mixing.mixing import Mixing
@@ -11,16 +14,18 @@ from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
 from src.button_input.button_input import ButtonInput
 import mido
-import mido.backends.rtmidi  # Needed for windows builds w/ pyinstaller
+import mido.backends.rtmidi # Needed for windows builds w/ pyinstaller
 
 CONSOLE_MODE = True # Set to True to allow for console commands
 
 class Main:
-    shared_queues = None
+    process_queues = None
+    shared_queues = None # TODO CHA-PROC Delete when processes are introduced
     mixing = None
     file_input = None
     button_input = None
     output = None
+    comm_system = None
 
     def __init__(self):
         pass
@@ -31,6 +36,8 @@ class Main:
 
         print("Creating Shared Queues")
         self.create_queues()
+        print("Creating Comm Subsystem")
+        self.create_comm()
         print("Creating Output Subsystem")
         self.create_output()
         print("Creating File Subsystem")
@@ -40,6 +47,7 @@ class Main:
         print("Creating Mixing Subsystem")
         self.create_mixing()
 
+        self.comm_system.start()
         self.output.start()
         self.file_input.start()
         self.button_input.run()
@@ -78,7 +86,11 @@ class Main:
         self.mixing.deactivate()
         self.file_input.deactivate()
         self.shared_queues.deactivate()
+        self.comm_system.deactivate()
         print("System Shutdown Succesfully")
+
+    def create_comm(self):
+        self.comm_system = CommSystem()
 
     def create_mixing(self):
         self.mixing = Mixing(self.shared_queues)
@@ -128,7 +140,7 @@ class Main:
         }
         """
         app.setStyleSheet(style)
-        window = src.user_interface.main_page.MainPage(self.shutdown,self.mixing,self.file_input,self.output)
+        window = src.user_interface.main_page.MainPage(self.shutdown,self.output)
         window.show()
         app.exec_()
 

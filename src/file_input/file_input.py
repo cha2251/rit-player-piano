@@ -1,7 +1,10 @@
 import queue
 from threading import Lock, Thread
+from src.communication.messages import Message, MessageType
 from src.file_input.MIDI_file_class import MIDIFileObject
 import time
+
+from src.mixing.mixing_comm import MixingCommSystem
 
 class FileInput(Thread):
     whitelisted_types = ['note_on','note_off']
@@ -14,10 +17,15 @@ class FileInput(Thread):
     def __init__(self, file_input_queue):
         Thread.__init__(self)
         self.file_input_queue = file_input_queue
+        self.comm_system = MixingCommSystem()
     
     def run(self):
+        self.registerCallbacks()
         self.active = True
         self.copy_file_to_queue()
+    
+    def registerCallbacks(self):
+        self.comm_system.registerListener(MessageType.SONG_UPDATE, self.openFile)
     
     def copy_file_to_queue(self):
         while self.active:
@@ -32,7 +40,8 @@ class FileInput(Thread):
                             time.sleep(0)
             time.sleep(0)
 
-    def openFile(self,filename):
+    def openFile(self,message : Message):
+        filename = message.data
         with self.accessLock:
             self.file_input_queue.queue.clear()
 

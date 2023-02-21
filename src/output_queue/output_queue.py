@@ -63,6 +63,10 @@ class OutputQueueProcess():
         self._notePlayingSet = _notePlayingSet
         self._open_port = None
         self._running = running
+        self.last_note_timestamp = 0
+        self.last_note_time_played = 0
+
+        # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
 
     def __del__(self):
         if self._open_port != None:
@@ -96,8 +100,10 @@ class OutputQueueProcess():
         now = time.time()
 
         try:
-            while now >= self.queue.peek().timestamp:
+            if self.last_note_time_played - self.last_note_timestamp <= now - self.queue.peek().timestamp:
                 midiEvent = self.queue.get()
+                self.last_note_time_played = now
+                self.last_note_timestamp = midiEvent.timestamp
 
                 if midiEvent.event.type == 'note_off' or midiEvent.event.velocity == 0:
                     if midiEvent.event.note in self._notePlayingSet.keys():
