@@ -57,27 +57,19 @@ class SettingsPage(QWidget):
 
         iconsList = QHBoxLayout()
 
-        self.arrow_down_mime = QMimeData()
-        self.arrow_down_mime.setText("button-arrow-down.svg")
-        self.arrow_down = DragButton(self.arrow_down_mime)
+        self.arrow_down = DragButton("button-arrow-down.svg")
         self.arrow_down.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-down.svg")))
         iconsList.addWidget(self.arrow_down)
 
-        self.arrow_up_mime = QMimeData()
-        self.arrow_up_mime.setText("button-arrow-up.svg")
-        self.arrow_up = DragButton(self.arrow_up_mime)
+        self.arrow_up = DragButton("button-arrow-up.svg")
         self.arrow_up.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-up.svg")))
         iconsList.addWidget(self.arrow_up)
 
-        self.arrow_right_mime = QMimeData()
-        self.arrow_right_mime.setText("button-arrow-right.svg")
-        self.arrow_right = DragButton(self.arrow_right_mime)
+        self.arrow_right = DragButton("button-arrow-right.svg")
         self.arrow_right.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-right.svg")))
         iconsList.addWidget(self.arrow_right)
 
-        self.arrow_left_mime = QMimeData()
-        self.arrow_left_mime.setText("button-arrow-left.svg")
-        self.arrow_left = DragButton(self.arrow_left_mime)
+        self.arrow_left = DragButton("button-arrow-left.svg")
         self.arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-left.svg")))
         iconsList.addWidget(self.arrow_left)
 

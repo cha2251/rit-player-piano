@@ -4,19 +4,16 @@ from PyQt5.QtWidgets import QToolButton
 
 
 class DragButton(QToolButton):
-    def __init__(self, qMimeData):
+    def __init__(self, mimeText):
         super().__init__()
-        self.mimeData = qMimeData
+        self.mimeText = mimeText
 
     def mouseMoveEvent(self, e):
+        mimeData = QMimeData()
+        mimeData.setText(self.mimeText)
         if e.buttons() == Qt.LeftButton:
-
             drag = QDrag(self)
-            if self.mimeData is None:
-                print("POSA HERE MIMEDATA NONE")
-                self.mimeData = "POSA MIMEDATA CUSTOM"
-            mime = self.mimeData
-            drag.setMimeData(mime)
+            drag.setMimeData(mimeData)
 
             pixmap = QPixmap(self.size())
             self.render(pixmap)
