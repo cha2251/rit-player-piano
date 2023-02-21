@@ -12,58 +12,64 @@ class MainPage(QWidget, Thread):
         super().__init__()
         Thread.__init__(self)
 
+        page_color = 'fbfaf4';
+        font_color = '006d7a';
+        button_color = 'e99e63';
+        button_press_color = 'c37335';
+        button_border_color = 'df7b2c';
+
         style = """
             QWidget {
-                background: #2a0b40;
+                background: #"""+page_color+""";
             }
             QLabel{
-                color: #fff;
-                font: 40px;
+                color: #"""+font_color+""";
+                font: 80px;
             }
             QPushButton{
-                color: #fff;
-                background-color: #5b2185;
+                color: #"""+font_color+""";
+                background-color: #"""+button_color+""";
                 border-style: outset;
                 border-width: 2px;
-                border-color: #792cb0;
+                border-color: #"""+button_border_color+""";
                 max-width: 50em;
                 min-width: 5em;
                 padding: 5px;
                 font-family: "Times New Roman", Times, serif;
-                font: bold 15px;
+                font: bold 40px;
                 border-radius: 10px;
             }
             QPushButton:hover{
-                background: #792cb0;
+                background: #"""+button_press_color+""";
             }
             QPushButton:pressed{
                 border-style: inset;
             }
             QToolButton{
-                color: #fff;
-                background-color: #5b2185;
+                color: #"""+font_color+""";
+                background-color: #"""+button_color+""";
                 border-style: outset;
                 border-width: 2px;
-                border-color: #792cb0;
+                border-color: #"""+button_border_color+""";
                 max-width: 25;
                 min-width: 5em;
                 padding: 5px;
                 font-family: "Times New Roman", Times, serif;
-                font: bold 15px;
+                font: bold 40px;
                 border-radius: 10px;
             }
             QToolButton:hover{
-                background: #792cb0;
+                background: #"""+button_press_color+""";
             }
             QToolButton:pressed{
                 border-style: inset;
             }
             QProgressBar{
-                background-color : rgb(255,255,255);
-                border : 1px;
+                background-color: #"""+button_press_color+""";
+                border: 1px;
             }
             QProgressBar::chunk{
-                background: rgb(0,0,0);
+                background: #fff;
             }
         """
         qApp.setStyleSheet(style)
@@ -121,18 +127,23 @@ class MainPage(QWidget, Thread):
 
 
 if __name__ == '__main__':
+
+    page_color = 'fbfaf4';
+    font_color = '006d7a';
+    button_color = 'e99e63';
+    button_press_color = 'c37335';
     app = QApplication([])
     style = """
         QWidget {
-            background: #2a0b40;
+            background: #"""+page_color+""";
         }
         QLabel{
-            color: #fff;
+            color: #"""+font_color+""";
             font: 40px;
         }
         QPushButton{
-            color: #fff;
-            background-color: #5b2185;
+            color: #"""+font_color+""";
+            background-color: #"""+button_color+""";
             border-style: outset;
             border-width: 2px;
             border-color: #792cb0;
@@ -144,14 +155,14 @@ if __name__ == '__main__':
             border-radius: 10px;
         }
         QPushButton:hover{
-            background: #792cb0;
+            background: #"""+button_press_color+""";
         }
         QPushButton:pressed{
             border-style: inset;
         }
         QToolButton{
-            color: #fff;
-            background-color: #5b2185;
+            color: #"""+font_color+""";
+            background-color: #"""+button_color+""";
             border-style: outset;
             border-width: 2px;
             border-color: #792cb0;
@@ -163,7 +174,7 @@ if __name__ == '__main__':
             border-radius: 10px;
         }
         QToolButton:hover{
-            background: #792cb0;
+            background: #"""+button_press_color+""";
         }
         QToolButton:pressed{
             border-style: inset;
