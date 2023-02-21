@@ -3,14 +3,15 @@ from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout, qApp
 
 from src.file_input import file_input
 from src.mixing import mixing
+from src.communication.messages import Message, MessageType
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
-from src.user_interface.settings_page import SettingsPage
+from src.user_interface.settings import SettingsPage
+from src.user_interface.ui_comm import UICommSystem
 
 
 class MainPage(QWidget, Thread):
-
-    def __init__(self, shutdown, mixing_system, file_input, output):
+    def __init__(self, shutdown, output): # TODO CHA-PROC Remove passing output system
         super().__init__()
         Thread.__init__(self)
 
@@ -70,7 +71,11 @@ class MainPage(QWidget, Thread):
         """
         qApp.setStyleSheet(style)
 
+        self.comm_system = UICommSystem()
+        self.comm_system.start()
+
         self.shutdown = shutdown
+
         self.mixing_system = mixing
         self.file_input = file_input
         self.output = output
@@ -139,7 +144,7 @@ class MainPage(QWidget, Thread):
         self.home_page.nav_settings.clicked.connect(self.go_to_settings_page)
         self.home_page.pick_song_lambda = lambda song: self.update_playing_page_song(song)
 
-        self.play_page = PlayingPage(mixing_system=self.mixing_system, output=self.output)
+        self.play_page = PlayingPage(output=self.output)
         self.play_page.nav_home.clicked.connect(self.go_to_home_page)
 
         self.settings_page = SettingsPage()
@@ -168,6 +173,7 @@ class MainPage(QWidget, Thread):
         self.play_page.set_song(song_name)
         print("MAIN UPDATE SONG NAME")
         self.file_input.openFile(song_name)
+        self.comm_system.send(Message(MessageType.SONG_UPDATE,song_name))
 
     def closeEvent(self, event):
         self.shutdown()
@@ -223,7 +229,6 @@ if __name__ == '__main__':
             border-style: inset;
         }
     """
-    #app.setStyleSheet(style)
     window = MainPage(5)
     window.show()
     app.exec_()

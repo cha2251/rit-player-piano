@@ -1,4 +1,5 @@
 from src.common.main import Main
+from src.mixing.mixing_comm import MixingCommSystem
 
 class TestSubsystemCreate:
     def test_create_queues(self):
@@ -9,13 +10,3 @@ class TestSubsystemCreate:
         component.create_queues()
 
         assert component.shared_queues is not None
-
-    def test_create_mixing(self):
-        component = Main()
-        component.create_queues()
-
-        assert component.mixing is None
-
-        component.create_mixing()
-
-        assert component.mixing is not None

@@ -1,23 +1,24 @@
 import os
 import sys
-from src.mixing.mixing import Mixing
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QLabel, QToolButton, QProgressBar
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
+from src.communication.messages import Message, MessageType, PlayingState
+
+from src.user_interface.ui_comm import UICommSystem
 
 from src.user_interface.visualization.visualization import VisualizationWidget
 
 class PlayingPage(QWidget):
-    def __init__(self, mixing_system, output, song_name="DEFAULT"):
+    def __init__(self, output, song_name="DEFAULT"):
         super().__init__()
         self.nav_home = QToolButton()
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.nav_home.setIconSize(QSize(55, 55))
         self.nav_home.setText("back")
         self.nav_home.setIcon(QIcon(r"../../UI_Images/back-arrow.svg"))
-        self.mixing_system = mixing_system
         self.song_name = song_name
         self.title = "TITLE: "
         self.left = 100
@@ -27,7 +28,8 @@ class PlayingPage(QWidget):
         self.title = "RIT Player Piano"
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
-        self.pbar_location = 0;
+        self.pbar_location = 0
+        self.comm_system = UICommSystem()
 
         self.progress = QProgressBar(self)
         self.progress.setGeometry(200, 100, 200, 30)
@@ -95,7 +97,7 @@ class PlayingPage(QWidget):
         ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
         ############################################################
 
-        vbox.addWidget(VisualizationWidget(parent=self, output=output))
+        #vbox.addWidget(VisualizationWidget(parent=self, output=output)) # TODO CHA-PROC Readd
         vbox.addLayout(hbox)
 
         self.initUI()
@@ -110,16 +112,15 @@ class PlayingPage(QWidget):
 
     @pyqtSlot()
     def on_click_stop(self):
-        self.mixing_system.stop_pushed()
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.STOP))
 
     @pyqtSlot()
     def on_click_pause(self):
-        self.mixing_system.pause_pushed()
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PAUSE))
 
     @pyqtSlot()
     def on_click_play(self):
-        self.mixing_system.play_pushed()
-        print('play')
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
         self.progress_action()
 
     @pyqtSlot()
