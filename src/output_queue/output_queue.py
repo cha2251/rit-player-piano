@@ -64,6 +64,8 @@ class OutputQueueProcess():
         self._open_port = None
         self._running = running
 
+        # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
+
     def __del__(self):
         if self._open_port != None:
             self._open_port.close()

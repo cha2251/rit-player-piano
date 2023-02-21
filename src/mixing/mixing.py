@@ -4,7 +4,7 @@ import time
 from src.common.midi_event import MidiEvent
 from src.common.shared_queues import SharedQueues
 from src.mixing.mixing_comm import MixingCommSystem
-from src.communication.messages import Message, MessageType, State
+from src.communication.messages import Message, MessageType, PlayingState
 import mido
 
 class Mixing(Thread):
@@ -13,7 +13,7 @@ class Mixing(Thread):
     mixed_output_queue: queue.PriorityQueue = None
     holding_queue: queue.PriorityQueue = None
     active = False
-    state = State.STOP
+    state = PlayingState.STOP
     current_pause_time = 0
     total_pause_time = 0
 
@@ -37,16 +37,16 @@ class Mixing(Thread):
         self.main_loop()
 
     def registerCallbacks(self):
-        self.comm_system.registerListner(MessageType.STATE_UPDATE, self.stateChanged)
-        self.comm_system.registerListner(MessageType.MODE_UPDATE, self.modeChanged)
-        self.comm_system.registerListner(MessageType.SONG_UPDATE, self.songChanged)
+        self.comm_system.registerListener(MessageType.STATE_UPDATE, self.stateChanged)
+        self.comm_system.registerListener(MessageType.MODE_UPDATE, self.modeChanged)
+        self.comm_system.registerListener(MessageType.SONG_UPDATE, self.songChanged)
 
     def stateChanged(self, message : Message):
-        if message.data == State.PLAY:
+        if message.data == PlayingState.PLAY:
             self.play_pushed()
-        if message.data == State.PAUSE:
+        if message.data == PlayingState.PAUSE:
             self.pause_pushed()
-        if message.data == State.STOP:
+        if message.data == PlayingState.STOP:
             self.stop_pushed()
 
     def songChanged(self, message : Message):
@@ -56,28 +56,28 @@ class Mixing(Thread):
         pass #TODO Implement when mutiple play modes are enabled
 
     def play(self):
-        self.state = State.PLAY
+        self.state = PlayingState.PLAY
 
     def play_pushed(self):
-        if self.state is State.STOP:
+        if self.state is PlayingState.STOP:
             self.play()
-        if self.state is State.PAUSE:
+        if self.state is PlayingState.PAUSE:
             self.unpause()
 
     def pause_pushed(self):
-        if self.state is State.PLAY:
+        if self.state is PlayingState.PLAY:
             self.pause()
-        elif self.state is State.PAUSE:
+        elif self.state is PlayingState.PAUSE:
             self.unpause()
     
     def stop_pushed(self):
-        if self.state is State.PLAY:
+        if self.state is PlayingState.PLAY:
             self.stop()
-        elif self.state is State.PAUSE:
+        elif self.state is PlayingState.PAUSE:
             self.stop()
 
     def pause(self):
-        self.state = State.PAUSE
+        self.state = PlayingState.PAUSE
         self.current_pause_time= time.time()
         
         self.holding_queue = self.mixed_output_queue.get_and_clear_queue()
@@ -97,10 +97,10 @@ class Mixing(Thread):
         self.holding_queue.clear()
 
         self.total_pause_time += self.current_pause_time
-        self.state = State.PLAY
+        self.state = PlayingState.PLAY
     
     def stop(self):
-        self.state = State.STOP
+        self.state = PlayingState.STOP
         self.current_pause_time = 0
         self.total_pause_time = 0
 
@@ -116,10 +116,9 @@ class Mixing(Thread):
             try:
                 event = self.button_input_queue.get_nowait()
                 self.mixed_output_queue.put(event)
-                time.sleep(0)
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
-            if(self.state == State.PLAY):
+            if(self.state == PlayingState.PLAY):
                 try:
                     event = self.file_input_queue.get_nowait()
                     event.addTime(self.total_pause_time)
@@ -127,6 +126,7 @@ class Mixing(Thread):
                     self.mixed_output_queue.put(event) # TODO CHA-PROC Switch to use Message and Comm system
                 except queue.Empty:
                     pass # Expected if we dont have anything in the queue
+            time.sleep(0)
         
 
     def deactivate(self):

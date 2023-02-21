@@ -1,7 +1,7 @@
 import time
 from src.common.midi_event import MidiEvent
 from src.common.shared_queues import SharedQueues
-from src.communication.messages import State
+from src.communication.messages import PlayingState
 from src.mixing.mixing import Mixing
 import pytest
 import mido
@@ -74,7 +74,7 @@ class TestRun:
 
         test_event = MidiEvent(mido.Message(type='note_on'),0)
         component.file_input_queue.put(test_event)
-        component.state = State.PLAY
+        component.state = PlayingState.PLAY
 
         component.start()
         component.deactivate()
@@ -92,11 +92,11 @@ class TestStateChanges:
 
         component.play()
 
-        assert component.state == State.PLAY
+        assert component.state == PlayingState.PLAY
 
         component.play_pushed()
 
-        assert component.state == State.PLAY
+        assert component.state == PlayingState.PLAY
 
         component.deactivate()
 
@@ -107,11 +107,11 @@ class TestStateChanges:
 
         component.pause()
 
-        assert component.state == State.PAUSE
+        assert component.state == PlayingState.PAUSE
 
         component.play_pushed()
 
-        assert component.state == State.PLAY
+        assert component.state == PlayingState.PLAY
 
         component.deactivate()
     
@@ -122,11 +122,11 @@ class TestStateChanges:
 
         component.play()
 
-        assert component.state == State.PLAY
+        assert component.state == PlayingState.PLAY
 
         component.pause_pushed()
 
-        assert component.state == State.PAUSE
+        assert component.state == PlayingState.PAUSE
 
         component.deactivate()
     
@@ -138,11 +138,11 @@ class TestStateChanges:
 
         component.pause()
 
-        assert component.state == State.PAUSE
+        assert component.state == PlayingState.PAUSE
 
         component.pause_pushed()
 
-        assert component.state == State.PLAY
+        assert component.state == PlayingState.PLAY
 
         component.deactivate()
     
@@ -153,11 +153,11 @@ class TestStateChanges:
 
         component.play()
 
-        assert component.state == State.PLAY
+        assert component.state == PlayingState.PLAY
 
         component.stop_pushed()
 
-        assert component.state == State.STOP
+        assert component.state == PlayingState.STOP
 
         component.deactivate()
 
@@ -168,11 +168,11 @@ class TestStateChanges:
 
         component.pause()
 
-        assert component.state == State.PAUSE
+        assert component.state == PlayingState.PAUSE
 
         component.stop_pushed()
 
-        assert component.state == State.STOP
+        assert component.state == PlayingState.STOP
 
         component.deactivate()
 

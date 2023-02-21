@@ -8,7 +8,7 @@ class MessageType(Enum):
     BUTTON_CONFIG_UPDATE = 5
     SONG_UPDATE = 6
 
-class State(Enum):
+class PlayingState(Enum):
     PLAY = 1
     PAUSE = 2
     STOP = 3
