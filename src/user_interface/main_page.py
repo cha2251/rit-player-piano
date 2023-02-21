@@ -6,7 +6,7 @@ from src.mixing import mixing
 from src.communication.messages import Message, MessageType
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
-from src.user_interface.settings import SettingsPage
+from src.user_interface.settings_page import SettingsPage
 from src.user_interface.ui_comm import UICommSystem
 
 
