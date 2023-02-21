@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHB
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
-from src.communication.messages import Message, MessageType, State
+from src.communication.messages import Message, MessageType, PlayingState
 
 from src.user_interface.ui_comm import UICommSystem
 
@@ -112,15 +112,15 @@ class PlayingPage(QWidget):
 
     @pyqtSlot()
     def on_click_stop(self):
-        self.comm_system.send(Message(MessageType.STATE_UPDATE,State.STOP))
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.STOP))
 
     @pyqtSlot()
     def on_click_pause(self):
-        self.comm_system.send(Message(MessageType.STATE_UPDATE,State.PAUSE))
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PAUSE))
 
     @pyqtSlot()
     def on_click_play(self):
-        self.comm_system.send(Message(MessageType.STATE_UPDATE,State.PLAY))
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
         self.progress_action()
 
     @pyqtSlot()

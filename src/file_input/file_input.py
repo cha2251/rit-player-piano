@@ -25,7 +25,7 @@ class FileInput(Thread):
         self.copy_file_to_queue()
     
     def registerCallbacks(self):
-        self.comm_system.registerListner(MessageType.SONG_UPDATE, self.openFile)
+        self.comm_system.registerListener(MessageType.SONG_UPDATE, self.openFile)
     
     def copy_file_to_queue(self):
         while self.active:
