@@ -97,7 +97,7 @@ class PlayingPage(QWidget):
         ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
         ############################################################
 
-        #vbox.addWidget(VisualizationWidget(parent=self, output=output))
+        #vbox.addWidget(VisualizationWidget(parent=self, output=output)) # TODO CHA-PROC Readd
         vbox.addLayout(hbox)
 
         self.initUI()
