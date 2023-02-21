@@ -31,8 +31,8 @@ class HomePage(QWidget):
 
         title = QLabel("RIT Player Piano")
         title.setAlignment(Qt.AlignCenter)
-        title_spacer = QSpacerItem(400, 5, QSizePolicy.Fixed)
-        outer_spacer = QSpacerItem(200, 5, QSizePolicy.Fixed)
+        title_spacer = QSpacerItem(40, 5, QSizePolicy.Fixed)
+        outer_spacer = QSpacerItem(20, 5, QSizePolicy.Fixed)
 
         add_song = QPushButton("upload song")
         add_song.clicked.connect(self.import_midi)
