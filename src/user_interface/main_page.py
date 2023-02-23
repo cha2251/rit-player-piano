@@ -15,11 +15,11 @@ class MainPage(QWidget, Thread):
         super().__init__()
         Thread.__init__(self)
 
-        page_color = 'fbfaf4';
-        font_color = '006d7a';
-        button_color = 'e99e63';
-        button_press_color = 'c37335';
-        button_border_color = 'df7b2c';
+        page_color = 'fbfaf4'
+        font_color = '006d7a'
+        button_color = 'e99e63'
+        button_press_color = 'c37335'
+        button_border_color = 'df7b2c'
 
         style = """
             QWidget {
@@ -85,57 +85,6 @@ class MainPage(QWidget, Thread):
         self.mixing_system = mixing
         self.file_input = file_input
         self.output = output
-
-        style = """
-            QWidget {
-                background: #2a0b40;
-            }
-            QLabel{
-                color: #fff;
-                font: 40px;
-            }
-            QPushButton{
-                color: #fff;
-                background-color: #5b2185;
-                border-style: outset;
-                border-width: 2px;
-                border-color: #792cb0;
-                max-width: 50em;
-                min-width: 5em;
-                padding: 5px;
-                font-family: "Times New Roman", Times, serif;
-                font: bold 15px;
-                border-radius: 10px;
-            }
-            QPushButton:hover{
-                background: #792cb0;
-            }
-            QPushButton:pressed{
-                border-style: inset;
-            }
-            QToolButton{
-                color: #fff;
-                background-color: #5b2185;
-                border-style: outset;
-                border-width: 2px;
-                border-color: #792cb0;
-                max-width: 25;
-                min-width: 5em;
-                padding: 5px;
-                font-family: "Times New Roman", Times, serif;
-                font: bold 15px;
-                border-radius: 10px;
-            }
-            QToolButton:hover{
-                background: #792cb0;
-            }
-            QToolButton:pressed{
-                border-style: inset;
-            }
-        """
-        qApp.setStyleSheet(style)
-
-        self.shutdown = shutdown
 
         self.title = 'Player Piano'
         self.left = 100
@@ -207,8 +156,8 @@ if __name__ == '__main__':
             border-style: outset;
             border-width: 2px;
             border-color: #792cb0;
-            max-width: 50em;
-            min-width: 5em;
+            max-width: 50px;
+            min-width: 15px;
             padding: 5px;
             font-family: "Times New Roman", Times, serif;
             font: bold 15px;
@@ -226,8 +175,8 @@ if __name__ == '__main__':
             border-style: outset;
             border-width: 2px;
             border-color: #792cb0;
-            max-width: 25;
-            min-width: 5em;
+            max-width: 25px;
+            min-width: 15px;
             padding: 5px;
             font-family: "Times New Roman", Times, serif;
             font: bold 15px;
