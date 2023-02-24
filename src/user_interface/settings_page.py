@@ -134,17 +134,17 @@ class SettingsPage(QWidget):
             aaa.addWidget(s, 0, i*2+1)
             aaa.setAlignment(s, Qt.AlignTop)
             s.setStyleSheet("""
-                color: #00FF00;
-                background-color: #00FF00;
+                color: #DDDDDD;
+                background-color: #FFFFFF;
                 border-style: outset;
-                border-width: 2px;
-                border-color: #00FF99;
+                border-width: 1px;
+                border-color: #000000;
                 max-width: 50em;
                 min-width: 5em;
                 padding: 5px;
                 font-family: "Times New Roman", Times, serif;
                 font: 20px;
-                border-radius: 20px;
+                border-radius: 0px;
             """)
 
             # white keys
@@ -156,11 +156,11 @@ class SettingsPage(QWidget):
             aaa.setAlignment(aac, Qt.AlignBottom)
             aac.setIconSize(QSize(60, 60))
             aac.setStyleSheet("""
-                color: #0000ff;
-                background-color: #0000ff;
+                color: #FFFFFF;
+                background-color: #FFFFFF;
                 border-style: outset;
                 border-width: 2px;
-                border-color: #0099ff;
+                border-color: transparent;
                 max-width: 50em;
                 min-width: 5em;
                 padding: 5px;
@@ -179,11 +179,11 @@ class SettingsPage(QWidget):
                 aaa.setAlignment(aab, Qt.AlignTop)
                 aab.setIconSize(QSize(60, 60))
                 aab.setStyleSheet("""
-                    color: #444444;
-                    background-color: #441144;
+                    color: #666666;
+                    background-color: #666666;
                     border-style: outset;
                     border-width: 2px;
-                    border-color: #444411;
+                    border-color: #666666;
                     max-width: 50em;
                     min-width: 5em;
                     padding: 5px;
@@ -201,7 +201,7 @@ class SettingsPage(QWidget):
                 s.setStyleSheet("""
                     color: transparent;
                     background-color: transparent;
-                    border-color: #aaaaaa;
+                    border-color: transparent;
                     border-width: 2px;
                     max-width: 50em;
                     min-width: 5em;
@@ -221,7 +221,7 @@ class SettingsPage(QWidget):
             s.setStyleSheet("""
                     color: transparent;
                     background-color: transparent;
-                    border-color: #FF0000;
+                    border-color: transparent;
                     border-width: 2px;
                     max-width: 50em;
                     min-width: 5em;
