@@ -130,7 +130,7 @@ class SettingsPage(QWidget):
             # Solid white boxes that are part of the piano keys inbetween the black keys
             # This is here to align the icons on the white keys to the bottom of the key
             s = QToolButton()
-            s.setFixedSize(50, 400)
+            s.setFixedSize(25, 400)
             aaa.addWidget(s, 0, i*2+1)
             aaa.setAlignment(s, Qt.AlignTop)
             s.setStyleSheet("""
@@ -139,12 +139,12 @@ class SettingsPage(QWidget):
                 border-style: outset;
                 border-width: 2px;
                 border-color: #00FF99;
-                max-width: 5em;
-                min-width: 1em;
+                max-width: 50em;
+                min-width: 5em;
                 padding: 5px;
                 font-family: "Times New Roman", Times, serif;
-                font: 7px;
-                border-radius: 10px;
+                font: 20px;
+                border-radius: 20px;
             """)
 
             # white keys
@@ -165,7 +165,7 @@ class SettingsPage(QWidget):
                 min-width: 5em;
                 padding: 5px;
                 font-family: "Times New Roman", Times, serif;
-                font: 12px;
+                font: 17px;
                 border-radius: 10px;
             """)
 
@@ -173,7 +173,7 @@ class SettingsPage(QWidget):
             if i != 0 and i != 3 and i != 7 and i != 10:
                 aab = pianoKey()
                 aab.setAutoFillBackground(True)
-                aab.setFixedSize(50, 200)
+                aab.setFixedSize(25, 200)
                 aab.acceptDrops()
                 aaa.addWidget(aab, 0, i*2)
                 aaa.setAlignment(aab, Qt.AlignTop)
@@ -188,21 +188,40 @@ class SettingsPage(QWidget):
                     min-width: 5em;
                     padding: 5px;
                     font-family: "Times New Roman", Times, serif;
-                    font: 7px;
-                    border-radius: 10px;
+                    font: 12px;
+                    border-radius: 8px;
                 """)
                 # insert an invisible spacer so that the black keys are spaced right
             elif i != 0:
                 s = QToolButton()
-                s.setFixedSize(50, 200)
                 s.setAutoFillBackground(True)
-                s.setFixedSize(50, 200)
+                s.setFixedSize(25, 200)
                 aaa.addWidget(s, 0, i*2)
                 aaa.setAlignment(s, Qt.AlignTop)
                 s.setStyleSheet("""
                     color: transparent;
-                    background-color: #aaaaaa;
+                    background-color: transparent;
                     border-color: #aaaaaa;
+                    border-width: 2px;
+                    max-width: 50em;
+                    min-width: 5em;
+                    padding: 5px;
+                    font-family: "Times New Roman", Times, serif;
+                    font: 12px;
+                    border-radius: 10px;
+                """)
+
+        for i in range(29, 36):
+            s = QToolButton()
+            s.setText("T" + str(i))
+            s.setAutoFillBackground(True)
+            s.setFixedSize(25, 400)
+            aaa.addWidget(s, 0, i)
+            aaa.setAlignment(s, Qt.AlignTop)
+            s.setStyleSheet("""
+                    color: transparent;
+                    background-color: transparent;
+                    border-color: #FF0000;
                     border-width: 2px;
                     max-width: 50em;
                     min-width: 5em;
@@ -212,10 +231,8 @@ class SettingsPage(QWidget):
                     border-radius: 10px;
                 """)
 
-        #aaa.setSpacing(50)
         piano_spacer = QHBoxLayout()
         piano_spacer.addLayout(aaa)
-        piano_spacer.addSpacerItem(QSpacerItem(10000, 400, QSizePolicy.Expanding))
 
         vbox.addLayout(piano_spacer)
 

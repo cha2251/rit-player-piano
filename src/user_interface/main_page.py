@@ -127,7 +127,6 @@ class MainPage(QWidget, Thread):
     def update_playing_page_song(self, song_name):
         self.play_page.set_song(song_name)
         print("MAIN UPDATE SONG NAME")
-        self.file_input.openFile(song_name)
         self.comm_system.send(Message(MessageType.SONG_UPDATE,song_name))
 
     def closeEvent(self, event):
