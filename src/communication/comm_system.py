@@ -5,7 +5,7 @@ from src.mixing.mixing_comm import MixingCommSystem
 from src.output_queue.output_comm import OutputCommSystem
 from src.user_interface.ui_comm import UICommSystem
 
-class CommSystem(Thread):
+class CommSystem():
     def __init__(self):
         Thread.__init__(self)
         self.active = False

@@ -1,13 +1,16 @@
 import queue
 from threading import Thread
 import time
+from src.button_input.button_input import ButtonInput
+from src.common import shared_queues
 from src.common.midi_event import MidiEvent
 from src.common.shared_queues import SharedQueues
+from src.file_input.file_input import FileInput
 from src.mixing.mixing_comm import MixingCommSystem
 from src.communication.messages import Message, MessageType, PlayingState
 import mido
 
-class Mixing(Thread):
+class Mixing():
     file_input_queue: queue.Queue = None
     button_input_queue: queue.Queue = None
     mixed_output_queue: queue.PriorityQueue = None
@@ -19,17 +22,18 @@ class Mixing(Thread):
 
     current_notes = {}
 
-    def __init__(self, shared_queues:SharedQueues):
+    def __init__(self):
         Thread.__init__(self)
-        self.file_input_queue = shared_queues.file_input_queue
-        self.button_input_queue = shared_queues.button_input_queue
-        self.mixed_output_queue = shared_queues.mixed_output_queue
-        self.comm_system = MixingCommSystem()
-        self.comm_system.start()
-    
+
     
     def run(self):
         self.active = True
+        self.shared_queues = SharedQueues()
+        self.comm_system = MixingCommSystem()
+        self.comm_system.start()
+        self.file_input = FileInput(self.shared_queues.file_input_queue)
+        self.file_input.start()
+        self.button_input = ButtonInput(self.shared_queues.button_input_queue)
         self.startup()
         
     def startup(self):

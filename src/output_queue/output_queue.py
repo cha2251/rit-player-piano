@@ -6,16 +6,17 @@ from threading import Thread
 from multiprocessing import Process, Manager
 
 from src.common.midi_event import MidiEvent
+from src.common.shared_priority_queue import PeekingPriorityQueue
 from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
 
-def _runOutputQueue(inputQueue, selectDeviceString, _notePlayingSet, running):
-    output = OutputQueueProcess(inputQueue, selectDeviceString, _notePlayingSet, running)
+def _runOutputQueue(selectDeviceString, _notePlayingSet, running):
+    output = OutputQueueProcess(selectDeviceString, _notePlayingSet, running)
     output.run()
 
 LINUX_SYNTH_KEYWORDS = "midi through port"
 WINDOWS_SYNTH_KEYWORDS = "microsoft gs wavetable synth"
 class OutputQueue():
-    def __init__(self, inputQueue):
+    def __init__(self):
         # Created a variable that can be shared between processes to notify the output system to stop
         self._processShouldRun = Manager().Value('c_bool', False)
 
@@ -25,8 +26,7 @@ class OutputQueue():
 
         self._notePlayingSet = Manager().dict() # Create a new dictionary that can be shared between processes
 
-        self._queue = inputQueue
-        self._outputSystem = Process(target=_runOutputQueue, args=(self._queue, self._selectDeviceString, self._notePlayingSet, self._processShouldRun,))
+        self._outputSystem = Process(target=_runOutputQueue, args=(self._selectDeviceString, self._notePlayingSet, self._processShouldRun,))
 
     def start(self):
         self._processShouldRun.value = True
@@ -73,8 +73,8 @@ class OutputQueue():
         return self._queue
 
 class OutputQueueProcess():
-    def __init__(self, inputQueue, selectDeviceString, _notePlayingSet, running):
-        self.queue = inputQueue
+    def __init__(self, selectDeviceString, _notePlayingSet, running):
+        self.queue : PeekingPriorityQueue
         self._selectDeviceString = selectDeviceString
         self._notePlayingSet = _notePlayingSet
         self._open_port = None
