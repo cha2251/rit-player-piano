@@ -12,6 +12,8 @@ def _runOutputQueue(inputQueue, selectDeviceString, _notePlayingSet, running):
     output = OutputQueueProcess(inputQueue, selectDeviceString, _notePlayingSet, running)
     output.run()
 
+LINUX_SYNTH_KEYWORDS = "midi through port"
+WINDOWS_SYNTH_KEYWORDS = "microsoft gs wavetable synth"
 class OutputQueue():
     def __init__(self, inputQueue):
         # Created a variable that can be shared between processes to notify the output system to stop
@@ -40,15 +42,29 @@ class OutputQueue():
             raise Exception("Device \"{}\" does not exist".format(name))
 
         if name is None:
-            if platform.system() != "Windows" or len(mido.get_output_names()) == 0:
-                name = SYNTHESIZER_NAME
-            else:
-                name = mido.get_output_names()[0]
+            name = self._get_devices_by_priority()[-1]
 
         self._selectDeviceString.value = name
 
     def get_device_list(self):
         return [SYNTHESIZER_NAME] + mido.get_output_names()
+
+    def _get_devices_by_priority(self):
+        devices_by_priority = []
+
+        # Create a priority-based list of devices to use and select the best one
+        for device in self.get_device_list():
+            if device == SYNTHESIZER_NAME:                  # The built-in synthesizer
+                devices_by_priority += [(1, device)]
+            elif LINUX_SYNTH_KEYWORDS in device.lower():    # Non-functional virtual ports on Linux, never use these
+                devices_by_priority += [(0, device)]
+            elif WINDOWS_SYNTH_KEYWORDS in device.lower():  # Windows synth, better than our synthesizer
+                devices_by_priority += [(2, device)]
+            else:                                           # Any other devices are likely physical devices so prioritize these
+                devices_by_priority += [(3, device)]
+
+        devices_by_priority.sort(key=lambda x: x[0])
+        return [x[1] for x in devices_by_priority] # Only return the names, not the priorities
 
     def get_playing_notes(self):
         return list(self._notePlayingSet.keys())
