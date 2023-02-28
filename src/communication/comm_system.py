@@ -26,7 +26,6 @@ class CommSystem():
             for queue in self.input_queues:
                 try:
                     message = queue.get_nowait()
-                    print("ECHOING MESSAGE"+str(message))
                     self.send_message(message)
 
                     if message.type == MessageType.SYSTEM_STOP:

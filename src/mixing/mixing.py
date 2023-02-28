@@ -13,12 +13,9 @@ import mido
 class Mixing(Thread):
     file_input_queue = queue.Queue()
     button_input_queue = queue.Queue()
-    mixed_output_queue = queue.PriorityQueue()
     holding_queue: queue.PriorityQueue = None
     active = False
     state = PlayingState.STOP
-    current_pause_time = 0
-    total_pause_time = 0
 
     current_notes = {}
 
@@ -32,9 +29,9 @@ class Mixing(Thread):
     def run(self):
         self.active = True
         self.shared_queues = SharedQueues()
-        self.file_input = FileInput(self.shared_queues.file_input_queue)
+        self.file_input = FileInput(self.file_input_queue)
         self.file_input.start()
-        self.button_input = ButtonInput(self.shared_queues.button_input_queue)
+        self.button_input = ButtonInput(self.button_input_queue)
         self.startup()
         
     def startup(self):
@@ -84,47 +81,35 @@ class Mixing(Thread):
 
     def pause(self):
         self.state = PlayingState.PAUSE
-        self.current_pause_time= time.time()
-        
-        self.holding_queue = self.mixed_output_queue.get_and_clear_queue()
 
         for note in self.current_notes.keys():
             if(self.current_notes[note]=='note_on'):
                 event = mido.Message('note_off', note=note)
-                self.mixed_output_queue.put(MidiEvent(event, time.time()))
+                self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
     
     def unpause(self):
-        self.mixed_output_queue.set_queue(self.holding_queue)
-
-        self.holding_queue.clear()
-
-        self.total_pause_time += self.current_pause_time
         self.state = PlayingState.PLAY
     
     def stop(self):
         self.state = PlayingState.STOP
-        self.current_pause_time = 0
-        self.total_pause_time = 0
-
-        self.mixed_output_queue.get_and_clear_queue()
-
+        
         for note in self.current_notes.keys():
             if(self.current_notes[note]=='note_on'):
                 event = mido.Message('note_off', note=note)
-                self.mixed_output_queue.put(MidiEvent(event, time.time()))
+                self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
     
     def main_loop(self):
         while(self.active):
             try:
                 event = self.button_input_queue.get_nowait()
-                self.mixed_output_queue.put(event)
+                self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
             if(self.state == PlayingState.PLAY):
                 try:
                     event = self.file_input_queue.get_nowait()
                     self.current_notes.update({event.event.note:event.event.type})
-                    self.mixed_output_queue.put(event) # TODO CHA-PROC Switch to use Message and Comm system
+                    self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
                 except queue.Empty:
                     pass # Expected if we dont have anything in the queue
             time.sleep(0)
@@ -133,3 +118,5 @@ class Mixing(Thread):
     def deactivate(self, message=None):
         print("Mixing System Deactivated")
         self.active = False
+        self.file_input.deactivate()
+        self.button_input.deactivate()

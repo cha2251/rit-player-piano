@@ -7,7 +7,7 @@ from multiprocessing import Process, Manager
 
 from src.common.midi_event import MidiEvent
 from src.common.shared_priority_queue import PeekingPriorityQueue
-from src.communication.messages import MessageType
+from src.communication.messages import Message, MessageType
 from src.output_queue.output_comm import OutputCommSystem
 from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
 
@@ -16,7 +16,7 @@ WINDOWS_SYNTH_KEYWORDS = "microsoft gs wavetable synth"
 
 class OutputQueue():
     def __init__(self, input_queue, output_queue):
-        self.queue : PeekingPriorityQueue
+        self.queue = PeekingPriorityQueue()
         self._open_port = None
         self.active = False
         self.last_note_timestamp = 0
@@ -26,6 +26,7 @@ class OutputQueue():
         self.comm_system = OutputCommSystem()
         self.comm_system.set_queues(input_queue, output_queue)
         self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
+        self.comm_system.registerListener(MessageType.OUTPUT_QUEUE_UPDATE, self.process_note_event)
         self.comm_system.start()
 
         # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
@@ -33,6 +34,9 @@ class OutputQueue():
     def __del__(self):
         if self._open_port != None:
             self._open_port.close()
+
+    def process_note_event(self, message : Message):
+        self.queue.put(message.data)
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
     def select_device(self, name):
@@ -101,7 +105,7 @@ class OutputQueue():
 
     def run(self):
         self.active = True
-        self.select_device(None) #TODO Fix during merge w/ device prioritizaion
+        self.select_device(None)
         while self.active:
             self._check_priority_queue()
     
