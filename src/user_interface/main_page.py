@@ -8,9 +8,12 @@ from src.user_interface.ui_comm import UICommSystem
 
 
 class MainPage(QWidget, Thread):
-    def __init__(self, shutdown, output): # TODO CHA-PROC Remove passing output system
+    def __init__(self, shutdown, output, input_queue, output_queue): # TODO CHA-PROC Remove passing output system
         super().__init__()
         Thread.__init__(self)
+        self.comm_system = UICommSystem()
+        self.comm_system.set_queues(input_queue,output_queue)
+        self.comm_system.start()
 
         page_color = 'fbfaf4';
         font_color = '006d7a';
@@ -73,9 +76,6 @@ class MainPage(QWidget, Thread):
             }
         """
         qApp.setStyleSheet(style)
-
-        self.comm_system = UICommSystem()
-        self.comm_system.start()
 
         self.shutdown = shutdown
         self.output = output

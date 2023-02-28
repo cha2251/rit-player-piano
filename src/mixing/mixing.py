@@ -10,10 +10,10 @@ from src.mixing.mixing_comm import MixingCommSystem
 from src.communication.messages import Message, MessageType, PlayingState
 import mido
 
-class Mixing():
-    file_input_queue: queue.Queue = None
-    button_input_queue: queue.Queue = None
-    mixed_output_queue: queue.PriorityQueue = None
+class Mixing(Thread):
+    file_input_queue = queue.Queue()
+    button_input_queue = queue.Queue()
+    mixed_output_queue = queue.PriorityQueue()
     holding_queue: queue.PriorityQueue = None
     active = False
     state = PlayingState.STOP
@@ -22,15 +22,16 @@ class Mixing():
 
     current_notes = {}
 
-    def __init__(self):
+    def __init__(self, input_queue, output_queue):
         Thread.__init__(self)
-
+        self.comm_system = MixingCommSystem()
+        self.comm_system.set_queues(input_queue, output_queue)
+        self.comm_system.start()
+        
     
     def run(self):
         self.active = True
         self.shared_queues = SharedQueues()
-        self.comm_system = MixingCommSystem()
-        self.comm_system.start()
         self.file_input = FileInput(self.shared_queues.file_input_queue)
         self.file_input.start()
         self.button_input = ButtonInput(self.shared_queues.button_input_queue)

@@ -7,6 +7,7 @@ from multiprocessing import Process, Manager
 
 from src.common.midi_event import MidiEvent
 from src.common.shared_priority_queue import PeekingPriorityQueue
+from src.output_queue.output_comm import OutputCommSystem
 from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
 
 def _runOutputQueue(selectDeviceString, _notePlayingSet, running):
@@ -16,7 +17,7 @@ def _runOutputQueue(selectDeviceString, _notePlayingSet, running):
 LINUX_SYNTH_KEYWORDS = "midi through port"
 WINDOWS_SYNTH_KEYWORDS = "microsoft gs wavetable synth"
 class OutputQueue():
-    def __init__(self):
+    def __init__(self, input_queue, output_queue):
         # Created a variable that can be shared between processes to notify the output system to stop
         self._processShouldRun = Manager().Value('c_bool', False)
 
@@ -26,7 +27,7 @@ class OutputQueue():
 
         self._notePlayingSet = Manager().dict() # Create a new dictionary that can be shared between processes
 
-        self._outputSystem = Process(target=_runOutputQueue, args=(self._selectDeviceString, self._notePlayingSet, self._processShouldRun,))
+        self._outputSystem = Process(target=_runOutputQueue, args=(self._selectDeviceString, self._notePlayingSet, self._processShouldRun, input_queue, output_queue,))
 
     def start(self):
         self._processShouldRun.value = True
@@ -73,7 +74,7 @@ class OutputQueue():
         return self._queue
 
 class OutputQueueProcess():
-    def __init__(self, selectDeviceString, _notePlayingSet, running):
+    def __init__(self, selectDeviceString, _notePlayingSet, running, input_queue, output_queue):
         self.queue : PeekingPriorityQueue
         self._selectDeviceString = selectDeviceString
         self._notePlayingSet = _notePlayingSet
@@ -81,6 +82,11 @@ class OutputQueueProcess():
         self._running = running
         self.last_note_timestamp = 0
         self.last_note_time_played = 0
+        self.input_queue = input_queue
+        self.output_queue = output_queue
+        self.comm_system = OutputCommSystem()
+        self.comm_system.set_queues(input_queue, output_queue)
+        self.comm_system.start()
 
         # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
 

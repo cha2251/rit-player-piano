@@ -32,6 +32,7 @@ class LocalCommSystem(Thread):
     '''
     
     def send(self, message : Message):
+        print("SENDING: "+str(message)+" via "+str(self.output_queue))
         self.output_queue.put(message)
     
     def registerListener(self, type : MessageType, function):

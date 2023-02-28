@@ -6,25 +6,14 @@ from src.output_queue.output_comm import OutputCommSystem
 from src.user_interface.ui_comm import UICommSystem
 
 class CommSystem():
-    def __init__(self):
+    def __init__(self, input_queues, output_queues):
         Thread.__init__(self)
         self.active = False
-        self.get_all_queues()
+        self.input_queues = input_queues
+        self.output_queues = output_queues
+        print(str(input_queues))
+        print(str(output_queues))
 
-    def get_all_queues(self):
-        self.mixing_comm = MixingCommSystem()
-        self.ui_comm = UICommSystem()
-        self.output_comm = OutputCommSystem()
-        self.out_queues = [ # Queues are named relative to local system
-            self.mixing_comm.input_queue,
-            self.ui_comm.input_queue,
-            self.output_comm.input_queue
-        ]
-        self.in_queues = [
-            self.mixing_comm.output_queue,
-            self.ui_comm.output_queue,
-            self.output_comm.output_queue,
-        ]
 
     def run(self):
         self.active = True
@@ -35,20 +24,18 @@ class CommSystem():
 
     def main_loop(self):
         while(self.active):
-            for queue in self.in_queues:
+            for queue in self.input_queues:
                 try:
                     message = queue.get_nowait()
+                    print("ECHOING MESSAGE"+str(message))
                     self.send_message(message)
                 except Empty:
                     pass # Expected if we dont have anything in the queue
             time.sleep(0)
     
     def send_message(self, message):
-        for queue in self.out_queues:
+        for queue in self.output_queues:
             queue.put(message)
     
     def deactivate(self):
         self.active = False
-        self.mixing_comm.deactivate()
-        self.ui_comm.deactivate()
-        self.output_comm.deactivate()
