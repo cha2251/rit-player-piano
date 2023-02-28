@@ -2,17 +2,15 @@
 from multiprocessing import Process, freeze_support, Queue
 from PyQt5.QtWidgets import QApplication
 from src.communication.comm_system import CommSystem
+from src.communication.messages import Message, MessageType
 import src.user_interface.main_page
 from src.mixing.mixing import Mixing
 from src.output_queue.output_queue import OutputQueue
 import mido
-import mido.backends.rtmidi # Needed for windows builds w/ pyinstaller
+import mido.backends.rtmidi
+from src.user_interface.ui_comm import UICommSystem # Needed for windows builds w/ pyinstaller
 
 class Main:
-    mixing = None
-    output = None
-    comm_system = None
-
     def __init__(self):
         pass
 
@@ -37,12 +35,6 @@ class Main:
         print("Starting UI Process")
         self.init_UI()
 
-        self.shutdown()
-        
-
-    def shutdown(self):
-        #TODO SEND SHUTDOWN MESSAGE
-        print("System Shutdown Succesfully")
 
     def create_comm(self, input_queues, output_queues):
         self.comm_system = CommSystem(output_queues, input_queues) # Switch due to naming convetions
@@ -96,7 +88,7 @@ class Main:
         }
         """
         app.setStyleSheet(style)
-        window = src.user_interface.main_page.MainPage(self.shutdown,self.output, self.ui_input_queue, self.ui_output_queue)
+        window = src.user_interface.main_page.MainPage(self.ui_input_queue, self.ui_output_queue)
         window.show()
         app.exec_()
 

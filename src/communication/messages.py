@@ -7,6 +7,7 @@ class MessageType(Enum):
     MODE_UPDATE = 4
     BUTTON_CONFIG_UPDATE = 5
     SONG_UPDATE = 6
+    SYSTEM_STOP = 7
 
 class PlayingState(Enum):
     PLAY = 1
@@ -17,3 +18,5 @@ class Message():
     def __init__(self, type, data):
         self.type = type
         self.data = data
+    def __init__(self, type):
+        self.type = type
