@@ -7,7 +7,7 @@ from multiprocessing import Process, Manager
 
 from src.common.midi_event import MidiEvent
 from src.common.shared_priority_queue import PeekingPriorityQueue
-from src.communication.messages import Message, MessageType
+from src.communication.messages import Message, MessageType, PlayingState
 from src.output_queue.output_comm import OutputCommSystem
 from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
 
@@ -23,10 +23,12 @@ class OutputQueue():
         self.last_note_time_played = 0
         self.input_queue = input_queue
         self.output_queue = output_queue
+        state = PlayingState.STOP
         self.comm_system = OutputCommSystem()
         self.comm_system.set_queues(input_queue, output_queue)
         self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
         self.comm_system.registerListener(MessageType.OUTPUT_QUEUE_UPDATE, self.process_note_event)
+        self.comm_system.registerListener(MessageType.STATE_UPDATE, self.stateChanged)
         self.comm_system.start()
 
         # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
@@ -37,6 +39,9 @@ class OutputQueue():
 
     def process_note_event(self, message : Message):
         self.queue.put(message.data)
+
+    def stateChanged(self, message : Message):
+        self.state = message.data
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
     def select_device(self, name):
@@ -86,22 +91,15 @@ class OutputQueue():
         now = time.time()
 
         try:
-            if self.last_note_time_played - self.last_note_timestamp <= now - self.queue.peek().timestamp:
-                midiEvent = self.queue.get()
-                self.last_note_time_played = now
-                self.last_note_timestamp = midiEvent.timestamp
+            if self.queue.peek() is not None and self.state == PlayingState.PLAY:
+                if self.last_note_time_played - self.last_note_timestamp <= now - self.queue.peek().timestamp:
+                    midiEvent = self.queue.get()
+                    self.last_note_time_played = now
+                    self.last_note_timestamp = midiEvent.timestamp
 
-                if midiEvent.event.type == 'note_off' or midiEvent.event.velocity == 0:
-                    if midiEvent.event.note in self._notePlayingSet.keys():
-                        del self._notePlayingSet[midiEvent.event.note]
-                elif midiEvent.event.type == 'note_on':
-                    self._notePlayingSet[midiEvent.event.note] = True
-
-                self._open_port.send(midiEvent.event)
+                    self._open_port.send(midiEvent.event)
         except IndexError:
             pass # Expected when the queue is empty
-        except AttributeError:
-            pass # Expected when the queue wasn't empty, but got preempted and becomes empty mid-way through the loop
 
     def run(self):
         self.active = True
