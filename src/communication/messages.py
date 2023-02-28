@@ -15,8 +15,6 @@ class PlayingState(Enum):
     STOP = 3
 
 class Message():
-    def __init__(self, type, data):
+    def __init__(self, type, data = None):
         self.type = type
         self.data = data
-    def __init__(self, type):
-        self.type = type
