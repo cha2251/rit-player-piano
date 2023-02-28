@@ -45,6 +45,7 @@ class Mixing(Thread):
         self.comm_system.registerListener(MessageType.STATE_UPDATE, self.stateChanged)
         self.comm_system.registerListener(MessageType.MODE_UPDATE, self.modeChanged)
         self.comm_system.registerListener(MessageType.SONG_UPDATE, self.songChanged)
+        self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
 
     def stateChanged(self, message : Message):
         if message.data == PlayingState.PLAY:
@@ -129,6 +130,6 @@ class Mixing(Thread):
             time.sleep(0)
         
 
-    def deactivate(self):
-        self.comm_system.deactivate()
+    def deactivate(self, message=None):
+        print("Mixing System Deactivated")
         self.active = False

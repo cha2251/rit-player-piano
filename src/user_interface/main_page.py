@@ -121,7 +121,7 @@ class MainPage(QWidget, Thread):
 
     def closeEvent(self, event):
         self.comm_system.send(Message(MessageType.SYSTEM_STOP))
-        print("System Shutdown Succesfully")
+        print("System Shutdown Started")
         event.accept()
 
 

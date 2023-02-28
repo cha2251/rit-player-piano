@@ -47,6 +47,7 @@ class Main:
     def create_output(self, input_queue, output_queue):
         self.output = OutputQueue(input_queue, output_queue)
         self.output.select_device()
+        self.output.start()
 
     def create_queues(self):
         # Queues are named relative to local system

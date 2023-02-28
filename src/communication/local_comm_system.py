@@ -53,6 +53,9 @@ class LocalCommSystem(Thread):
             try:
                 message = self.input_queue.get_nowait()
                 self.callHandlers(message)
+                if message.type == MessageType.SYSTEM_STOP:
+                        self.active = False
+                        break
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
             time.sleep(0)

@@ -7,35 +7,28 @@ from multiprocessing import Process, Manager
 
 from src.common.midi_event import MidiEvent
 from src.common.shared_priority_queue import PeekingPriorityQueue
+from src.communication.messages import MessageType
 from src.output_queue.output_comm import OutputCommSystem
 from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
 
-def _runOutputQueue(selectDeviceString, _notePlayingSet, running):
-    output = OutputQueueProcess(selectDeviceString, _notePlayingSet, running)
+def _runOutputQueue(selectDeviceString, _notePlayingSet, input_queue, output_queue):
+    output = OutputQueueProcess(selectDeviceString, _notePlayingSet, input_queue, output_queue)
     output.run()
 
 LINUX_SYNTH_KEYWORDS = "midi through port"
 WINDOWS_SYNTH_KEYWORDS = "microsoft gs wavetable synth"
 class OutputQueue():
     def __init__(self, input_queue, output_queue):
-        # Created a variable that can be shared between processes to notify the output system to stop
-        self._processShouldRun = Manager().Value('c_bool', False)
-
         # Created a variable that can be shared between processes to notify the output to
         # switch to a different output device. A value other than None indicates a device change
         self._selectDeviceString = Manager().Value('c_char_p', None)
 
         self._notePlayingSet = Manager().dict() # Create a new dictionary that can be shared between processes
 
-        self._outputSystem = Process(target=_runOutputQueue, args=(self._selectDeviceString, self._notePlayingSet, self._processShouldRun, input_queue, output_queue,))
+        self._outputSystem = Process(target=_runOutputQueue, args=(self._selectDeviceString, self._notePlayingSet, input_queue, output_queue,))
 
     def start(self):
-        self._processShouldRun.value = True
         self._outputSystem.start()
-
-    def deactivate(self):
-        self._processShouldRun.value = False
-        self._outputSystem.join()
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
     def select_device(self, name=None):
@@ -74,18 +67,19 @@ class OutputQueue():
         return self._queue
 
 class OutputQueueProcess():
-    def __init__(self, selectDeviceString, _notePlayingSet, running, input_queue, output_queue):
+    def __init__(self, selectDeviceString, _notePlayingSet, input_queue, output_queue):
         self.queue : PeekingPriorityQueue
         self._selectDeviceString = selectDeviceString
         self._notePlayingSet = _notePlayingSet
         self._open_port = None
-        self._running = running
+        self.active = False
         self.last_note_timestamp = 0
         self.last_note_time_played = 0
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.comm_system = OutputCommSystem()
         self.comm_system.set_queues(input_queue, output_queue)
+        self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
         self.comm_system.start()
 
         # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
@@ -140,12 +134,17 @@ class OutputQueueProcess():
             pass # Expected when the queue wasn't empty, but got preempted and becomes empty mid-way through the loop
 
     def run(self):
-        while self._running.value:
+        self.active = True
+        while self.active:
             if self._selectDeviceString.value is not None:
                  self.select_device(self._selectDeviceString.value)
                  self._selectDeviceString.value = None
 
             self._check_priority_queue()
+    
+    def deactivate(self, message=None):
+        print("Output System Deactivated")
+        self.active = False
 
 def play_test_tones(queue, delay=0.0):
     now = time.time() + delay
