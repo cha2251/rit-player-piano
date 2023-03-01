@@ -9,7 +9,6 @@ from src.output_queue.output_queue import OutputQueue
 import mido
 import mido.backends.rtmidi
 from src.user_interface.ui_comm import UICommSystem # Needed for windows builds w/ pyinstaller
-import sys
 
 class Main:
     def __init__(self):

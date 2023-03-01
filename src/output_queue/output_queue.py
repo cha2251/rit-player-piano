@@ -96,29 +96,11 @@ class OutputQueue():
                 self.state_changed = False
 
                 if self.state == PlayingState.PLAY:
-                    # Restore the difference so that the timing remains correct
-                    if self.last_note_timestamp is not None:
-                        self.last_note_timestamp += now
-
-                        for event in self.playing_notes.values():
-                            self._open_port.send(event)
-                    else: # If we are starting from the beginning, clear the queue and reset the timestamp
-                        self.last_note_timestamp = 0
-                        self.queue.clear()
+                    self.play()
                 elif self.state == PlayingState.PAUSE:
-                    if self.last_note_timestamp is not None:
-                        self.last_note_timestamp -= now # Store the difference between this and now for later
-
-                    for event in self.playing_notes.values():
-                        self._open_port.send(mido.Message('note_off', note=event.note))
+                    self.pause()
                 elif self.state == PlayingState.STOP:
-                    self.last_note_timestamp = None # Signals that we removed all notes from the queue and want to start over
-                    self.last_note_time_played = 0
-
-                    for event in self.playing_notes.values():
-                        self._open_port.send(mido.Message('note_off', note=event.note))
-                    self.playing_notes.clear()
-                    self.queue.clear()
+                    self.stop()
 
             if self.queue.peek() is not None and self.state == PlayingState.PLAY:
                 if self.last_note_time_played - self.last_note_timestamp <= now - self.queue.peek().timestamp:
@@ -135,6 +117,36 @@ class OutputQueue():
                     self._open_port.send(midiEvent.event)
         except IndexError:
             pass # Expected when the queue is empty
+
+    def play(self):
+        if self.last_note_timestamp is not None:
+            # Restore the difference so that the timing remains correct
+            self.last_note_timestamp += time.time()
+
+            for event in self.playing_notes.values():
+                self._open_port.send(event)
+        else:
+            # If we are starting from the beginning, clear the queue and reset the timestamp
+            self.last_note_timestamp = 0
+            self.queue.clear()
+
+    def pause(self):
+        if self.last_note_timestamp is not None:
+            self.last_note_timestamp -= time.time() # Store the difference between this and now for later
+
+        # Turn off all notes currently playing
+        for event in self.playing_notes.values():
+            self._open_port.send(mido.Message('note_off', note=event.note))
+
+    def stop(self):
+        self.last_note_timestamp = None # Signals that we removed all notes from the queue and want to start over
+        self.last_note_time_played = 0
+
+        # Turn off all notes currently playing and clear everything
+        for event in self.playing_notes.values():
+            self._open_port.send(mido.Message('note_off', note=event.note))
+        self.playing_notes.clear()
+        self.queue.clear()
 
     def run(self):
         self.active = True
