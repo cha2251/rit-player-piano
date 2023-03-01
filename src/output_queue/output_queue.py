@@ -23,7 +23,7 @@ class OutputQueue():
         self.last_note_time_played = 0
         self.input_queue = input_queue
         self.output_queue = output_queue
-        state = PlayingState.STOP
+        self.state = PlayingState.STOP
         self.comm_system = OutputCommSystem()
         self.comm_system.set_queues(input_queue, output_queue)
         self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)

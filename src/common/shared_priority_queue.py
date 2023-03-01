@@ -1,8 +1,6 @@
 from copy import deepcopy
 import queue
-import copy
 from heapq import heappush, heappop, nsmallest
-from multiprocessing.managers import SyncManager
 from threading import Lock
 
 class PeekingPriorityQueue(queue.Queue):
@@ -47,12 +45,3 @@ class PeekingPriorityQueue(queue.Queue):
                 return nsmallest(n, self.queue)
             except:
                 return None
-
-
-class SharedQueueSyncManager(SyncManager):
-    '''Manages the synchronization of Python objects in between processes'''
-    def __init__(self):
-        SyncManager.__init__(self)
-        self.start()
-
-SharedQueueSyncManager.register("PeekingPriorityQueue", PeekingPriorityQueue)  # Register a shared PriorityQueue

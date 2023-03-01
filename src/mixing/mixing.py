@@ -2,9 +2,6 @@ import queue
 from threading import Thread
 import time
 from src.button_input.button_input import ButtonInput
-from src.common import shared_queues
-from src.common.midi_event import MidiEvent
-from src.common.shared_queues import SharedQueues
 from src.file_input.file_input import FileInput
 from src.mixing.mixing_comm import MixingCommSystem
 from src.communication.messages import Message, MessageType, PlayingState
@@ -28,7 +25,6 @@ class Mixing(Thread):
     
     def run(self):
         self.active = True
-        self.shared_queues = SharedQueues()
         self.file_input = FileInput(self.file_input_queue)
         self.file_input.start()
         self.button_input = ButtonInput(self.button_input_queue)
@@ -92,7 +88,7 @@ class Mixing(Thread):
     
     def stop(self):
         self.state = PlayingState.STOP
-        
+
         for note in self.current_notes.keys():
             if(self.current_notes[note]=='note_on'):
                 event = mido.Message('note_off', note=note)

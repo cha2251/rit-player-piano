@@ -1,31 +1,24 @@
+from queue import Queue
 import time
 from src.common.midi_event import MidiEvent
-from src.common.shared_queues import SharedQueues
 from src.communication.messages import PlayingState
 from src.mixing.mixing import Mixing
 import pytest
 import mido
 
-class TestCreate:
-    def test_copies_queues(self):
-        test_shared_queues =  SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
-
-        assert component.file_input_queue is test_shared_queues.file_input_queue
-        assert component.button_input_queue is test_shared_queues.button_input_queue
-        assert component.mixed_output_queue is test_shared_queues.mixed_output_queue
-
-        component.deactivate()
-    
 class TestDeactivate():
     def test_set_false(self):
-        test_shared_queues = SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
+        dummy_queue = Queue()
+        component = Mixing(dummy_queue, dummy_queue)
 
         component.active = True
+        
+        component.start()
+        time.sleep(.2) #Allow for creation of sub threads
+
         component.deactivate()
+
+        component.join()
 
         expected = False
         actual = component.active
@@ -35,11 +28,11 @@ class TestDeactivate():
 class TestRun:
     @pytest.mark.timeout(5) #Longer timeout than strictly nesscary, to allow for slower computers
     def test_exits(self):
-        test_shared_queues = SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
+        dummy_queue = Queue()
+        component = Mixing(dummy_queue, dummy_queue)
 
         component.start()
+        time.sleep(.2) #Allow for creation of sub threads
 
         component.deactivate()
 
@@ -47,18 +40,18 @@ class TestRun:
     
     @pytest.mark.timeout(5)
     def test_pulls_from_button(self):
-        test_shared_queues = SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
+        dummy_queue = Queue()
+        component = Mixing(dummy_queue, dummy_queue)
 
         test_event = MidiEvent(mido.Message(type='note_on'),0)
         component.button_input_queue.put(test_event)
 
         component.start()
+        time.sleep(.2) #Allow for creation of sub threads
         component.active = True
         component.deactivate()
 
-        actual = component.mixed_output_queue.get()
+        actual = component.comm_system.output_queue.get()
 
         component.join()
 
@@ -68,27 +61,26 @@ class TestRun:
 
     @pytest.mark.timeout(5)
     def test_pulls_from_file(self):
-        test_shared_queues = SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
+        dummy_queue = Queue()
+        component = Mixing(dummy_queue, dummy_queue)
 
         test_event = MidiEvent(mido.Message(type='note_on'),0)
         component.file_input_queue.put(test_event)
         component.state = PlayingState.PLAY
 
         component.start()
+        time.sleep(.2) #Allow for creation of sub threads
         component.deactivate()
         component.join()
 
-        actual = component.mixed_output_queue.get()
+        actual = component.comm_system.output_queue.get().data
 
         assert test_event == actual
 
 class TestStateChanges:
     def test_play_when_playing(self):
-        test_shared_queues = SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
+        dummy_queue = Queue()
+        component = Mixing(dummy_queue, dummy_queue)
 
         component.play()
 
@@ -98,12 +90,9 @@ class TestStateChanges:
 
         assert component.state == PlayingState.PLAY
 
-        component.deactivate()
-
     def test_play_when_paused(self):
-        test_shared_queues = SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
+        dummy_queue = Queue()
+        component = Mixing(dummy_queue, dummy_queue)
 
         component.pause()
 
@@ -112,13 +101,10 @@ class TestStateChanges:
         component.play_pushed()
 
         assert component.state == PlayingState.PLAY
-
-        component.deactivate()
     
     def test_pause_when_playing(self):
-        test_shared_queues = SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
+        dummy_queue = Queue()
+        component = Mixing(dummy_queue, dummy_queue)
 
         component.play()
 
@@ -127,14 +113,11 @@ class TestStateChanges:
         component.pause_pushed()
 
         assert component.state == PlayingState.PAUSE
-
-        component.deactivate()
     
 
     def test_pause_when_paused(self):
-        test_shared_queues = SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
+        dummy_queue = Queue()
+        component = Mixing(dummy_queue, dummy_queue)
 
         component.pause()
 
@@ -143,13 +126,10 @@ class TestStateChanges:
         component.pause_pushed()
 
         assert component.state == PlayingState.PLAY
-
-        component.deactivate()
     
     def test_stop_when_playing(self):
-        test_shared_queues = SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
+        dummy_queue = Queue()
+        component = Mixing(dummy_queue, dummy_queue)
 
         component.play()
 
@@ -159,12 +139,9 @@ class TestStateChanges:
 
         assert component.state == PlayingState.STOP
 
-        component.deactivate()
-
     def test_stop_when_paused(self):
-        test_shared_queues = SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
+        dummy_queue = Queue()
+        component = Mixing(dummy_queue, dummy_queue)
 
         component.pause()
 
@@ -173,14 +150,10 @@ class TestStateChanges:
         component.stop_pushed()
 
         assert component.state == PlayingState.STOP
-
-        component.deactivate()
-
 class TestPause:
     def test_pause_turns_off_notes(self):
-        test_shared_queues = SharedQueues()
-        test_shared_queues.create_queues()
-        component = Mixing(test_shared_queues)
+        dummy_queue = Queue()
+        component = Mixing(dummy_queue, dummy_queue)
 
         testNote = 80
 
@@ -190,7 +163,7 @@ class TestPause:
 
         component.pause()
 
-        assert component.mixed_output_queue.peek().event.type == 'note_off'
-        assert component.mixed_output_queue.peek().event.note == testNote
+        actual = component.comm_system.output_queue.get().data
 
-        component.deactivate()
+        assert actual.event.type == 'note_off'
+        assert actual.event.note == testNote
