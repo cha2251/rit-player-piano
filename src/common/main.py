@@ -9,6 +9,7 @@ from src.output_queue.output_queue import OutputQueue
 import mido
 import mido.backends.rtmidi
 from src.user_interface.ui_comm import UICommSystem # Needed for windows builds w/ pyinstaller
+import sys
 
 class Main:
     def __init__(self):
@@ -57,6 +58,14 @@ class Main:
         self.ui_output_queue = Queue()
         self.output_output_queue = Queue()
 
+    def destroy_queues(self):
+        self.mixing_input_queue.close()
+        self.ui_input_queue.close()
+        self.output_input_queue.close()
+        self.mixing_output_queue.close()
+        self.ui_output_queue.close()
+        self.output_output_queue.close()
+
     def init_UI(self):
         app = QApplication([])
         style = """
@@ -91,6 +100,7 @@ class Main:
         window = src.user_interface.main_page.MainPage(self.ui_input_queue, self.ui_output_queue)
         window.show()
         app.exec_()
+        self.destroy_queues()
 
 
 if __name__ == "__main__":

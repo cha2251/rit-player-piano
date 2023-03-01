@@ -29,11 +29,9 @@ class PeekingPriorityQueue(queue.Queue):
             except:
                 return None
 
-    def get_and_clear_queue(self):
+    def clear(self):
         with self.accessLock:
-            val = deepcopy(self.queue)
             self.queue.clear()
-            return val
 
     def set_queue(self, queue):
         with self.accessLock:

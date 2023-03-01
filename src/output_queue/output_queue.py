@@ -24,6 +24,8 @@ class OutputQueue():
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.state = PlayingState.STOP
+        self.state_changed = False
+        self.playing_notes = {}
         self.comm_system = OutputCommSystem()
         self.comm_system.set_queues(input_queue, output_queue)
         self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
@@ -33,14 +35,13 @@ class OutputQueue():
 
         # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
 
-    def __del__(self):
-        if self._open_port != None:
-            self._open_port.close()
-
     def process_note_event(self, message : Message):
         self.queue.put(message.data)
 
     def stateChanged(self, message : Message):
+        if self.state != message.data:
+            self.state_changed = True
+
         self.state = message.data
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
@@ -91,11 +92,45 @@ class OutputQueue():
         now = time.time()
 
         try:
+            if self.state_changed:
+                self.state_changed = False
+
+                if self.state == PlayingState.PLAY:
+                    # Restore the difference so that the timing remains correct
+                    if self.last_note_timestamp is not None:
+                        self.last_note_timestamp += now
+
+                        for event in self.playing_notes.values():
+                            self._open_port.send(event)
+                    else: # If we are starting from the beginning, clear the queue and reset the timestamp
+                        self.last_note_timestamp = 0
+                        self.queue.clear()
+                elif self.state == PlayingState.PAUSE:
+                    if self.last_note_timestamp is not None:
+                        self.last_note_timestamp -= now # Store the difference between this and now for later
+
+                    for event in self.playing_notes.values():
+                        self._open_port.send(mido.Message('note_off', note=event.note))
+                elif self.state == PlayingState.STOP:
+                    self.last_note_timestamp = None # Signals that we removed all notes from the queue and want to start over
+                    self.last_note_time_played = 0
+
+                    for event in self.playing_notes.values():
+                        self._open_port.send(mido.Message('note_off', note=event.note))
+                    self.playing_notes.clear()
+                    self.queue.clear()
+
             if self.queue.peek() is not None and self.state == PlayingState.PLAY:
                 if self.last_note_time_played - self.last_note_timestamp <= now - self.queue.peek().timestamp:
                     midiEvent = self.queue.get()
                     self.last_note_time_played = now
                     self.last_note_timestamp = midiEvent.timestamp
+
+                    if midiEvent.event.type == "note_off" or midiEvent.event.velocity == 0:
+                        if midiEvent.event.note in self.playing_notes.keys():
+                            del self.playing_notes[midiEvent.event.note]
+                    elif midiEvent.event.type == "note_on":
+                        self.playing_notes[midiEvent.event.note] = midiEvent.event
 
                     self._open_port.send(midiEvent.event)
         except IndexError:
@@ -106,6 +141,9 @@ class OutputQueue():
         self.select_device(None)
         while self.active:
             self._check_priority_queue()
+            time.sleep(0)
+
+        self._open_port.close()
     
     def deactivate(self, message=None):
         print("Output System Deactivated")

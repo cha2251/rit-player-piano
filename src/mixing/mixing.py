@@ -78,21 +78,11 @@ class Mixing(Thread):
     def pause(self):
         self.state = PlayingState.PAUSE
 
-        for note in self.current_notes.keys():
-            if(self.current_notes[note]=='note_on'):
-                event = mido.Message('note_off', note=note)
-                self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
-    
     def unpause(self):
         self.state = PlayingState.PLAY
     
     def stop(self):
         self.state = PlayingState.STOP
-
-        for note in self.current_notes.keys():
-            if(self.current_notes[note]=='note_on'):
-                event = mido.Message('note_off', note=note)
-                self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
     
     def main_loop(self):
         while(self.active):
