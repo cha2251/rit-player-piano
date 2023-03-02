@@ -51,9 +51,9 @@ class LoadingDialog(QDialog):
         #layout.addWidget(self.label)
         
         # Set the dialog properties.
-        self.setWindowTitle("Loading")
-        self.setFixedSize(250, 75)
-        self.setModal(True)
+        self.setWindowTitle("       Loading...")
+        # self.setFixedSize(250, 75)
+        #self.setModal(True)
         self.setWindowFlags(Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         
     def update_progress(self, progress):
