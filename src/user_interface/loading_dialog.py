@@ -24,7 +24,6 @@ class WorkerThread(QThread):
     def run(self):
         """Run the thread."""
         # Perform a task that takes time.
-        #self.spinner.startAnimation()
         for i in range(101):
             self.progress_signal.emit(i)
             #self.msleep(1)
@@ -41,9 +40,7 @@ class LoadingDialog(QDialog):
         # Set up the UI elements.
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setRange(0, 100)
-        self.progress_bar.setAlignment(Qt.AlignCenter)
-
-        
+        self.progress_bar.setAlignment(Qt.AlignCenter)        
         
         #self.label = QLabel("Loading...", self)
         #self.label.setAlignment(Qt.AlignCenter)
@@ -63,20 +60,25 @@ class LoadingDialog(QDialog):
         """Update the progress bar's value."""
         self.progress_bar.setValue(progress)
 
-class LoadingGif(QWidget):
+
+
+
+class LoadingGif(QDialog):
   
     def __init__(self):
         super().__init__()
         self.setFixedSize(200, 200)
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
-        self.label_animation = QLabel(self)
-
+        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)        
   
         # Loading the GIF
+        layout = QVBoxLayout(self)
+        self.label_animation = QLabel(self)
         self.movie = QMovie(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "loading_spinner.gif"))
         self.label_animation.setMovie(self.movie)
+        layout.addWidget(self.label_animation)
   
-        self.startAnimation()
+        # self.startAnimation()
+        self.thread = None
   
     # Start Animation
   
@@ -86,3 +88,10 @@ class LoadingGif(QWidget):
     # Stop Animation(According to need)
     def stopAnimation(self):
         self.movie.stop()
+
+    def start_loading(self, thread):
+        self.thread = thread
+        self.thread.finished.connect(self.close)
+        self.movie.start()
+        self.exec_()
+
