@@ -21,7 +21,7 @@ class SettingsPage(QWidget):
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.nav_home.setIconSize(QSize(55, 55))
         self.nav_home.setText("back")
-        self.nav_home.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "back-arrow.svg")))
+        self.nav_home.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "navigation", "back-arrow.svg")))
 
         self.title = 'PLayer Piano'
         self.left = 100
@@ -30,6 +30,7 @@ class SettingsPage(QWidget):
         self.height = 200
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+        self.keys = []
 
         # button = QPushButton('PyQt5 button', self)
         # button.setIcon(QIcon(r"images\play-solid.svg"))
@@ -57,8 +58,6 @@ class SettingsPage(QWidget):
 
         push = """
             QPushButton{
-                color: #fff;
-                background-color: #5b2185;
                 border-style: outset;
                 border-width: 2px;
                 border-color: #792cb0;
@@ -78,61 +77,72 @@ class SettingsPage(QWidget):
             """
 
         tool = """
-         QToolButton{
-                color: #fff;
-                background-color: #5b2185;
-                border-style: outset;
-                border-width: 2px;
-                border-color: #792cb0;
-                max-width: 10em;
-                min-width: 5em;
-                padding: 5px;
-                font-family: "Times New Roman", Times, serif;
-                font: 15px;
-                border-radius: 10px;
-            }
-            QToolButton:hover{
-                background: #792cb0;
-            }
-            QToolButton:pressed{
-                border-style: inset;
-            }
+        QToolButton {
+            max-width: 5em;
+            min-width: 5em;
+            font: 25px;
+            padding: 5px;
+            font-family: "Times New Roman", Times, serif;
+        }
         """
 
         iconsList = QHBoxLayout()
 
-        self.arrow_down = DragButton("button-arrow-down.svg")
-        self.arrow_down.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-down.svg")))
+        self.arrow_down = DragButton("settings/button-arrow-down.svg")
+        self.arrow_down.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-down.svg")))
         self.arrow_down.setStyleSheet(tool)
+        self.arrow_down.setIconSize(QSize(60, 60))
         iconsList.addWidget(self.arrow_down)
 
-        self.arrow_up = DragButton("button-arrow-up.svg")
-        self.arrow_up.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-up.svg")))
+        self.arrow_up = DragButton("settings/button-arrow-up.svg")
+        self.arrow_up.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-up.svg")))
         self.arrow_up.setStyleSheet(tool)
+        self.arrow_up.setIconSize(QSize(60, 60))
         iconsList.addWidget(self.arrow_up)
 
-        self.arrow_right = DragButton("button-arrow-right.svg")
-        self.arrow_right.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-right.svg")))
+        self.arrow_right = DragButton("settings/button-arrow-right.svg")
+        self.arrow_right.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-right.svg")))
         self.arrow_right.setStyleSheet(tool)
+        self.arrow_right.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.arrow_right)
 
-        self.arrow_left = DragButton("button-arrow-left.svg")
-        self.arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "button-arrow-left.svg")))
+        self.arrow_left = DragButton("settings/button-arrow-left.svg")
+        self.arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-left.svg")))
         self.arrow_left.setStyleSheet(tool)
+        self.arrow_left.setIconSize(QSize(60, 50))
+        iconsList.addWidget(self.arrow_left)
+
+        self.arrow_left = DragButton("settings/button-arrow-left.svg")
+        self.arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-left.svg")))
+        self.arrow_left.setStyleSheet(tool)
+        self.arrow_left.setIconSize(QSize(60, 50))
+        iconsList.addWidget(self.arrow_left)
+
+        self.arrow_left = DragButton("settings/button-arrow-left.svg")
+        self.arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-left.svg")))
+        self.arrow_left.setStyleSheet(tool)
+        self.arrow_left.setIconSize(QSize(60, 50))
+        iconsList.addWidget(self.arrow_left)
+
+        self.arrow_left = DragButton("settings/button-arrow-left.svg")
+        self.arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-left.svg")))
+        self.arrow_left.setStyleSheet(tool)
+        self.arrow_left.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.arrow_left)
 
         vbox.addLayout(iconsList)
+
         # CREATE PIANO
-        aaa = QGridLayout()
-        aaa.setAlignment(Qt.AlignTop)
-        aaa.setSpacing(0)
+        piano = QGridLayout()
+        piano.setAlignment(Qt.AlignTop)
+        piano.setSpacing(0)
         for i in range(0, 14):
             # Solid white boxes that are part of the piano keys inbetween the black keys
             # This is here to align the icons on the white keys to the bottom of the key
             s = QToolButton()
             s.setFixedSize(25, 400)
-            aaa.addWidget(s, 0, i*2+1)
-            aaa.setAlignment(s, Qt.AlignTop)
+            piano.addWidget(s, 0, i*2+1)
+            piano.setAlignment(s, Qt.AlignTop)
             s.setStyleSheet("""
                 color: #DDDDDD;
                 background-color: #FFFFFF;
@@ -152,8 +162,8 @@ class SettingsPage(QWidget):
             aac.setAutoFillBackground(True)
             aac.setFixedSize(50, 200)
             aac.setAcceptDrops(True)
-            aaa.addWidget(aac, 0, i*2+1)
-            aaa.setAlignment(aac, Qt.AlignBottom)
+            piano.addWidget(aac, 0, i*2+1)
+            piano.setAlignment(aac, Qt.AlignBottom)
             aac.setIconSize(QSize(60, 60))
             aac.setStyleSheet("""
                 color: #FFFFFF;
@@ -175,8 +185,8 @@ class SettingsPage(QWidget):
                 aab.setAutoFillBackground(True)
                 aab.setFixedSize(25, 200)
                 aab.acceptDrops()
-                aaa.addWidget(aab, 0, i*2)
-                aaa.setAlignment(aab, Qt.AlignTop)
+                piano.addWidget(aab, 0, i*2)
+                piano.setAlignment(aab, Qt.AlignTop)
                 aab.setIconSize(QSize(60, 60))
                 aab.setStyleSheet("""
                     color: #666666;
@@ -196,8 +206,8 @@ class SettingsPage(QWidget):
                 s = QToolButton()
                 s.setAutoFillBackground(True)
                 s.setFixedSize(25, 200)
-                aaa.addWidget(s, 0, i*2)
-                aaa.setAlignment(s, Qt.AlignTop)
+                piano.addWidget(s, 0, i*2)
+                piano.setAlignment(s, Qt.AlignTop)
                 s.setStyleSheet("""
                     color: transparent;
                     background-color: transparent;
@@ -211,14 +221,15 @@ class SettingsPage(QWidget):
                     border-radius: 10px;
                 """)
 
+        # invisible spacer that pushes the keys closer together to eliminate the space between keys
         for i in range(29, 36):
-            s = QToolButton()
-            s.setText("T" + str(i))
-            s.setAutoFillBackground(True)
-            s.setFixedSize(25, 400)
-            aaa.addWidget(s, 0, i)
-            aaa.setAlignment(s, Qt.AlignTop)
-            s.setStyleSheet("""
+            spacer = QToolButton()
+            spacer.setText("T" + str(i))
+            spacer.setAutoFillBackground(True)
+            spacer.setFixedSize(25, 400)
+            piano.addWidget(spacer, 0, i)
+            piano.setAlignment(spacer, Qt.AlignTop)
+            spacer.setStyleSheet("""
                     color: transparent;
                     background-color: transparent;
                     border-color: transparent;
@@ -231,34 +242,10 @@ class SettingsPage(QWidget):
                     border-radius: 10px;
                 """)
 
-        piano_spacer = QHBoxLayout()
-        piano_spacer.addLayout(aaa)
+        #piano_spacer = QHBoxLayout()
+        #piano_spacer.addLayout(piano)
 
-        vbox.addLayout(piano_spacer)
-
-        #### gpthbox = QHBoxLayout()
-        #### gptgrid = QGridLayout()
-        #### for i in range(12):
-        ####     button = QPushButton()
-        ####     row = 0
-        ####     if i % 2 == 1:
-        ####         row = 0
-        ####         if i in [5, 13, 19]:
-        ####             button.setStyleSheet("background-color: transparent; color: transparent; border-radius: 0px;")
-        ####         else:
-        ####             button.setStyleSheet("background-color: black; color: white; border-radius: 0px;")
-        ####         button.setFixedSize(5, 200)
-        ####     else:
-        ####         row = 1
-        ####         button.setStyleSheet("background-color: white; color: black; border-radius: 0px;")
-        ####         button.setFixedSize(5, 400)
-        ####     ## gpthbox.addWidget(button)
-        ####     gptgrid.addWidget(button, row, i)
-        ####     ##gpthbox.setAlignment(button, Qt.AlignTop)
-
-        #### ##gpthbox.setSpacing(10)
-        #### gptgrid.setVerticalSpacing(0)
-        #### vbox.addLayout(gptgrid)
+        vbox.addLayout(piano)
 
         self.initUI()
 
