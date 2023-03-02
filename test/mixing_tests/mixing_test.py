@@ -17,6 +17,7 @@ class TestDeactivate():
         time.sleep(.5) #Allow for creation of sub threads
 
         component.deactivate()
+        component.comm_system.deactivate()
 
         component.join()
 
@@ -35,6 +36,7 @@ class TestRun:
         time.sleep(.5) #Allow for creation of sub threads
 
         component.deactivate()
+        component.comm_system.deactivate()
 
         component.join()
     
@@ -91,6 +93,8 @@ class TestStateChanges:
 
         assert component.state == PlayingState.PLAY
 
+        component.comm_system.deactivate()
+
     def test_play_when_paused(self):
         dummy_queue = Queue()
         component = Mixing(dummy_queue, dummy_queue)
@@ -102,6 +106,8 @@ class TestStateChanges:
         component.play_pushed()
 
         assert component.state == PlayingState.PLAY
+
+        component.comm_system.deactivate()
     
     def test_pause_when_playing(self):
         dummy_queue = Queue()
@@ -114,6 +120,8 @@ class TestStateChanges:
         component.pause_pushed()
 
         assert component.state == PlayingState.PAUSE
+
+        component.comm_system.deactivate()
     
 
     def test_pause_when_paused(self):
@@ -127,6 +135,8 @@ class TestStateChanges:
         component.pause_pushed()
 
         assert component.state == PlayingState.PLAY
+
+        component.comm_system.deactivate()
     
     def test_stop_when_playing(self):
         dummy_queue = Queue()
@@ -140,6 +150,8 @@ class TestStateChanges:
 
         assert component.state == PlayingState.STOP
 
+        component.comm_system.deactivate()
+
     def test_stop_when_paused(self):
         dummy_queue = Queue()
         component = Mixing(dummy_queue, dummy_queue)
@@ -151,6 +163,8 @@ class TestStateChanges:
         component.stop_pushed()
 
         assert component.state == PlayingState.STOP
+
+        component.comm_system.deactivate()
 # class TestPause:
 #     def test_pause_turns_off_notes(self):
 #         dummy_queue = Queue()
