@@ -5,6 +5,7 @@ from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
 from src.user_interface.settings_page import SettingsPage
 from src.user_interface.ui_comm import UICommSystem
+from src.user_interface.loading_dialog import LoadingDialog, WorkerThread
 
 
 class MainPage(QWidget, Thread):
@@ -19,8 +20,8 @@ class MainPage(QWidget, Thread):
         self.loading_thread = WorkerThread()
         self.loading_thread.progress_signal.connect(self.loading_dialog.update_progress)
         self.loading_thread.finished.connect(self.loading_dialog.hide)
-        self.loading_thread.finished.connect(self.loading_thread.deleteLater)
-        self.loading_thread.finished.connect(self.loading_dialog.deleteLater)
+        #self.loading_thread.finished.connect(self.loading_thread.deleteLater)
+        #self.loading_thread.finished.connect(self.loading_dialog.deleteLater)
 
         page_color = 'fbfaf4';
         font_color = '006d7a';
