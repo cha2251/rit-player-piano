@@ -34,7 +34,7 @@ def output_queue(mocker):
 
     mock_open_output = mocker.patch("mido.open_output")
     mock_open_output.return_value = dummy_port
-
+    
     return output_queue
 
 @pytest.fixture
@@ -76,6 +76,7 @@ class TestRun:
     def test_deactivate(self):
         output_queue = OutputQueue(multiprocessing.Queue(), multiprocessing.Queue())
         output_queue.deactivate()
+        output_queue.comm_system.deactivate()
     
     def test_empty_queue(self, output_queue_process):
         output_queue_process.select_device(DUMMY_PORT_NAME)
@@ -86,6 +87,8 @@ class TestRun:
 
         assert actual_sent_messages is expected_sent_messages
 
+        output_queue_process.comm_system.deactivate()
+
     def test_no_open_port(self, output_queue_process):
         output_queue_process.queue.put(None)
         output_queue_process._check_priority_queue()
@@ -94,6 +97,8 @@ class TestRun:
         actual_unsent_messages = output_queue_process.queue.qsize()
 
         assert actual_unsent_messages is expected_unsent_messages
+
+        output_queue_process.comm_system.deactivate()
 
     def test_one_message(self, output_queue_process):
         test_message = MidiEvent(mido.Message('note_on',note=60), 42)
@@ -112,6 +117,8 @@ class TestRun:
         assert actual_sent_messages is expected_sent_messages
         assert actual_sent_event is expected_sent_event
 
+        output_queue_process.comm_system.deactivate()
+
     def test_future_message(self, output_queue_process):
         test_message = MidiEvent(mido.Message('note_on',note=60), FAR_FUTURE_TIMESTAMP)
         output_queue_process.select_device(DUMMY_PORT_NAME)
@@ -124,6 +131,8 @@ class TestRun:
         actual_sent_messages = len(output_queue_process._open_port.sent_messages)
 
         assert actual_sent_messages is expected_sent_messages
+
+        output_queue_process.comm_system.deactivate()
 
     def test_many_messages(self, output_queue_process):
         expected_past_messages = 5
@@ -152,3 +161,5 @@ class TestRun:
         # Assert that each past message exists in the sent messages (already length checked)
         for i in range(expected_past_messages):
             assert past_messages[i].event in output_queue_process._open_port.sent_messages
+
+        output_queue_process.comm_system.deactivate()
