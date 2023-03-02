@@ -8,9 +8,12 @@ from src.user_interface.ui_comm import UICommSystem
 
 
 class MainPage(QWidget, Thread):
-    def __init__(self, shutdown, output): # TODO CHA-PROC Remove passing output system
+    def __init__(self, input_queue, output_queue):
         super().__init__()
         Thread.__init__(self)
+        self.comm_system = UICommSystem()
+        self.comm_system.set_queues(input_queue,output_queue)
+        self.comm_system.start()
 
         page_color = 'fbfaf4';
         font_color = '006d7a';
@@ -74,12 +77,6 @@ class MainPage(QWidget, Thread):
         """
         qApp.setStyleSheet(style)
 
-        self.comm_system = UICommSystem()
-        self.comm_system.start()
-
-        self.shutdown = shutdown
-        self.output = output
-
         self.title = 'Player Piano'
         self.left = 100
         self.top = 50
@@ -93,7 +90,7 @@ class MainPage(QWidget, Thread):
         self.home_page.nav_settings.clicked.connect(self.go_to_settings_page)
         self.home_page.pick_song_lambda = lambda song: self.update_playing_page_song(song)
 
-        self.play_page = PlayingPage(output=self.output)
+        self.play_page = PlayingPage()
         self.play_page.nav_home.clicked.connect(self.go_to_home_page)
 
         self.settings_page = SettingsPage()
@@ -122,7 +119,8 @@ class MainPage(QWidget, Thread):
         self.comm_system.send(Message(MessageType.SONG_UPDATE,song_name))
 
     def closeEvent(self, event):
-        self.shutdown()
+        self.comm_system.send(Message(MessageType.SYSTEM_STOP))
+        print("System Shutdown Started")
         event.accept()
 
 

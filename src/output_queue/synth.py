@@ -4,7 +4,7 @@ import pyaudio
 import itertools
 import numpy as np
 
-BUFFER_SIZE = 16
+BUFFER_SIZE = 128
 SAMPLE_RATE = 32000
 NOTE_AMPLITUDE = 0.05
 

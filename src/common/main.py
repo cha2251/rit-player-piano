@@ -1,113 +1,69 @@
-import multiprocessing
-import sys
-import time
-from threading import Thread
+# freeze_support must run before imports
+from multiprocessing import Process, freeze_support, Queue
 from PyQt5.QtWidgets import QApplication
 from src.communication.comm_system import CommSystem
-from src.mixing.mixing_comm import MixingCommSystem
-from src.output_queue.output_comm import OutputCommSystem
+from src.communication.messages import Message, MessageType
 import src.user_interface.main_page
-from src.common.midi_event import MidiEvent
 from src.mixing.mixing import Mixing
 from src.output_queue.output_queue import OutputQueue
-from src.common.shared_queues import SharedQueues
-from src.file_input.file_input import FileInput
-from src.button_input.button_input import ButtonInput
 import mido
-import mido.backends.rtmidi # Needed for windows builds w/ pyinstaller
-
-CONSOLE_MODE = True # Set to True to allow for console commands
+import mido.backends.rtmidi
+from src.user_interface.ui_comm import UICommSystem # Needed for windows builds w/ pyinstaller
 
 class Main:
-    process_queues = None
-    shared_queues = None # TODO CHA-PROC Delete when processes are introduced
-    mixing = None
-    file_input = None
-    button_input = None
-    output = None
-    comm_system = None
-
     def __init__(self):
         pass
 
     def main(self):
         mido.set_backend("mido.backends.rtmidi")
         print("Using Mido backend: {}".format(mido.backend))
-
-        print("Creating Shared Queues")
+        
         self.create_queues()
-        print("Creating Comm Subsystem")
-        self.create_comm()
-        print("Creating Output Subsystem")
-        self.create_output()
-        print("Creating File Subsystem")
-        self.create_file_input()
-        print("Creating Button Subsystem")
-        self.create_button_input()
-        print("Creating Mixing Subsystem")
-        self.create_mixing()
 
-        self.comm_system.start()
-        self.output.start()
-        self.file_input.start()
-        self.button_input.run()
+        print("Starting Comm Process")
+        Process(target=self.create_comm, args=(
+            [self.mixing_input_queue,self.ui_input_queue,self.output_input_queue],
+            [self.mixing_output_queue,self.ui_output_queue,self.output_output_queue],
+            )).start()
+        
+        print("Starting Output Process")
+        Process(target=self.create_output, args=(self.output_input_queue, self.output_output_queue,)).start()
+
+        print("Starting Mixing Process")
+        Process(target=self.create_mixing, args=(self.mixing_input_queue, self.mixing_output_queue,)).start()
+        
+        print("Starting UI Process")
+        self.init_UI()
+
+
+    def create_comm(self, input_queues, output_queues):
+        self.comm_system = CommSystem(output_queues, input_queues) # Switch due to naming convetions
+        self.comm_system.run()
+
+    def create_mixing(self, input_queue, output_queue):
+        self.mixing = Mixing(input_queue, output_queue)
         self.mixing.start()
 
-        #init UI
-        x = Thread(target=self.init_UI)
-        x.start()
-
-        print("Type `quit` to quit")
-
-        while(CONSOLE_MODE and x.is_alive()):
-            command = input()
-            if command == 'quit':
-                break
-            if command == 'off':
-                self.file_input.deactivate()
-                self.shared_queues.file_input_queue.queue.clear()
-            if command == 'pause':
-                self.mixing.pause_pushed()
-            if command == 'play':
-                self.mixing.play_pushed()
-            if command == 'stop':
-                self.mixing.stop_pushed()
-
-        while(x.is_alive()): # Do not shutdown until UI is closed
-            pass
-
-        self.shutdown()
-        
-        
-
-    def shutdown(self):
-        self.output.deactivate()
-        self.button_input.deactivate()
-        self.mixing.deactivate()
-        self.file_input.deactivate()
-        self.shared_queues.deactivate()
-        self.comm_system.deactivate()
-        print("System Shutdown Succesfully")
-
-    def create_comm(self):
-        self.comm_system = CommSystem()
-
-    def create_mixing(self):
-        self.mixing = Mixing(self.shared_queues)
-
-    def create_output(self):
-        self.output = OutputQueue(self.shared_queues.mixed_output_queue)
-        self.output.select_device()
+    def create_output(self, input_queue, output_queue):
+        self.output = OutputQueue(input_queue, output_queue)
+        self.output.run()
 
     def create_queues(self):
-        self.shared_queues = SharedQueues()
-        self.shared_queues.create_queues()
+        # Queues are named relative to local system
+        self.mixing_input_queue = Queue()
+        self.ui_input_queue = Queue()
+        self.output_input_queue = Queue()
+        self.mixing_output_queue = Queue()
+        self.ui_output_queue = Queue()
+        self.output_output_queue = Queue()
 
-    def create_file_input(self):
-        self.file_input = FileInput(self.shared_queues.file_input_queue)
-
-    def create_button_input(self):
-        self.button_input = ButtonInput(self.shared_queues.button_input_queue)
+    def destroy_queues(self):
+        self.mixing_input_queue.close()
+        self.ui_input_queue.close()
+        self.output_input_queue.close()
+        self.mixing_output_queue.close()
+        self.ui_output_queue.close()
+        self.output_output_queue.close()
 
     def init_UI(self):
         app = QApplication([])
@@ -140,13 +96,13 @@ class Main:
         }
         """
         app.setStyleSheet(style)
-        window = src.user_interface.main_page.MainPage(self.shutdown,self.output)
+        window = src.user_interface.main_page.MainPage(self.ui_input_queue, self.ui_output_queue)
         window.show()
         app.exec_()
-
+        self.destroy_queues()
 
 
 if __name__ == "__main__":
-    multiprocessing.freeze_support() # Needed for mulitple processors with pyinstaller
+    freeze_support()
     main = Main()
     main.main()
