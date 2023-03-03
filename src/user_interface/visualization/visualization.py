@@ -39,13 +39,13 @@ class VisualizationConfig:
 
 
 class VisualizationWidget(QWidget):
-    def __init__(self, parent=None, output=None):
+    def __init__(self, parent=None):
         super().__init__(parent=parent)
 
         self.config = VisualizationConfig()
 
-        self.notes_widget = NotesWidget(self.config, parent=self, output=output)
-        self.piano_widget = PianoWidget(self.config, parent=self, output=output)
+        self.notes_widget = NotesWidget(self.config, parent=self)
+        self.piano_widget = PianoWidget(self.config, parent=self)
 
         hbox = QHBoxLayout(self)
 

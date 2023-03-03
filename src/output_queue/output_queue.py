@@ -103,6 +103,7 @@ class OutputQueue():
                     self.stop()
 
             if self.queue.peek() is not None and self.state == PlayingState.PLAY:
+                print("oq: {}".format(time.time() - self.last_note_time_played + self.last_note_timestamp))
                 if self.last_note_time_played - self.last_note_timestamp <= now - self.queue.peek().timestamp:
                     midiEvent = self.queue.get()
                     self.last_note_time_played = now
@@ -114,9 +115,13 @@ class OutputQueue():
                     elif midiEvent.event.type == "note_on":
                         self.playing_notes[midiEvent.event.note] = midiEvent.event
 
-                    self._open_port.send(midiEvent.event)
+                    self._send_midi_event(midiEvent)
         except IndexError:
             pass # Expected when the queue is empty
+
+    def _send_midi_event(self, midiEvent: MidiEvent):
+        self._open_port.send(midiEvent.event)
+        self.comm_system.send(Message(MessageType.NOTE_OUTPUT, midiEvent))
 
     def play(self):
         if self.last_note_timestamp is not None:
@@ -124,7 +129,7 @@ class OutputQueue():
             self.last_note_timestamp += time.time()
 
             for event in self.playing_notes.values():
-                self._open_port.send(event)
+                self._send_midi_event(event)
         else:
             # If we are starting from the beginning, clear the queue and reset the timestamp
             self.last_note_timestamp = 0
@@ -136,7 +141,7 @@ class OutputQueue():
 
         # Turn off all notes currently playing
         for event in self.playing_notes.values():
-            self._open_port.send(mido.Message('note_off', note=event.note))
+            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
 
     def stop(self):
         self.last_note_timestamp = None # Signals that we removed all notes from the queue and want to start over
@@ -144,7 +149,7 @@ class OutputQueue():
 
         # Turn off all notes currently playing and clear everything
         for event in self.playing_notes.values():
-            self._open_port.send(mido.Message('note_off', note=event.note))
+            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
         self.playing_notes.clear()
         self.queue.clear()
 

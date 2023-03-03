@@ -91,13 +91,13 @@ class PlayingPage(QWidget):
 
         vbox = QVBoxLayout(self)
         vbox.addWidget(self.nav_home)
-        vbox.addLayout(song_hbox)
+        # vbox.addLayout(song_hbox)
 
         ############################################################
         ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
         ############################################################
 
-        #vbox.addWidget(VisualizationWidget(parent=self, output=output)) # TODO CHA-PROC Readd
+        vbox.addWidget(VisualizationWidget(parent=self))
         vbox.addLayout(hbox)
 
         self.initUI()
