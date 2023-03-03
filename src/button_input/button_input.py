@@ -76,7 +76,6 @@ class ButtonInput:
     def add_controller_note(self, button : ControllerButton, state):
         if state == 1:
             for note in self.get_notes(button):
-                print(note)
                 self.button_input_queue.put(
                     MidiEvent(mido.Message('note_on', note=note, velocity=120), 0))
         else:
