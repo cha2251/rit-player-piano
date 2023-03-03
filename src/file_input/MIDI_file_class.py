@@ -37,6 +37,8 @@ class MIDIFileObject:
             self.messages = self.parse_midi_file(file_name)
         except EOFError: #TODO: For freeplay song, this is thrown. Need to handle this better
             self.messages = []
+        self.hand_to_play = ""
+
 
 
     def __str__(self):
@@ -92,6 +94,22 @@ class MIDIFileObject:
         if self.curr_tempo is None or self.curr_time_signature is None:
             return None
         
+    
+    def is_correct_hand(self, note_num):
+        """
+        If the given note is not on the hand_to_play side return false
+        """
+        #print(self.hand_to_play)
+        if self.hand_to_play == "right":
+            if note_num >= 60:
+                return True
+        elif self.hand_to_play == "left":
+            if note_num <= 60:
+                return True
+        elif self.hand_to_play == "":
+            return True
+        return False
+        
 
     def parse_midi_file(self, file_name):
         """Parse the designated MIDI file and retrieve the selected track.
@@ -125,10 +143,19 @@ class MIDIFileObject:
 
             curr_time += delta
 
-            track_messages.append(MidiEvent(msg,curr_time))
+            if msg.type == 'note_on':
+                if self.is_correct_hand(msg.note):
+                    track_messages.append(MidiEvent(msg,curr_time, True))
+                else:
+                    track_messages.append(MidiEvent(msg,curr_time, False))
+            else:
+                track_messages.append(MidiEvent(msg,curr_time, True))
 
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
                 
         return track_messages
 
+
+    def set_hand_to_play(self, hand):
+        self.hand_to_play = hand

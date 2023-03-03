@@ -111,10 +111,23 @@ class OutputQueue():
                     if midiEvent.event.type == "note_off" or midiEvent.event.velocity == 0:
                         if midiEvent.event.note in self.playing_notes.keys():
                             del self.playing_notes[midiEvent.event.note]
-                    elif midiEvent.event.type == "note_on":
+                    elif midiEvent.event.type == "note_on":                        
                         self.playing_notes[midiEvent.event.note] = midiEvent.event
 
-                    self._open_port.send(midiEvent.event)
+
+                    if midiEvent.event.type == "note_on" and midiEvent.play_note:
+                        """ TODO: Here's where we filter for the split hands.
+                        If the note is not on the correct hand it will not be sent.
+                        If the note should be sent anyway, this should be adjusted.
+                        """
+                        
+                        self._open_port.send(midiEvent.event)
+                    elif midiEvent.event.type == "note_on" and not midiEvent.play_note:
+                        pass # do nothing
+                    else:
+                        self._open_port.send(midiEvent.event)
+
+                    #self._open_port.send(midiEvent.event)
         except IndexError:
             pass # Expected when the queue is empty
 
@@ -125,6 +138,7 @@ class OutputQueue():
 
             for event in self.playing_notes.values():
                 self._open_port.send(event)
+
         else:
             # If we are starting from the beginning, clear the queue and reset the timestamp
             self.last_note_timestamp = 0
