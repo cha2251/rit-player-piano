@@ -53,10 +53,12 @@ class XboxController:
         self.add_controller_note = add_controller_note
         self.active = True
         self.controller_listener = threading.Thread(target=self.listener, args=())
+        self.controller_listener.daemon = True
         self.controller_listener.start()
 
     def listener(self):
         while self.active:
+            print('GOING')
             events = get_gamepad()
             for event in events:
                 if event.code in self.event_button_map:
