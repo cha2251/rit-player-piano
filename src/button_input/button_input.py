@@ -93,4 +93,3 @@ class ButtonInput:
     def deactivate(self):
         self.controller.deactivate()
         self.keyboard_listener.stop()
-        self.keyboard_listener.join()
