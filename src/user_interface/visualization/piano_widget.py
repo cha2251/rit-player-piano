@@ -21,7 +21,7 @@ class PianoWidget(QWidget):
         self.setBaseSize(self.sizeHint())
 
     def on_note_output(self, message):
-        midiEvent = message.data
+        midiEvent = message.data.event
         if midiEvent.event.type == "note_off" or midiEvent.event.velocity == 0:
             if midiEvent.event.note in self.playing_notes:
                 self.playing_notes.remove(midiEvent.event.note)
