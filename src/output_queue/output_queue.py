@@ -127,6 +127,8 @@ class OutputQueue():
                     else:
                         self._open_port.send(midiEvent.event)
 
+                    
+
                     #self._open_port.send(midiEvent.event)
         except IndexError:
             pass # Expected when the queue is empty
