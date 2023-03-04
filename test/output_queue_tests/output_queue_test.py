@@ -101,7 +101,7 @@ class TestRun:
         output_queue_process.comm_system.deactivate()
 
     def test_one_message(self, output_queue_process):
-        test_message = MidiEvent(mido.Message('note_on',note=60), 42)
+        test_message = MidiEvent(mido.Message('note_on',note=60,), 42, True)
         output_queue_process.select_device(DUMMY_PORT_NAME)
         output_queue_process.state = PlayingState.PLAY
 
@@ -120,7 +120,7 @@ class TestRun:
         output_queue_process.comm_system.deactivate()
 
     def test_future_message(self, output_queue_process):
-        test_message = MidiEvent(mido.Message('note_on',note=60), FAR_FUTURE_TIMESTAMP)
+        test_message = MidiEvent(mido.Message('note_on',note=60), FAR_FUTURE_TIMESTAMP, True)
         output_queue_process.select_device(DUMMY_PORT_NAME)
         output_queue_process.state = PlayingState.PLAY
 
@@ -141,12 +141,12 @@ class TestRun:
         output_queue_process.state = PlayingState.PLAY
 
         for i in range(expected_past_messages):
-            test_message = MidiEvent(mido.Message('note_on', note=60), 0)
+            test_message = MidiEvent(mido.Message('note_on', note=60), 0, True)
             past_messages += [test_message]
             output_queue_process.queue.put(test_message)
 
         for i in range(expected_future_messages):
-            output_queue_process.queue.put(MidiEvent(mido.Message('note_on', note=60), FAR_FUTURE_TIMESTAMP + i * 10))
+            output_queue_process.queue.put(MidiEvent(mido.Message('note_on', note=60), FAR_FUTURE_TIMESTAMP + i * 10, True))
 
         output_queue_process.select_device(DUMMY_PORT_NAME)
         for i in range(expected_past_messages + expected_future_messages + 1):
