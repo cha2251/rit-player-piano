@@ -97,7 +97,7 @@ class Main:
         """
         app.setStyleSheet(style)
         window = src.user_interface.main_page.MainPage(self.ui_input_queue, self.ui_output_queue)
-        window.show()
+        window.showMaximized()
         app.exec_()
         self.destroy_queues()
 

@@ -21,6 +21,7 @@ class HomePage(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
+
         # button = QPushButton('PyQt5 button', self)
         # button.setIcon(QIcon(r"images\play-solid.svg"))
         # button.setIconSize(QSize(65, 65))
@@ -59,11 +60,9 @@ class HomePage(QWidget):
         # vbox.addLayout(hbox)
         # vbox.addWidget(button)
         # vbox.setAlignment(Qt.AlignCenter)
-        self.initUI()
-
-    def initUI(self):
-        self.showFullScreen()
-        # self.showMaximized()
+        #self.showFullScreen()
+        self.setLayout(vbox)
+        self.showMaximized()
 
     @pyqtSlot()
     def on_click(self):

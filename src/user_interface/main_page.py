@@ -118,23 +118,22 @@ class MainPage(QWidget, Thread):
         self.stackLayout.addWidget(self.settings_page)
 
         self.showMaximized()
-        # self.showFullScreen()
-        #self.show()
+        #self.showFullScreen()
 
     def go_to_home_page(self):
-        self.loading_dialog.show()
+        self.loading_dialog.showMaximized()
         self.loading_thread.start()
         #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(0)
 
     def go_to_play_page(self):
-        self.loading_dialog.show()
+        self.loading_dialog.showMaximized()
         self.loading_thread.start()
         #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(1)
 
     def go_to_settings_page(self):
-        self.loading_dialog.show()
+        self.loading_dialog.showMaximized()
         self.loading_thread.start()
         #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(2)

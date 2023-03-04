@@ -24,12 +24,14 @@ class SettingsPage(QWidget):
         self.nav_home.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "navigation", "back-arrow.svg")))
 
         self.title = 'PLayer Piano'
-        self.left = 100
-        self.top = 50
-        self.width = 320
-        self.height = 200
         self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+
+        ########################################################
+        # This appears to fix the resizing issue by preventing
+        # the window from getting bigger. This does not seem
+        # like the optimal fix but it works ¯\_(ツ)_/¯ ~dsp9049
+        self.setMaximumWidth(1920)
+        ########################################################
         self.keys = []
 
         # button = QPushButton('PyQt5 button', self)
@@ -247,10 +249,7 @@ class SettingsPage(QWidget):
 
         vbox.addLayout(piano)
 
-        self.initUI()
-
-    def initUI(self):
-        # self.showFullScreen()
+        #self.showFullScreen()
         self.showMaximized()
 
     @pyqtSlot()
