@@ -7,10 +7,8 @@ import src.user_interface.main_page
 from src.mixing.mixing import Mixing
 from src.output_queue.output_queue import OutputQueue
 import mido
-import mido.backends.rtmidi # Needed for windows builds w/ pyinstaller
-
-CONSOLE_MODE = True  # Set to True to allow for console commands
-
+import mido.backends.rtmidi
+from src.user_interface.ui_comm import UICommSystem # Needed for windows builds w/ pyinstaller
 
 class Main:
     def __init__(self):
@@ -19,53 +17,23 @@ class Main:
     def main(self):
         mido.set_backend("mido.backends.rtmidi")
         print("Using Mido backend: {}".format(mido.backend))
-        
+
         self.create_queues()
-        print("Creating Comm Subsystem")
-        self.create_comm()
-        print("Creating Output Subsystem")
-        self.create_output()
-        print("Creating File Subsystem")
-        self.create_file_input()
-        print("Creating Button Subsystem")
-        self.create_button_input()
-        print("Creating Mixing Subsystem")
-        self.create_mixing()
 
-        self.comm_system.start()
-        self.output.start()
-        self.file_input.start()
-        self.button_input.run()
-        self.mixing.start()
+        print("Starting Comm Process")
+        Process(target=self.create_comm, args=(
+            [self.mixing_input_queue,self.ui_input_queue,self.output_input_queue],
+            [self.mixing_output_queue,self.ui_output_queue,self.output_output_queue],
+        )).start()
 
-        # init UI
-        x = Thread(target=self.init_UI)
-        x.start()
+        print("Starting Output Process")
+        Process(target=self.create_output, args=(self.output_input_queue, self.output_output_queue,)).start()
 
-        # init UI
-        x = Thread(target=self.init_UI, args=(self.shutdown,))
-        x.start()
+        print("Starting Mixing Process")
+        Process(target=self.create_mixing, args=(self.mixing_input_queue, self.mixing_output_queue,)).start()
 
-        print("Type `quit` to quit")
-
-        while (CONSOLE_MODE and x.is_alive()):
-            command = input()
-            if command == 'quit':
-                break
-            if command == 'off':
-                self.file_input.deactivate()
-                self.shared_queues.file_input_queue.queue.clear()
-            if command == 'pause':
-                self.mixing.pause_pushed()
-            if command == 'play':
-                self.mixing.play_pushed()
-            if command == 'stop':
-                self.mixing.stop_pushed()
-
-        while (x.is_alive()):  # Do not shutdown until UI is closed
-            pass
-
-        self.shutdown()
+        print("Starting UI Process")
+        self.init_UI()
 
 
     def create_comm(self, input_queues, output_queues):
@@ -132,6 +100,7 @@ class Main:
         window.show()
         app.exec_()
         self.destroy_queues()
+
 
 if __name__ == "__main__":
     freeze_support()

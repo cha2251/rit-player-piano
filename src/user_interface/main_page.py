@@ -91,14 +91,6 @@ class MainPage(QWidget, Thread):
         """
         qApp.setStyleSheet(style)
 
-        self.comm_system = UICommSystem()
-        self.comm_system.start()
-
-        self.shutdown = shutdown
-
-        self.mixing_system = mixing
-        self.file_input = file_input
-        self.output = output
 
         self.title = 'Player Piano'
         self.left = 100
