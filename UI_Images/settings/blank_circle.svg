@@ -9,7 +9,7 @@
    class="si-glyph si-glyph-button-arrow-up"
    fill="#000000"
    id="svg17"
-   sodipodi:docname="button-arrow-up.svg"
+   sodipodi:docname="blank_circle.svg"
    inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,9 +26,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="1.0725"
-     inkscape:cx="400"
-     inkscape:cy="400.4662"
+     inkscape:zoom="1.5593736"
+     inkscape:cx="442.80601"
+     inkscape:cy="438.95831"
      inkscape:window-width="1920"
      inkscape:window-height="1051"
      inkscape:window-x="-9"
@@ -42,32 +42,9 @@
      id="SVGRepo_tracerCarrier"
      stroke-linecap="round"
      stroke-linejoin="round" />
-  <g
-     id="SVGRepo_iconCarrier"
-     transform="rotate(90,8.984,7.997)">
-    <title
-       id="title4">1187</title>
-    <defs
-       id="defs6" />
-    <g
-       stroke="none"
-       stroke-width="1"
-       fill="none"
-       fill-rule="evenodd"
-       id="g14">
-      <g
-         transform="translate(1)"
-         fill="#000000"
-         id="g12">
-        <path
-           d="m 7.984,0.057 c 4.389,0 7.959,3.562 7.959,7.941 0,4.377 -3.57,7.939 -7.959,7.939 -4.389,0 -7.959,-3.562 -7.959,-7.939 0,-4.379 3.571,-7.941 7.959,-7.941 z M 7.969,14.083 c 3.347,0 6.074,-2.729 6.074,-6.083 0,-3.353 -2.727,-6.083 -6.074,-6.083 -3.349,0 -6.073,2.73 -6.073,6.083 0,3.354 2.724,6.083 6.073,6.083 z"
-           class="si-glyph-fill"
-           id="path8" />
-        <path
-           d="M 10.975,7.906 7.973,4.002 5.022,7.907 h 2.003 v 3.264 c 0,0.344 0.324,0.79 0.955,0.79 0.63,0 0.975,-0.483 0.975,-0.826 V 7.906 h 2.02 z"
-           class="si-glyph-fill"
-           id="path10" />
-      </g>
-    </g>
-  </g>
+  <path
+     style="fill:#000000;stroke:none;stroke-width:0.0479093"
+     d="M 3.1404445,1.5184477 C 2.5299741,1.5520463 2.5451958,1.5352439 2.1366407,2.0133063 1.8807065,2.3127835 1.9211519,2.7430827 1.921735,3.1082853 1.923295,4.0865746 2.0908709,5.096003 2.2952266,6.039597 c 0.5448202,4.075265 3.5329729,8.185574 7.0777956,8.731993 1.3190218,0.175016 2.7333338,0.229119 4.0599968,0.0694 0.471298,-0.05675 0.883645,-0.07682 1.234669,-0.465506 C 15.767386,13.888608 15.929624,2.2331508 15.122184,1.8570364 14.455499,1.4303949 13.927695,1.5586118 13.385282,1.5152712"
+     id="path1320"
+     sodipodi:nodetypes="ccccccccc" />
 </svg>
