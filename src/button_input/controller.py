@@ -50,7 +50,7 @@ class XboxController:
             'BTN_DPAD_DOWN': ControllerButton.DownDPad
         }
 
-        self.add_controller_note = add_controller_note
+        self.on_controller_update = on_controller_update
         self.active = True
         self.controller_listener = threading.Thread(target=self.listener, args=())
         self.controller_listener.daemon = True
@@ -58,11 +58,10 @@ class XboxController:
 
     def listener(self):
         while self.active:
-            print('GOING')
             events = get_gamepad()
             for event in events:
                 if event.code in self.event_button_map:
-                    self.add_controller_note(self.event_button_map[event.code], event.state)
+                    self.on_controller_update(self.event_button_map[event.code], event.state)
 
     def deactivate(self):
         self.active = False

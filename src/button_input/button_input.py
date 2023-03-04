@@ -30,7 +30,7 @@ class ButtonInput:
         
         self.keyboard_listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.keyboard_listener.start()
-        self.controller = XboxController(self.add_controller_note)
+        self.controller = XboxController(self.on_controller_update)
 
     # Updates the keymap with a new set of mappings
     def change_map(self, keyMap):
@@ -73,7 +73,7 @@ class ButtonInput:
                     MidiEvent(mido.Message('note_off', note=note, velocity=120), 0))
             
     # Adds a note when a button on the controller is pressed
-    def add_controller_note(self, button : ControllerButton, state):
+    def on_controller_update(self, button : ControllerButton, state):
         if state == 1:
             for note in self.get_notes(button):
                 self.button_input_queue.put(
