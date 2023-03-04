@@ -163,6 +163,7 @@ class OutputQueue():
         self.select_device(None)
         while self.active:
             self._check_priority_queue()
+            time.sleep(0)
 
         self._open_port.close()
     

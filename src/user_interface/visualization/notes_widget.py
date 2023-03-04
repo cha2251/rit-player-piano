@@ -27,7 +27,7 @@ class NotesWidget(QWidget):
         self.comm_system.registerListener(MessageType.NOTE_OUTPUT, self.on_note_output)
 
         self.notes_queue = PeekingPriorityQueue()
-        self.widget_height = 750
+        self.widget_height = self.config.visualization_height
 
         self.state = PlayingState.STOP
         self.last_note_timestamp = None
@@ -176,7 +176,7 @@ class NotesWidget(QWidget):
 
         if self.last_note_timestamp is not None:
             # Restore the difference so that the timing remains correct
-            self.last_note_timestamp = time.time() - self.paused_delta_time
+            self.last_note_time_played = time.time() - self.paused_delta_time
         else:
             # If we are starting from the beginning, clear the queue and reset the timestamp
             self.last_note_timestamp = 0
@@ -224,8 +224,12 @@ class NotesWidget(QWidget):
         if self.state != PlayingState.PLAY:
             return
 
-        self.last_note_timestamp = message.data.event.timestamp
-        self.last_note_time_played = message.data.absolute_timestamp
+        relative_time = time.time() - self.last_note_time_played + self.last_note_timestamp
+
+        # Only resets if the difference is more than 100ms to prevent unnecessary jumping
+        if abs(relative_time - message.data.relative_timestamp) > 0.1:
+            self.last_note_timestamp = message.data.event.timestamp
+            self.last_note_time_played = message.data.absolute_timestamp
 
     def sizeHint(self):
         return QSize(self.config.octaves * 7 * self.config.key_width, self.widget_height)
