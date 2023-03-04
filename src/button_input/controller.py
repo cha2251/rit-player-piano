@@ -25,7 +25,7 @@ class ControllerButton(Enum):
     DownDPad = 20
 
 class XboxController:
-    def __init__(self, add_controller_note):
+    def __init__(self, on_controller_update):
         # Map of event codes to controller buttons
         self.event_button_map = {
             'ABS_Y': ControllerButton.LeftJoystickY,
