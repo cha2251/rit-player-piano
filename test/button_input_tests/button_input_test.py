@@ -35,6 +35,26 @@ class TestCreate:
 
         component.deactivate()
 
+
+class TestModify:
+    @pytest.mark.timeout(1)
+    def test_change_map(self):
+        testQueue = Queue()
+        component = ButtonInput(testQueue)
+        testDict = {'q': [1], 'w': 2}
+
+        assert component.keyMap != testDict
+
+        component.change_map(testDict)
+
+        expected = testDict
+        actual = component.keyMap
+
+        assert actual == expected
+
+        component.deactivate()
+
+
 class TestRun:
     @pytest.mark.timeout(1)
     def test_exits(self):
