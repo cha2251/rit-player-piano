@@ -1,35 +1,33 @@
 import queue
 from threading import Thread
 import time
-from src.common.midi_event import MidiEvent
-from src.common.shared_queues import SharedQueues
+from src.button_input.button_input import ButtonInput
+from src.file_input.file_input import FileInput
 from src.mixing.mixing_comm import MixingCommSystem
 from src.communication.messages import Message, MessageType, PlayingState
 import mido
 
 class Mixing(Thread):
-    file_input_queue: queue.Queue = None
-    button_input_queue: queue.Queue = None
-    mixed_output_queue: queue.PriorityQueue = None
+    file_input_queue = queue.Queue()
+    button_input_queue = queue.Queue()
     holding_queue: queue.PriorityQueue = None
     active = False
     state = PlayingState.STOP
-    current_pause_time = 0
-    total_pause_time = 0
 
     current_notes = {}
 
-    def __init__(self, shared_queues:SharedQueues):
+    def __init__(self, input_queue, output_queue):
         Thread.__init__(self)
-        self.file_input_queue = shared_queues.file_input_queue
-        self.button_input_queue = shared_queues.button_input_queue
-        self.mixed_output_queue = shared_queues.mixed_output_queue
         self.comm_system = MixingCommSystem()
+        self.comm_system.set_queues(input_queue, output_queue)
         self.comm_system.start()
-    
+        
     
     def run(self):
         self.active = True
+        self.file_input = FileInput(self.file_input_queue)
+        self.file_input.start()
+        self.button_input = ButtonInput(self.button_input_queue)
         self.startup()
         
     def startup(self):
@@ -40,6 +38,7 @@ class Mixing(Thread):
         self.comm_system.registerListener(MessageType.STATE_UPDATE, self.stateChanged)
         self.comm_system.registerListener(MessageType.MODE_UPDATE, self.modeChanged)
         self.comm_system.registerListener(MessageType.SONG_UPDATE, self.songChanged)
+        self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
 
     def stateChanged(self, message : Message):
         if message.data == PlayingState.PLAY:
@@ -78,52 +77,32 @@ class Mixing(Thread):
 
     def pause(self):
         self.state = PlayingState.PAUSE
-        self.current_pause_time= time.time()
-        
-        self.holding_queue = self.mixed_output_queue.get_and_clear_queue()
 
-        for note in self.current_notes.keys():
-            if(self.current_notes[note]=='note_on'):
-                event = mido.Message('note_off', note=note)
-                self.mixed_output_queue.put(MidiEvent(event, time.time()))
-    
     def unpause(self):
-        self.mixed_output_queue.set_queue(self.holding_queue)
-
-        self.holding_queue.clear()
-
-        self.total_pause_time += self.current_pause_time
         self.state = PlayingState.PLAY
     
     def stop(self):
         self.state = PlayingState.STOP
-        self.current_pause_time = 0
-        self.total_pause_time = 0
-
-        self.mixed_output_queue.get_and_clear_queue()
-
-        for note in self.current_notes.keys():
-            if(self.current_notes[note]=='note_on'):
-                event = mido.Message('note_off', note=note)
-                self.mixed_output_queue.put(MidiEvent(event, time.time()))
     
     def main_loop(self):
         while(self.active):
             try:
                 event = self.button_input_queue.get_nowait()
-                self.mixed_output_queue.put(event)
+                self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
             if(self.state == PlayingState.PLAY):
                 try:
                     event = self.file_input_queue.get_nowait()
                     self.current_notes.update({event.event.note:event.event.type})
-                    self.mixed_output_queue.put(event) # TODO CHA-PROC Switch to use Message and Comm system
+                    self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
                 except queue.Empty:
                     pass # Expected if we dont have anything in the queue
             time.sleep(0)
         
 
-    def deactivate(self):
-        self.comm_system.deactivate()
+    def deactivate(self, message=None):
+        print("Mixing System Deactivated")
         self.active = False
+        self.file_input.deactivate()
+        self.button_input.deactivate()

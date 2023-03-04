@@ -12,7 +12,7 @@ from src.user_interface.ui_comm import UICommSystem
 from src.user_interface.visualization.visualization import VisualizationWidget
 
 class PlayingPage(QWidget):
-    def __init__(self, output, song_name="DEFAULT"):
+    def __init__(self, song_name="DEFAULT"):
         super().__init__()
         self.nav_home = QToolButton()
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
