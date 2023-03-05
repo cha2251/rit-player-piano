@@ -7,6 +7,7 @@ import pytest
 import mido
 
 class TestDeactivate():
+    @pytest.mark.timeout(1)
     def test_set_false(self):
         dummy_queue = Queue()
         component = Mixing(dummy_queue, dummy_queue)
@@ -81,6 +82,7 @@ class TestRun:
     # assert test_event == actual
 
 class TestStateChanges:
+    @pytest.mark.timeout(1)
     def test_play_when_playing(self):
         dummy_queue = Queue()
         component = Mixing(dummy_queue, dummy_queue)
@@ -95,6 +97,7 @@ class TestStateChanges:
 
         component.comm_system.deactivate()
 
+    @pytest.mark.timeout(1)
     def test_play_when_paused(self):
         dummy_queue = Queue()
         component = Mixing(dummy_queue, dummy_queue)
@@ -108,7 +111,8 @@ class TestStateChanges:
         assert component.state == PlayingState.PLAY
 
         component.comm_system.deactivate()
-    
+   
+    @pytest.mark.timeout(1)
     def test_pause_when_playing(self):
         dummy_queue = Queue()
         component = Mixing(dummy_queue, dummy_queue)
@@ -122,8 +126,8 @@ class TestStateChanges:
         assert component.state == PlayingState.PAUSE
 
         component.comm_system.deactivate()
-    
-
+   
+    @pytest.mark.timeout(1)
     def test_pause_when_paused(self):
         dummy_queue = Queue()
         component = Mixing(dummy_queue, dummy_queue)
@@ -137,7 +141,8 @@ class TestStateChanges:
         assert component.state == PlayingState.PLAY
 
         component.comm_system.deactivate()
-    
+   
+    @pytest.mark.timeout(1)
     def test_stop_when_playing(self):
         dummy_queue = Queue()
         component = Mixing(dummy_queue, dummy_queue)
@@ -151,7 +156,8 @@ class TestStateChanges:
         assert component.state == PlayingState.STOP
 
         component.comm_system.deactivate()
-
+   
+    @pytest.mark.timeout(1)
     def test_stop_when_paused(self):
         dummy_queue = Queue()
         component = Mixing(dummy_queue, dummy_queue)
@@ -165,20 +171,3 @@ class TestStateChanges:
         assert component.state == PlayingState.STOP
 
         component.comm_system.deactivate()
-# class TestPause:
-#     def test_pause_turns_off_notes(self):
-#         dummy_queue = Queue()
-#         component = Mixing(dummy_queue, dummy_queue)
-
-#         testNote = 80
-
-#         component.current_notes = ({testNote:'note_on'})
-
-#         assert dummy_queue.qsize() == 0
-
-#         component.pause()
-
-#         actual = component.comm_system.output_queue.get_nowait()
-
-#         assert actual.data.event.type == 'note_off'
-#         assert actual.data.event.note == testNote

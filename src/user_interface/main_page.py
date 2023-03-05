@@ -5,6 +5,7 @@ from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
 from src.user_interface.settings_page import SettingsPage
 from src.user_interface.ui_comm import UICommSystem
+from src.user_interface.loading_dialog import LoadingDialog, WorkerThread, LoadingGif
 
 
 class MainPage(QWidget, Thread):
@@ -14,6 +15,16 @@ class MainPage(QWidget, Thread):
         self.comm_system = UICommSystem()
         self.comm_system.set_queues(input_queue,output_queue)
         self.comm_system.start()
+
+        self.loading_dialog = LoadingDialog()
+        self.loading_thread = WorkerThread()
+        self.loading_gif = LoadingGif()
+        self.loading_thread.progress_signal.connect(self.loading_dialog.update_progress)
+        self.loading_thread.finished.connect(self.loading_dialog.hide)
+        
+        #self.loading_thread.finished.connect(self.loading_gif.hide)
+        #self.loading_thread.finished.connect(self.loading_thread.deleteLater)
+        #self.loading_thread.finished.connect(self.loading_dialog.deleteLater)
 
         page_color = 'fbfaf4';
         font_color = '006d7a';
@@ -106,12 +117,21 @@ class MainPage(QWidget, Thread):
         # self.showFullScreen()
 
     def go_to_home_page(self):
+        self.loading_dialog.show()
+        self.loading_thread.start()
+        #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(0)
 
     def go_to_play_page(self):
+        self.loading_dialog.show()
+        self.loading_thread.start()
+        #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(1)
 
     def go_to_settings_page(self):
+        self.loading_dialog.show()
+        self.loading_thread.start()
+        #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(2)
 
     def update_playing_page_song(self, song_name):
