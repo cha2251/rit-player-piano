@@ -91,7 +91,7 @@ class PlayingPage(QWidget):
 
         vbox = QVBoxLayout(self)
         vbox.addWidget(self.nav_home)
-        # vbox.addLayout(song_hbox)
+        vbox.addLayout(song_hbox)
 
         ############################################################
         ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
