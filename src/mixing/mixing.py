@@ -88,12 +88,17 @@ class Mixing(Thread):
         while(self.active):
             try:
                 event = self.button_input_queue.get_nowait()
-                self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
+                self.comm_system.send(Message(MessageType.BUTTON_NOTE,event))
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
             if(self.state == PlayingState.PLAY):
                 try:
                     event = self.file_input_queue.get_nowait()
+
+                    # if event.event.type == 'note_on' and event.event.note >= 60:
+                    #     event.should_play = False
+                    #     event.split_note = True
+
                     self.current_notes.update({event.event.note:event.event.type})
                     self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
                 except queue.Empty:

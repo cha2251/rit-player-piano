@@ -11,6 +11,8 @@ class MessageType(Enum):
     SONG_UPDATE = 6
     SYSTEM_STOP = 7
     NOTE_OUTPUT = 8
+    BUTTON_NOTE = 9
+    TEMPO_MODE_UPDATE = 10
 
 class PlayingState(Enum):
     PLAY = 1
@@ -22,6 +24,15 @@ class NoteOutputMessage():
         self.event = event
         self.relative_timestamp = relative_timestamp
         self.absolute_timestamp = absolute_timestamp
+
+class TempoModeMessageType(Enum):
+    HIT_NOTE = 1
+    MISSED_NOTE = 2
+
+class TempoModeMessage():
+    def __init__(self, type: TempoModeMessageType, time_delta: float):
+        self.type = type
+        self.time_delta = time_delta
 
 class Message():
     def __init__(self, type, data = None):

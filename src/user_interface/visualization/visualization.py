@@ -3,6 +3,7 @@ from PyQt5.QtGui import QColor
 
 from src.user_interface.visualization.piano_widget import PianoWidget
 from src.user_interface.visualization.notes_widget import NotesWidget
+from src.user_interface.visualization.timing_widget import TimingWidget
 
 KEY_ASPECT_RATIO = 4
 BLACK_KEY_WIDTH_MULT = 0.67
@@ -47,6 +48,7 @@ class VisualizationWidget(QWidget):
 
         self.notes_widget = NotesWidget(self.config, parent=self)
         self.piano_widget = PianoWidget(self.config, parent=self)
+        self.timing_widget = TimingWidget(parent=self)
 
         hbox = QHBoxLayout(self)
 
@@ -55,3 +57,4 @@ class VisualizationWidget(QWidget):
         vbox.addWidget(self.piano_widget)
 
         hbox.addLayout(vbox)
+        hbox.addWidget(self.timing_widget)

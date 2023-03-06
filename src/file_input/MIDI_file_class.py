@@ -125,6 +125,9 @@ class MIDIFileObject:
 
             curr_time += delta
 
+            if msg.type == 'note_on' and msg.velocity == 0:
+                msg = mido.Message('note_off', note=msg.note, velocity=msg.velocity, time=msg.time)
+
             track_messages.append(MidiEvent(msg,curr_time))
 
             if msg.type == 'set_tempo':

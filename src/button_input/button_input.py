@@ -13,7 +13,9 @@ class ButtonInput:
     keyMap = dict
     default = {'q': [53,54,55], 'w': [56], 'e': [57], 'r': [58], 't': [59],
                'y': [60], 'u': [61], 'i': [62], 'o': [63], 'p': [64],
-               ControllerButton.A: [65], ControllerButton.B: [66, 68, 70]}
+               ControllerButton.A: [72], ControllerButton.B: [66], 
+               ControllerButton.LeftTrigger: [53, 56, 60], ControllerButton.RightTrigger: [58, 62, 65],
+               ControllerButton.LeftBumper: [56, 60, 63], ControllerButton.RightBumper: [63, 67, 70]}
 
     """ Sets initial values of Thread
     button_input_queue: global queue responsible for carrying midi events to mixing subsystem
@@ -77,7 +79,7 @@ class ButtonInput:
         if state == 1:
             for note in self.get_notes(button):
                 self.button_input_queue.put(
-                    MidiEvent(mido.Message('note_on', note=note, velocity=120), 0))
+                    MidiEvent(mido.Message('note_on', note=note, velocity=40), 0))
         else:
             for note in self.get_notes(button):
                 self.button_input_queue.put(

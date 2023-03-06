@@ -34,6 +34,8 @@ class XboxController:
             'ABS_RX': ControllerButton.RightJoystickX,
             'ABS_Z': ControllerButton.LeftTrigger,
             'ABS_RZ': ControllerButton.RightTrigger,
+            'BTN_TL2': ControllerButton.LeftTrigger,
+            'BTN_TR2': ControllerButton.RightTrigger,
             'BTN_TL': ControllerButton.LeftBumper,
             'BTN_TR': ControllerButton.RightBumper,
             'BTN_SOUTH': ControllerButton.A,
@@ -60,6 +62,8 @@ class XboxController:
         while self.active:
             events = get_gamepad()
             for event in events:
+                print(event.__dict__)
+
                 if event.code in self.event_button_map:
                     self.on_controller_update(self.event_button_map[event.code], event.state)
 
