@@ -14,9 +14,10 @@ class FileInput(Thread):
     active = False
     accessLock = Lock()
 
-    def __init__(self, file_input_queue):
+    def __init__(self, file_input_queue, hand_to_play=""):
         Thread.__init__(self)
         self.file_input_queue = file_input_queue
+        self.hand_to_play = hand_to_play
         self.comm_system = MixingCommSystem()
     
     def run(self):
@@ -24,7 +25,8 @@ class FileInput(Thread):
         self.active = True
         self.copy_file_to_queue()
     
-    def registerCallbacks(self):
+    def registerCallbacks(self):        
+        self.comm_system.registerListener(MessageType.SET_HAND_TO_PLAY, self.set_hand_to_play)
         self.comm_system.registerListener(MessageType.SONG_UPDATE, self.openFile)
     
     def copy_file_to_queue(self):
@@ -32,7 +34,8 @@ class FileInput(Thread):
             while self.filename is not None:
                 with self.accessLock:
                     if self.fileObject is None:
-                        self.fileObject = MIDIFileObject(self.filename)
+                        print(f'Hand to play: {self.hand_to_play}')
+                        self.fileObject = MIDIFileObject(self.filename,self.hand_to_play)
                     if self.fileObject.has_next():
                         message = self.fileObject.get_next_message()
                         if message.event.type in self.whitelisted_types:
@@ -55,3 +58,9 @@ class FileInput(Thread):
         self.active = False
         self.filename = None
         self.fileObject = None
+
+    def set_hand_to_play(self, message : Message):
+        print(f'Update hand (in file_input.py): {message.data}')
+        self.hand_to_play = message.data
+
+    

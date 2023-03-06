@@ -22,7 +22,7 @@ class MIDIFileObject:
     STARTUP_DELAY = 2.5
     
 
-    def __init__(self, file_name):
+    def __init__(self, file_name, hand_to_play=""):
         """Constructor for MIDIFileObject class. Parses the given file and maintains the messages for the track.
 
         Args:
@@ -38,6 +38,7 @@ class MIDIFileObject:
         except EOFError: #TODO: For freeplay song, this is thrown. Need to handle this better
             self.messages = []
         self.hand_to_play = ""
+
 
 
 
@@ -97,17 +98,23 @@ class MIDIFileObject:
     
     def is_correct_hand(self, note_num):
         """
+        NOTE: The hand_to_play side refers to the side the PIANO is going to play.
+        The player would, presumably, be playing the opposite.
+
+        
         If the given note is not on the hand_to_play side return false
         """
         #print(self.hand_to_play)
-        if self.hand_to_play == "right":
+        if self.hand_to_play == "right":    # The piano will play right hand
             if note_num >= 60:
                 return True
-        elif self.hand_to_play == "left":
+        elif self.hand_to_play == "left":   # The piano will play left hand
             if note_num <= 60:
                 return True
-        elif self.hand_to_play == "":
+        elif self.hand_to_play == "":       # The piano will play all
             return True
+        elif self.hand_to_play == "neither": # The piano will play nothing
+            return False
         return False
         
 

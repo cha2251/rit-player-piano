@@ -24,6 +24,8 @@ class MainPage(QWidget, Thread):
         self.loading_gif = LoadingGif()
         self.loading_thread.progress_signal.connect(self.loading_dialog.update_progress)
         self.loading_thread.finished.connect(self.loading_dialog.hide)
+
+        self.hand_to_play = "left"
         
         #self.loading_thread.finished.connect(self.loading_gif.hide)
         #self.loading_thread.finished.connect(self.loading_thread.deleteLater)
@@ -162,7 +164,9 @@ class MainPage(QWidget, Thread):
     def update_playing_page_song(self, song_name):
         self.play_page.set_song(song_name)
         print("MAIN UPDATE SONG NAME")
-        self.comm_system.send(Message(MessageType.SONG_UPDATE,song_name))
+        self.comm_system.send(Message(MessageType.SET_HAND_TO_PLAY, self.hand_to_play))
+        self.comm_system.send(Message(MessageType.SONG_UPDATE, song_name))
+
 
     def closeEvent(self, event):
         self.comm_system.send(Message(MessageType.SYSTEM_STOP))
