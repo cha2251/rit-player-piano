@@ -129,7 +129,7 @@ class MainPage(QWidget, Thread):
         self.play_page = PlayingPage()
         self.play_page.nav_home.clicked.connect(self.go_to_home_page)
 
-        self.settings_page = SettingsPage(self.comm_system)
+        self.settings_page = SettingsPage()
         self.settings_page.nav_home.clicked.connect(self.go_to_home_page)
 
         # self.stackedWidget = QStackedWidget(self)

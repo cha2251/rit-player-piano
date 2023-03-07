@@ -1,6 +1,6 @@
 import queue
 from threading import Lock, Thread
-from src.communication.messages import Message, MessageType
+from src.communication.messages import Message, MessageType, PianoAssistPlaying
 from src.file_input.MIDI_file_class import MIDIFileObject
 import time
 
@@ -13,11 +13,11 @@ class FileInput(Thread):
     fileObject = None
     active = False
     accessLock = Lock()
+    hand_to_play = PianoAssistPlaying.BOTH
 
-    def __init__(self, file_input_queue, hand_to_play=""):
+    def __init__(self, file_input_queue):
         Thread.__init__(self)
         self.file_input_queue = file_input_queue
-        self.hand_to_play = hand_to_play
         self.comm_system = MixingCommSystem()
     
     def run(self):
@@ -34,7 +34,8 @@ class FileInput(Thread):
             while self.filename is not None:
                 with self.accessLock:
                     if self.fileObject is None:
-                        self.fileObject = MIDIFileObject(self.filename,self.hand_to_play)
+                        MIDIFileObject.hand_to_play = self.hand_to_play
+                        self.fileObject = MIDIFileObject(self.filename)                        
                     if self.fileObject.has_next():
                         message = self.fileObject.get_next_message()
                         if message.event.type in self.whitelisted_types:

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from src.common.midi_event import MidiEvent
 from mido import merge_tracks, tick2second
+from src.communication.messages import PianoAssistPlaying
 
 class MIDIFileObject:
     """
@@ -20,20 +21,19 @@ class MIDIFileObject:
 
     DEFAULT_TEMPO = 500000
     STARTUP_DELAY = 2.5
+    hand_to_play = PianoAssistPlaying.BOTH
     
 
-    def __init__(self, file_name, hand_to_play=""):
+    def __init__(self, file_name):
         """Constructor for MIDIFileObject class. Parses the given file and maintains the messages for the track.
 
         Args:
             file_name (str): The MIDI file to be parsed. Must be in /MIDI_Files.
             track_string (str): The string name for the track to play within the MIDI file.
         """
-
         self.file_name = file_name
         self.curr_pos = 0
         self.current_time_delay = None
-        self.hand_to_play = hand_to_play
         try:
             self.messages = self.parse_midi_file(file_name)
         except EOFError: #TODO: For freeplay song, this is thrown. Need to handle this better
@@ -105,16 +105,15 @@ class MIDIFileObject:
         
         If the given note is not on the hand_to_play side return false
         """
-        #print(f'Hand to play: {self.hand_to_play}')
-        if self.hand_to_play == "right":    # The piano will play right hand
+        if self.hand_to_play == PianoAssistPlaying.RIGHT.value:    # The piano will play right hand
             if note_num >= 60:
                 return True
-        elif self.hand_to_play == "left":   # The piano will play left hand
+        elif self.hand_to_play == PianoAssistPlaying.LEFT.value:   # The piano will play left hand
             if note_num <= 60:
                 return True
-        elif self.hand_to_play == "":       # The piano will play all
+        elif self.hand_to_play == PianoAssistPlaying.BOTH.value:       # The piano will play all
             return True
-        elif self.hand_to_play == "neither": # The piano will play nothing
+        elif self.hand_to_play == PianoAssistPlaying.NEITHER.value: # The piano will play nothing
             return False
         return False
         

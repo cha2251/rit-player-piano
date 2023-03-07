@@ -10,6 +10,12 @@ class MessageType(Enum):
     SYSTEM_STOP = 7
     SET_HAND_TO_PLAY = 8
 
+class PianoAssistPlaying(Enum):
+    LEFT = 1
+    RIGHT = 2
+    NEITHER = 3
+    BOTH = 4
+
 class PlayingState(Enum):
     PLAY = 1
     PAUSE = 2
