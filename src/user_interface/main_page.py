@@ -113,7 +113,6 @@ class MainPage(QWidget, Thread):
         """
         qApp.setStyleSheet(style)
 
-
         self.title = 'Player Piano'
         self.left = 100
         self.top = 50
