@@ -329,6 +329,8 @@ class SettingsPage(QWidget):
         print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
         print("DROP DOWN TRIGGERED: " + str(index))
 
+    def get_piano_dict(self):
+        return self.piano_dict
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
