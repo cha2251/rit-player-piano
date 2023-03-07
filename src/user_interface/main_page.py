@@ -101,6 +101,15 @@ class MainPage(QWidget, Thread):
                 font: bold 40px;
                 border-radius: 10px;
             }
+            QComboBox QAbstractItemView{
+                color: #"""+font_color+""";
+                background-color: #"""+page_color+""";
+                selection-background-color: #"""+button_color+""";
+            }
+            QComboBox::drop-down{
+                width: 3.5em;
+                height: 3.5em;
+            }
         """
         qApp.setStyleSheet(style)
 

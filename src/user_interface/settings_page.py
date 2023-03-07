@@ -69,6 +69,7 @@ class SettingsPage(QWidget):
         vbox.addWidget(prompt)
         hand_select = QComboBox()
         hand_select.addItems(['Right', 'Left', 'Both', 'Neither'])
+        hand_select.setCurrentIndex(2)
         vbox.addWidget(hand_select)
 
         vbox.addSpacerItem(spacer)
