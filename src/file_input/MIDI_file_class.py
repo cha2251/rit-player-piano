@@ -33,11 +33,12 @@ class MIDIFileObject:
         self.file_name = file_name
         self.curr_pos = 0
         self.current_time_delay = None
+        self.hand_to_play = hand_to_play
         try:
             self.messages = self.parse_midi_file(file_name)
         except EOFError: #TODO: For freeplay song, this is thrown. Need to handle this better
             self.messages = []
-        self.hand_to_play = ""
+        
 
 
 
@@ -104,7 +105,7 @@ class MIDIFileObject:
         
         If the given note is not on the hand_to_play side return false
         """
-        #print(self.hand_to_play)
+        #print(f'Hand to play: {self.hand_to_play}')
         if self.hand_to_play == "right":    # The piano will play right hand
             if note_num >= 60:
                 return True

@@ -34,7 +34,6 @@ class FileInput(Thread):
             while self.filename is not None:
                 with self.accessLock:
                     if self.fileObject is None:
-                        print(f'Hand to play: {self.hand_to_play}')
                         self.fileObject = MIDIFileObject(self.filename,self.hand_to_play)
                     if self.fileObject.has_next():
                         message = self.fileObject.get_next_message()
