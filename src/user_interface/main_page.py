@@ -170,33 +170,6 @@ class MainPage(QWidget, Thread):
         event.accept()
 
 
-##if __name__ == '__main__':
-##
-##    page_color = 'fbfaf4'
-##    font_color = '006d7a'
-##    button_color = 'e99e63'
-##    button_press_color = 'c37335'
-##    app = QApplication([])
-##    style = """
-##        QWidget {
-##            background: #"""+page_color+""";
-##        }
-##        QLabel{
-##            color: #"""+font_color+""";
-##            font: 40px;
-##        }
-##        QPushButton{
-##            color: #"""+font_color+""";
-##            background-color: #"""+button_color+""";
-##            border-style: outset;
-##            border-width: 2px;
-##            border-color: #792cb0;
-##            max-width: 50px;
-##            min-width: 15px;
-##            padding: 5px;
-##            font-family: "Times New Roman", Times, serif;
-##            font: bold 15px;
-##            border-radius: 10px;
 ##        }
 ##        QPushButton:hover{
 ##            background: #"""+button_press_color+""";
