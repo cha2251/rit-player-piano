@@ -106,8 +106,11 @@ class OutputQueue():
             if self.queue.peek() is not None and self.state == PlayingState.PLAY:
                 if self.last_note_time_played - self.last_note_timestamp <= now - self.queue.peek().timestamp:
                     midiEvent = self.queue.get()
-                    self.last_note_time_played = now
-                    self.last_note_timestamp = midiEvent.timestamp
+
+                    # Zero represents a note that should be played immediately, and would otherwise mess up the timings
+                    if midiEvent.timestamp > 1e-4:
+                        self.last_note_time_played = now
+                        self.last_note_timestamp = midiEvent.timestamp
 
                     if midiEvent.event.type == "note_off" or midiEvent.event.velocity == 0:
                         if midiEvent.event.note in self.playing_notes.keys():

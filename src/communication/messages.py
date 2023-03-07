@@ -17,13 +17,13 @@ class PlayingState(Enum):
     PAUSE = 2
     STOP = 3
 
-class NoteOutputMessage():
-    def __init__(self, event: MidiEvent, relative_timestamp: float, absolute_timestamp: float):
-        self.event = event
-        self.relative_timestamp = relative_timestamp
-        self.absolute_timestamp = absolute_timestamp
-
 class Message():
     def __init__(self, type, data = None):
         self.type = type
         self.data = data
+
+class NoteOutputMessage(Message):
+    def __init__(self, event: MidiEvent, relative_timestamp: float, absolute_timestamp: float):
+        self.event = event
+        self.relative_timestamp = relative_timestamp
+        self.absolute_timestamp = absolute_timestamp
