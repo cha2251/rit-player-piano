@@ -15,7 +15,6 @@ keyboard==0.13.5
 lxml==4.9.1
 MechanicalSoup==1.1.0
 mido==1.2.10
-numpy
 packaging==21.3
 pefile==2022.5.30
 pluggy==1.0.0
