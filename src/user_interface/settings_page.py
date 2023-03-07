@@ -96,61 +96,61 @@ class SettingsPage(QWidget):
         """
         iconsList = QHBoxLayout()
 
-        self.arrow_up = DragButton("settings/button-arrow-up.svg")
+        self.arrow_up = DragButton("button-arrow-up")
         self.arrow_up.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-up.svg")))
         self.arrow_up.setStyleSheet(tool)
         self.arrow_up.setIconSize(QSize(60, 60))
         iconsList.addWidget(self.arrow_up)
 
-        self.arrow_down = DragButton("settings/button-arrow-down.svg")
+        self.arrow_down = DragButton("button-arrow-down")
         self.arrow_down.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-down.svg")))
         self.arrow_down.setStyleSheet(tool)
         self.arrow_down.setIconSize(QSize(60, 60))
         iconsList.addWidget(self.arrow_down)
 
-        self.arrow_left = DragButton("settings/button-arrow-left.svg")
+        self.arrow_left = DragButton("button-arrow-left")
         self.arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-left.svg")))
         self.arrow_left.setStyleSheet(tool)
         self.arrow_left.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.arrow_left)
 
-        self.arrow_right = DragButton("settings/button-arrow-right.svg")
+        self.arrow_right = DragButton("button-arrow-right")
         self.arrow_right.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-right.svg")))
         self.arrow_right.setStyleSheet(tool)
         self.arrow_right.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.arrow_right)
 
-        self.a = DragButton("settings/button-A.svg")
+        self.a = DragButton("button-A")
         self.a.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-A.svg")))
         self.a.setStyleSheet(tool)
         self.a.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.a)
 
-        self.B = DragButton("settings/button-B.svg")
+        self.B = DragButton("button-B")
         self.B.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-B.svg")))
         self.B.setStyleSheet(tool)
         self.B.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.B)
 
-        self.X = DragButton("settings/button-X.svg")
+        self.X = DragButton("button-X")
         self.X.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-X.svg")))
         self.X.setStyleSheet(tool)
         self.X.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.X)
 
-        self.Y = DragButton("settings/button-Y.svg")
+        self.Y = DragButton("button-Y")
         self.Y.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-Y.svg")))
         self.Y.setStyleSheet(tool)
         self.Y.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.Y)
 
-        self.RT = DragButton("settings/button-RT.svg")
+        self.RT = DragButton("button-RT")
         self.RT.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-RT.svg")))
         self.RT.setStyleSheet(tool)
         self.RT.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.RT)
 
-        self.LT = DragButton("settings/button-LT.svg")
+        self.LT = DragButton("button-LT")
         self.LT.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-LT.svg")))
         self.LT.setStyleSheet(tool)
         self.LT.setIconSize(QSize(60, 50))
@@ -162,14 +162,45 @@ class SettingsPage(QWidget):
         piano = QGridLayout()
         piano.setAlignment(Qt.AlignTop)
         piano.setSpacing(0)
+
+        self.piano_dict = {
+            "c3": [],
+            "c#3": [],
+            "d3": [],
+            "d#3": [],
+            "e3": [],
+            "f3": [],
+            "f#3": [],
+            "g3": [],
+            "g#3": [],
+            "a3": [],
+            "a#3": [],
+            "b3": [],
+            "c4": [],
+            "c#4": [],
+            "d4": [],
+            "d#4": [],
+            "e4": [],
+            "f4": [],
+            "f#4": [],
+            "g4": [],
+            "g#4": [],
+            "a4": [],
+            "a#4": [],
+            "b4": []
+        }
+        white_notes = ["c3", "d3", "e3", "f3", "g3", "a3", "b3", "c4", "d4", "e4", "f4", "g4", "a4", "b4"]
+        wi = 0
+        black_notes = ["c#3", "d#3", "f#3", "g#3", "a#3", "c#4", "d#4", "f#4", "g#4", "a#4"]
+        bi = 0
         for i in range(0, 14):
             # Solid white boxes that are part of the piano keys inbetween the black keys
             # This is here to align the icons on the white keys to the bottom of the key
-            s = QToolButton()
-            s.setFixedSize(25, 400)
-            piano.addWidget(s, 0, i*2+1)
-            piano.setAlignment(s, Qt.AlignTop)
-            s.setStyleSheet("""
+            white_sup = QToolButton()
+            white_sup.setFixedSize(25, 400)
+            piano.addWidget(white_sup, 0, i*2+1)
+            piano.setAlignment(white_sup, Qt.AlignTop)
+            white_sup.setStyleSheet("""
                 color: #DDDDDD;
                 background-color: #FFFFFF;
                 border-style: outset;
@@ -184,14 +215,15 @@ class SettingsPage(QWidget):
             """)
 
             # white keys
-            aac = pianoKey()
-            aac.setAutoFillBackground(True)
-            aac.setFixedSize(50, 200)
-            aac.setAcceptDrops(True)
-            piano.addWidget(aac, 0, i*2+1)
-            piano.setAlignment(aac, Qt.AlignBottom)
-            aac.setIconSize(QSize(60, 60))
-            aac.setStyleSheet("""
+            white_key = pianoKey(white_notes[wi], self.piano_dict)
+            wi += 1
+            white_key.setAutoFillBackground(True)
+            white_key.setFixedSize(50, 200)
+            white_key.setAcceptDrops(True)
+            piano.addWidget(white_key, 0, i*2+1)
+            piano.setAlignment(white_key, Qt.AlignBottom)
+            white_key.setIconSize(QSize(60, 60))
+            white_key.setStyleSheet("""
                 color: #FFFFFF;
                 background-color: #FFFFFF;
                 border-style: outset;
@@ -207,14 +239,15 @@ class SettingsPage(QWidget):
 
             # black keys these skip in the appropriate pattern sorry its hard coded
             if i != 0 and i != 3 and i != 7 and i != 10:
-                aab = pianoKey()
-                aab.setAutoFillBackground(True)
-                aab.setFixedSize(25, 200)
-                aab.acceptDrops()
-                piano.addWidget(aab, 0, i*2)
-                piano.setAlignment(aab, Qt.AlignTop)
-                aab.setIconSize(QSize(60, 60))
-                aab.setStyleSheet("""
+                black_key = pianoKey(black_notes[bi], self.piano_dict)
+                bi += 1
+                black_key.setAutoFillBackground(True)
+                black_key.setFixedSize(25, 200)
+                black_key.acceptDrops()
+                piano.addWidget(black_key, 0, i*2)
+                piano.setAlignment(black_key, Qt.AlignTop)
+                black_key.setIconSize(QSize(60, 60))
+                black_key.setStyleSheet("""
                     color: #666666;
                     background-color: #666666;
                     border-style: outset;
@@ -229,12 +262,12 @@ class SettingsPage(QWidget):
                 """)
                 # insert an invisible spacer so that the black keys are spaced right
             elif i != 0:
-                s = QToolButton()
-                s.setAutoFillBackground(True)
-                s.setFixedSize(25, 200)
-                piano.addWidget(s, 0, i*2)
-                piano.setAlignment(s, Qt.AlignTop)
-                s.setStyleSheet("""
+                space = QToolButton()
+                space.setAutoFillBackground(True)
+                space.setFixedSize(25, 200)
+                piano.addWidget(space, 0, i*2)
+                piano.setAlignment(space, Qt.AlignTop)
+                space.setStyleSheet("""
                     color: transparent;
                     background-color: transparent;
                     border-color: transparent;

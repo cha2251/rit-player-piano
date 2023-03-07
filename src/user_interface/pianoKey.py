@@ -7,9 +7,11 @@ from PyQt5.QtWidgets import QToolButton
 
 class pianoKey(QToolButton):
 
-    def __init__(self):
+    def __init__(self, key, piano_dict):
         super().__init__()
         self.setAcceptDrops(True)
+        self.key = key
+        self.piano_dict = piano_dict
 
     def dragEnterEvent(self, e):
         try:
@@ -19,16 +21,8 @@ class pianoKey(QToolButton):
 
     def dropEvent(self, e):
         try:
-            print("pianoKey DROP EVENT")
-            print(e.source())
-            print(e.mimeData().text())
             file = e.mimeData().text()
-            self.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", file),))
-            #####e.accept()
-            # if e.mimeData().hasurls():
-            #     e.accept()
-            #     for url in e.mimeData().urls():
-            #         self.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", url)))
-            print("pianoKey DROP END")
+            self.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", (file + ".svg")),))
+            self.piano_dict[self.key] += file
         except:
-            print("exception occured in drop event")
+            print("exception occurred in drop event")
