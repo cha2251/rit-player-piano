@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 -0.5 17 17"
+   version="1.1"
+   class="si-glyph si-glyph-button-arrow-up"
+   fill="#000000"
+   id="svg17"
+   sodipodi:docname="button-A.svg"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs21">
+    <rect
+       x="236.89194"
+       y="215.71724"
+       width="321.59073"
+       height="369.2338"
+       id="rect4475" />
+    <rect
+       x="268.53147"
+       y="258.27506"
+       width="277.0963"
+       height="267.59407"
+       id="rect3691" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview19"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="1.5112376"
+     inkscape:cx="308.6874"
+     inkscape:cy="360.30072"
+     inkscape:window-width="1920"
+     inkscape:window-height="1051"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg17" />
+  <g
+     id="SVGRepo_bgCarrier"
+     stroke-width="0"
+     transform="translate(-0.47808498,-0.02812264)" />
+  <g
+     id="SVGRepo_tracerCarrier"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     transform="translate(-0.47808498,-0.02812264)" />
+  <g
+     id="SVGRepo_iconCarrier"
+     transform="translate(-0.47808498,-0.02812264)">
+    <title
+       id="title4">1187</title>
+    <defs
+       id="defs6" />
+    <g
+       stroke="none"
+       stroke-width="1"
+       fill="none"
+       fill-rule="evenodd"
+       id="g14">
+      <g
+         transform="translate(1)"
+         fill="#000000"
+         id="g12">
+        <path
+           id="path8"
+           style="stroke-width:47.0588"
+           class="si-glyph-fill"
+           transform="matrix(0.02125,0,0,0.02125,-1,-0.5)"
+           d="M 422.77734,26.210938 C 216.28323,26.210937 48.234375,193.83566 48.234375,399.90625 c 0,205.97647 168.001795,373.59961 374.542965,373.59961 206.54118,0 374.54102,-167.62314 374.54102,-373.59961 0,-206.07059 -167.99984,-373.695312 -374.54102,-373.695312 z m -0.70703,87.529292 c 157.50588,0 285.83594,128.47153 285.83594,286.25977 0,157.83529 -128.33006,286.25977 -285.83594,286.25977 -157.6,0 -285.78711,-128.42448 -285.78711,-286.25977 0,-157.78824 128.18711,-286.25977 285.78711,-286.25977 z" />
+      </g>
+    </g>
+  </g>
+  <path
+     style="fill:#000000;stroke:none;stroke-width:1"
+     d="m 229.03771,588.65995 c -8.10672,-1.84178 -14.68291,-5.59713 -21.39537,-12.21791 -11.8772,-11.71498 -14.00276,-22.48001 -8.12103,-41.12946 1.29235,-4.09773 30.54935,-74.42298 65.01554,-156.27831 34.46619,-81.85534 64.96663,-154.30231 67.77874,-160.99327 7.82514,-18.61862 13.83338,-28.87879 21.41616,-36.57207 10.42059,-10.57244 20.54399,-15.28983 37.14256,-17.30802 25.23985,-3.06886 47.93216,6.74082 61.17266,26.44441 6.13843,9.1348 9.24448,15.63362 24.07041,50.36274 6.92123,16.2127 37.01445,85.90628 66.87381,154.87462 29.85937,68.96833 55.34376,128.34473 56.63198,131.94756 6.25963,17.50658 6.75668,28.09017 1.79278,38.17328 -9.97556,20.26325 -37.35519,29.67006 -57.74561,19.83964 -14.01657,-6.75753 -20.36482,-17.81647 -44.45074,-77.43536 l -9.73693,-24.10143 -90.2644,0.23857 -90.2644,0.23857 -13.20402,32.83362 c -22.86961,56.86843 -27.85944,65.20568 -41.87242,69.96248 -6.43825,2.18551 -17.87987,2.70155 -24.83972,1.12034 z M 465.55965,422.23238 c 0,-0.63173 -66.52894,-170.43393 -66.93589,-170.84089 -0.24288,-0.24287 -0.5869,-0.26612 -0.7645,-0.0517 -0.4368,0.52741 -64.40051,167.46439 -64.95936,169.53546 -0.41782,1.54846 3.18272,1.63765 66.10893,1.63765 36.60295,0 66.55082,-0.12625 66.55082,-0.28055 z"
+     id="path958"
+     transform="matrix(0.02125,0,0,0.02125,0,-0.5)" />
+</svg>

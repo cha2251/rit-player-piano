@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 -0.5 17 17"
+   version="1.1"
+   class="si-glyph si-glyph-button-arrow-up"
+   fill="#000000"
+   id="svg17"
+   sodipodi:docname="button-Y.svg"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs21">
+    <rect
+       x="268.53147"
+       y="258.27506"
+       width="277.0963"
+       height="267.59407"
+       id="rect3691" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview19"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="99.092446"
+     inkscape:cx="506.21921"
+     inkscape:cy="253.57634"
+     inkscape:window-width="1920"
+     inkscape:window-height="1051"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg17" />
+  <g
+     id="SVGRepo_bgCarrier"
+     stroke-width="0" />
+  <g
+     id="SVGRepo_tracerCarrier"
+     stroke-linecap="round"
+     stroke-linejoin="round" />
+  <g
+     id="SVGRepo_iconCarrier">
+    <title
+       id="title4">1187</title>
+    <defs
+       id="defs6" />
+    <g
+       stroke="none"
+       stroke-width="1"
+       fill="none"
+       fill-rule="evenodd"
+       id="g14">
+      <g
+         transform="translate(1.000000, 0.000000)"
+         fill="#000000"
+         id="g12">
+        <path
+           id="path8"
+           style="stroke-width:47.0588"
+           class="si-glyph-fill"
+           transform="matrix(0.02125,0,0,0.02125,-1,-0.5)"
+           d="M 422.77734,26.210938 C 216.28323,26.210937 48.234375,193.83566 48.234375,399.90625 c 0,205.97647 168.001795,373.59961 374.542965,373.59961 206.54118,0 374.54102,-167.62314 374.54102,-373.59961 0,-206.07059 -167.99984,-373.695312 -374.54102,-373.695312 z m -0.70703,87.529292 c 157.50588,0 285.83594,128.47153 285.83594,286.25977 0,157.83529 -128.33006,286.25977 -285.83594,286.25977 -157.6,0 -285.78711,-128.42448 -285.78711,-286.25977 0,-157.78824 128.18711,-286.25977 285.78711,-286.25977 z" />
+      </g>
+    </g>
+  </g>
+  <path
+     style="fill:#000000;stroke:none;stroke-width:0.913386"
+     d="m 407.10409,630.27462 c -13.45019,-3.06372 -23.42809,-10.5818 -28.99597,-21.84764 -5.74819,-11.63066 -5.83588,-13.00419 -5.8714,-91.9657 l -0.0319,-70.846 -57.20421,-79.86271 c -31.46231,-43.92449 -60.41097,-84.63756 -64.33036,-90.4735 -15.23648,-22.68699 -20.17609,-33.46345 -20.12788,-43.91179 0.0454,-9.83743 3.08445,-16.49106 10.85004,-23.75486 8.42517,-7.88076 18.90886,-11.69109 32.1667,-11.69109 13.91418,0 22.40095,3.22613 30.62941,11.64335 10.01843,10.24827 15.43348,17.89087 84.45725,119.19998 17.3315,25.43818 31.9227,46.1373 32.42488,45.99806 0.8206,-0.22755 52.99426,-75.2071 92.4567,-132.87093 16.29779,-23.81488 24.53545,-33.54874 32.3478,-38.22312 12.24581,-7.32707 30.65259,-7.76573 44.29182,-1.05555 5.80842,2.85761 15.01064,12.0342 17.53216,17.48333 4.17161,9.01508 3.24899,21.0982 -2.47391,32.39972 -4.70529,9.29195 -12.57401,20.4787 -76.08036,108.1614 l -62.40458,86.16148 -0.50256,74.44098 c -0.44189,65.45381 -0.68349,75.03302 -2.00113,79.34497 -4.74918,15.54155 -14.23635,25.54565 -28.91995,30.49573 -6.84395,2.3072 -20.70521,2.88395 -28.21259,1.17389 z"
+     id="path6500"
+     transform="matrix(0.02125,0,0,0.02125,0,-0.5)" />
+</svg>
