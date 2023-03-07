@@ -67,10 +67,12 @@ class SettingsPage(QWidget):
             font: 35px;
         """)
         vbox.addWidget(prompt)
-        hand_select = QComboBox()
-        hand_select.addItems(['Right', 'Left', 'Both', 'Neither'])
-        hand_select.setCurrentIndex(2)
-        vbox.addWidget(hand_select)
+        self.hand_select = QComboBox()
+        self.hand_select.addItems(['Right', 'Left', 'Both', 'Neither'])
+        self.hand_select.setCurrentIndex(2)
+        self.hand_select.activated.connect(self.on_drop_down_selected)
+
+        vbox.addWidget(self.hand_select)
 
         vbox.addSpacerItem(spacer)
 
@@ -281,6 +283,18 @@ class SettingsPage(QWidget):
 
     def show_song_page(self, page_num):
         pass
+
+    def on_drop_down_selected(self, index):
+        print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+        print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+        print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+        print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+        print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+        print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+        print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+        print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+        print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+        print("DROP DOWN TRIGGERED: " + str(index))
 
 
 if __name__ == '__main__':
