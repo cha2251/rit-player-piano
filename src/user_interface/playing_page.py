@@ -18,7 +18,7 @@ class PlayingPage(QWidget):
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.nav_home.setIconSize(QSize(55, 55))
         self.nav_home.setText("back")
-        self.nav_home.setIcon(QIcon(r"../../UI_Images/back-arrow.svg"))
+        self.nav_home.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "back-arrow.svg")))
         self.song_name = song_name
         self.title = "TITLE: "
         self.left = 100
@@ -40,7 +40,7 @@ class PlayingPage(QWidget):
 
         playButton = QToolButton()
         playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        playButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "play-solid.svg")))
+        playButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "play-solid.svg")))
         playButton.setIconSize(QSize(65, 65))
         playButton.setText("play")
         playButton.setToolTip("play song")
@@ -48,7 +48,7 @@ class PlayingPage(QWidget):
 
         stopButton = QToolButton()
         stopButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        stopButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "stop-solid.svg")))
+        stopButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "stop-solid.svg")))
         stopButton.setIconSize(QSize(65, 65))
         stopButton.setText('stop')
         stopButton.setToolTip('stop song')
@@ -56,7 +56,7 @@ class PlayingPage(QWidget):
 
         pauseButton = QToolButton()
         pauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        pauseButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "pause-solid.svg")))
+        pauseButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "pause-solid.svg")))
         pauseButton.setIconSize(QSize(65, 65))
         pauseButton.setText('pause')
         pauseButton.setToolTip('pause song')
@@ -64,7 +64,7 @@ class PlayingPage(QWidget):
 
         restartButton = QToolButton()
         restartButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        restartButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "rotate-left-solid.svg")))
+        restartButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing",  "rotate-left-solid.svg")))
         restartButton.setIconSize(QSize(65, 65))
         restartButton.setText('restart')
         restartButton.setToolTip('restart song')
