@@ -21,7 +21,6 @@ class HomePage(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-
         # button = QPushButton('PyQt5 button', self)
         # button.setIcon(QIcon(r"images\play-solid.svg"))
         # button.setIconSize(QSize(65, 65))
