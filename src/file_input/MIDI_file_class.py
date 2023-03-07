@@ -33,7 +33,10 @@ class MIDIFileObject:
         self.file_name = file_name
         self.curr_pos = 0
         self.current_time_delay = None
-        self.messages = self.parse_midi_file(file_name)
+        try:
+            self.messages = self.parse_midi_file(file_name)
+        except EOFError: #TODO: For freeplay song, this is thrown. Need to handle this better
+            self.messages = []
 
 
     def __str__(self):
