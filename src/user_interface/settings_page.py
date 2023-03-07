@@ -18,9 +18,6 @@ class SettingsPage(QWidget):
         super().__init__()
 
         self.comm_system = comm_system
-        #self.comm_system.set_queues(input_queue,output_queue)
-        #self.comm_system.start()
-
         self.acceptDrops()
 
         self.nav_home = QToolButton()
@@ -328,7 +325,7 @@ class SettingsPage(QWidget):
         """ if you want to play the right hand the piano has to play the left.
         0:'Right', 1:'Left', 2:'Both', 3:'Neither'
         """
-        print("DROP DOWN TRIGGERED: " + str(index))
+        #print("DROP DOWN TRIGGERED: " + str(index))
         if index == 0:
             self.hand_to_play = "left"
         elif index == 1:
