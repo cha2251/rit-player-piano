@@ -131,7 +131,7 @@ class MainPage(QWidget, Thread):
         self.play_page = PlayingPage()
         self.play_page.nav_home.clicked.connect(self.go_to_home_page)
 
-        self.settings_page = SettingsPage()
+        self.settings_page = SettingsPage(self.comm_system)
         self.settings_page.nav_home.clicked.connect(self.go_to_home_page)
 
         # self.stackedWidget = QStackedWidget(self)
@@ -164,7 +164,6 @@ class MainPage(QWidget, Thread):
     def update_playing_page_song(self, song_name):
         self.play_page.set_song(song_name)
         print("MAIN UPDATE SONG NAME")
-        self.comm_system.send(Message(MessageType.SET_HAND_TO_PLAY, self.hand_to_play))
         self.comm_system.send(Message(MessageType.SONG_UPDATE, song_name))
 
 
