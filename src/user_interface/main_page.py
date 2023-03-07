@@ -1,5 +1,8 @@
 from threading import Thread
 from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout, qApp
+
+from src.file_input import file_input
+from src.mixing import mixing
 from src.communication.messages import Message, MessageType
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
@@ -26,11 +29,11 @@ class MainPage(QWidget, Thread):
         #self.loading_thread.finished.connect(self.loading_thread.deleteLater)
         #self.loading_thread.finished.connect(self.loading_dialog.deleteLater)
 
-        page_color = 'fbfaf4';
-        font_color = '006d7a';
-        button_color = 'e99e63';
-        button_press_color = 'c37335';
-        button_border_color = 'df7b2c';
+        page_color = 'fbfaf4'
+        font_color = '006d7a'
+        button_color = 'e99e63'
+        button_press_color = 'c37335'
+        button_border_color = 'df7b2c'
 
         style = """
             QWidget {
@@ -65,7 +68,7 @@ class MainPage(QWidget, Thread):
                 border-style: outset;
                 border-width: 2px;
                 border-color: #"""+button_border_color+""";
-                max-width: 25;
+                max-width: 25em;
                 min-width: 5em;
                 padding: 5px;
                 font-family: "Times New Roman", Times, serif;
@@ -84,6 +87,28 @@ class MainPage(QWidget, Thread):
             }
             QProgressBar::chunk{
                 background: #fff;
+            }
+            QComboBox{
+                color: #"""+font_color+""";
+                background-color: #"""+button_color+""";
+                border-style: outset;
+                border-width: 2px;
+                border-color: #"""+button_border_color+""";
+                max-width: 5em;
+                min-width: 5em;
+                padding: 5px;
+                font-family: "Times New Roman", Times, serif;
+                font: bold 40px;
+                border-radius: 10px;
+            }
+            QComboBox QAbstractItemView{
+                color: #"""+font_color+""";
+                background-color: #"""+page_color+""";
+                selection-background-color: #"""+button_color+""";
+            }
+            QComboBox::drop-down{
+                width: 3.5em;
+                height: 3.5em;
             }
         """
         qApp.setStyleSheet(style)
@@ -114,28 +139,29 @@ class MainPage(QWidget, Thread):
         self.stackLayout.addWidget(self.settings_page)
 
         self.showMaximized()
-        # self.showFullScreen()
+        #self.showFullScreen()
 
     def go_to_home_page(self):
-        self.loading_dialog.show()
+        self.loading_dialog.showMaximized()
         self.loading_thread.start()
         #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(0)
 
     def go_to_play_page(self):
-        self.loading_dialog.show()
+        self.loading_dialog.showMaximized()
         self.loading_thread.start()
         #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(1)
 
     def go_to_settings_page(self):
-        self.loading_dialog.show()
+        self.loading_dialog.showMaximized()
         self.loading_thread.start()
         #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(2)
 
     def update_playing_page_song(self, song_name):
         self.play_page.set_song(song_name)
+        print("MAIN UPDATE SONG NAME")
         self.comm_system.send(Message(MessageType.SONG_UPDATE,song_name))
 
     def closeEvent(self, event):
@@ -144,61 +170,33 @@ class MainPage(QWidget, Thread):
         event.accept()
 
 
-if __name__ == '__main__':
-
-    page_color = 'fbfaf4';
-    font_color = '006d7a';
-    button_color = 'e99e63';
-    button_press_color = 'c37335';
-    app = QApplication([])
-    style = """
-        QWidget {
-            background: #"""+page_color+""";
-        }
-        QLabel{
-            color: #"""+font_color+""";
-            font: 40px;
-        }
-        QPushButton{
-            color: #"""+font_color+""";
-            background-color: #"""+button_color+""";
-            border-style: outset;
-            border-width: 2px;
-            border-color: #792cb0;
-            max-width: 50em;
-            min-width: 5em;
-            padding: 5px;
-            font-family: "Times New Roman", Times, serif;
-            font: bold 15px;
-            border-radius: 10px;
-        }
-        QPushButton:hover{
-            background: #"""+button_press_color+""";
-        }
-        QPushButton:pressed{
-            border-style: inset;
-        }
-        QToolButton{
-            color: #"""+font_color+""";
-            background-color: #"""+button_color+""";
-            border-style: outset;
-            border-width: 2px;
-            border-color: #792cb0;
-            max-width: 25;
-            min-width: 5em;
-            padding: 5px;
-            font-family: "Times New Roman", Times, serif;
-            font: bold 15px;
-            border-radius: 10px;
-        }
-        QToolButton:hover{
-            background: #"""+button_press_color+""";
-        }
-        QToolButton:pressed{
-            border-style: inset;
-        }
-    """
-    #app.setStyleSheet(style)
-    window = MainPage(5)
-    window.show()
-    app.exec_()
+##        }
+##        QPushButton:hover{
+##            background: #"""+button_press_color+""";
+##        }
+##        QPushButton:pressed{
+##            border-style: inset;
+##        }
+##        QToolButton{
+##            color: #"""+font_color+""";
+##            background-color: #"""+button_color+""";
+##            border-style: outset;
+##            border-width: 2px;
+##            border-color: #792cb0;
+##            max-width: 25px;
+##            min-width: 15px;
+##            padding: 5px;
+##            font-family: "Times New Roman", Times, serif;
+##            font: bold 15px;
+##            border-radius: 10px;
+##        }
+##        QToolButton:hover{
+##            background: #"""+button_press_color+""";
+##        }
+##        QToolButton:pressed{
+##            border-style: inset;
+##        }
+##    """
+##    window = MainPage(5)
+##    window.show()
+##    app.exec_()

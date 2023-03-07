@@ -59,11 +59,9 @@ class HomePage(QWidget):
         # vbox.addLayout(hbox)
         # vbox.addWidget(button)
         # vbox.setAlignment(Qt.AlignCenter)
-        self.initUI()
-
-    def initUI(self):
-        self.showFullScreen()
-        # self.showMaximized()
+        #self.showFullScreen()
+        self.setLayout(vbox)
+        self.showMaximized()
 
     @pyqtSlot()
     def on_click(self):

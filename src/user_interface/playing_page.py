@@ -148,12 +148,4 @@ class PlayingPage(QWidget):
         """
         self.progress.setValue(self.pbar_location)
 
-        
 
-            
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = PlayingPage()
-    sys.exit(app.exec_())

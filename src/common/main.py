@@ -17,21 +17,21 @@ class Main:
     def main(self):
         mido.set_backend("mido.backends.rtmidi")
         print("Using Mido backend: {}".format(mido.backend))
-        
+
         self.create_queues()
 
         print("Starting Comm Process")
         Process(target=self.create_comm, args=(
             [self.mixing_input_queue,self.ui_input_queue,self.output_input_queue],
             [self.mixing_output_queue,self.ui_output_queue,self.output_output_queue],
-            )).start()
-        
+        )).start()
+
         print("Starting Output Process")
         Process(target=self.create_output, args=(self.output_input_queue, self.output_output_queue,)).start()
 
         print("Starting Mixing Process")
         Process(target=self.create_mixing, args=(self.mixing_input_queue, self.mixing_output_queue,)).start()
-        
+
         print("Starting UI Process")
         self.init_UI()
 
@@ -97,7 +97,7 @@ class Main:
         """
         app.setStyleSheet(style)
         window = src.user_interface.main_page.MainPage(self.ui_input_queue, self.ui_output_queue)
-        window.show()
+        window.showMaximized()
         app.exec_()
         self.destroy_queues()
 
