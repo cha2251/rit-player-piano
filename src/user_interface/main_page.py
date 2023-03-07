@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout, qApp
 
 from src.file_input import file_input
 from src.mixing import mixing
-from src.communication.messages import Message, MessageType
+from src.communication.messages import Message, MessageType, PlayingState
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
 from src.user_interface.settings_page import SettingsPage
@@ -146,6 +146,7 @@ class MainPage(QWidget, Thread):
         self.loading_thread.start()
         #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(0)
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.STOP))
 
     def go_to_play_page(self):
         self.loading_dialog.showMaximized()
@@ -162,7 +163,8 @@ class MainPage(QWidget, Thread):
     def update_playing_page_song(self, song_name):
         self.play_page.set_song(song_name)
         print("MAIN UPDATE SONG NAME")
-        self.comm_system.send(Message(MessageType.SONG_UPDATE,song_name))
+        self.comm_system.send(Message(MessageType.SONG_UPDATE, song_name))
+
 
     def closeEvent(self, event):
         self.comm_system.send(Message(MessageType.SYSTEM_STOP))

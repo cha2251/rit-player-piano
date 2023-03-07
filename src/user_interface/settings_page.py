@@ -8,6 +8,8 @@ from PyQt5.QtCore import pyqtSlot, Qt, QSize, QRect, QMimeData
 
 from src.user_interface.DragButton import DragButton
 from src.user_interface.pianoKey import pianoKey
+from src.user_interface.ui_comm import UICommSystem
+from src.communication.messages import Message, MessageType
 
 
 class SettingsPage(QWidget):
@@ -15,6 +17,7 @@ class SettingsPage(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.comm_system = UICommSystem()
         self.acceptDrops()
 
         self.nav_home = QToolButton()
@@ -29,6 +32,7 @@ class SettingsPage(QWidget):
 
         self.title = 'PLayer Piano'
         self.setWindowTitle(self.title)
+        self.hand_to_play = ""
 
         ########################################################
         # This appears to fix the resizing issue by preventing
@@ -318,7 +322,14 @@ class SettingsPage(QWidget):
         pass
 
     def on_drop_down_selected(self, index):
-        print("DROP DOWN TRIGGERED: " + str(index))
+        """ if you want to play the right hand the piano has to play the left.
+        0:'Right', 1:'Left', 2:'Both', 3:'Neither'
+        """
+        self.hand_to_play = index + 1
+        self.comm_system.send(Message(MessageType.SET_HAND_TO_PLAY, self.hand_to_play))
+        
+
+
 
     def get_piano_dict(self):
         return self.piano_dict

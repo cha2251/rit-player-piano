@@ -83,4 +83,35 @@ class TestParse:
 
         with pytest.raises(IndexError):
             fileObject.get_curr_message()
+
+    
+    def test_is_correct_hand(self):
+        """
+        Test that the correct notes are filtered out.
+        """
+        # notes = [50,51,55,59,60,62,73,85]
+
+        # right_hand = [60,62,73,85]
+        fileObject = MIDI_FC.MIDIFileObject('MIDI_sample.mid')
+
+        fileObject.set_hand_to_play(2)
+        actual = fileObject.is_correct_hand(60)
+        expected = True
+        assert actual == expected 
+
+    def test_is_not_correct_hand(self):
+        """
+        Test that the correct notes are filtered out.
+        """
+        # notes = [50,51,55,59,60,62,73,85]
+
+        # right_hand = [60,62,73,85]
+        fileObject = MIDI_FC.MIDIFileObject('MIDI_sample.mid')
+
+        fileObject.set_hand_to_play(2)
+        actual = fileObject.is_correct_hand(59)
+        expected = False
+        assert actual == expected 
+
+
             

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from src.common.midi_event import MidiEvent
 from mido import merge_tracks, tick2second
+from src.communication.messages import PianoAssistPlaying
 
 class MIDIFileObject:
     """
@@ -20,6 +21,7 @@ class MIDIFileObject:
 
     DEFAULT_TEMPO = 500000
     STARTUP_DELAY = 2.5
+    hand_to_play = PianoAssistPlaying.BOTH
     
 
     def __init__(self, file_name):
@@ -29,7 +31,6 @@ class MIDIFileObject:
             file_name (str): The MIDI file to be parsed. Must be in /MIDI_Files.
             track_string (str): The string name for the track to play within the MIDI file.
         """
-
         self.file_name = file_name
         self.curr_pos = 0
         self.current_time_delay = None
@@ -37,6 +38,9 @@ class MIDIFileObject:
             self.messages = self.parse_midi_file(file_name)
         except EOFError: #TODO: For freeplay song, this is thrown. Need to handle this better
             self.messages = []
+        
+
+
 
 
     def __str__(self):
@@ -92,6 +96,27 @@ class MIDIFileObject:
         if self.curr_tempo is None or self.curr_time_signature is None:
             return None
         
+    
+    def is_correct_hand(self, note_num):
+        """
+        NOTE: The hand_to_play side refers to the side the PIANO is going to play.
+        The player would, presumably, be playing the opposite.
+
+        
+        If the given note is not on the hand_to_play side return false
+        """
+        if self.hand_to_play == PianoAssistPlaying.RIGHT.value:    # The piano will play right hand
+            if note_num >= 60:
+                return True
+        elif self.hand_to_play == PianoAssistPlaying.LEFT.value:   # The piano will play left hand
+            if note_num <= 60:
+                return True
+        elif self.hand_to_play == PianoAssistPlaying.BOTH.value:       # The piano will play all
+            return True
+        elif self.hand_to_play == PianoAssistPlaying.NEITHER.value: # The piano will play nothing
+            return False
+        return False
+        
 
     def parse_midi_file(self, file_name):
         """Parse the designated MIDI file and retrieve the selected track.
@@ -125,10 +150,19 @@ class MIDIFileObject:
 
             curr_time += delta
 
-            track_messages.append(MidiEvent(msg,curr_time))
+            if msg.type == 'note_on':
+                if self.is_correct_hand(msg.note):
+                    track_messages.append(MidiEvent(msg,curr_time, True))
+                else:
+                    track_messages.append(MidiEvent(msg,curr_time, False))
+            else:
+                track_messages.append(MidiEvent(msg,curr_time, True))
 
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
                 
         return track_messages
 
+
+    def set_hand_to_play(self, hand):
+        self.hand_to_play = hand
