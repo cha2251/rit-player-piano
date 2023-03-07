@@ -68,7 +68,7 @@ class MainPage(QWidget, Thread):
                 border-style: outset;
                 border-width: 2px;
                 border-color: #"""+button_border_color+""";
-                max-width: 25;
+                max-width: 25em;
                 min-width: 5em;
                 padding: 5px;
                 font-family: "Times New Roman", Times, serif;
@@ -87,6 +87,19 @@ class MainPage(QWidget, Thread):
             }
             QProgressBar::chunk{
                 background: #fff;
+            }
+            QComboBox{
+                color: #"""+font_color+""";
+                background-color: #"""+button_color+""";
+                border-style: outset;
+                border-width: 2px;
+                border-color: #"""+button_border_color+""";
+                max-width: 5em;
+                min-width: 5em;
+                padding: 5px;
+                font-family: "Times New Roman", Times, serif;
+                font: bold 40px;
+                border-radius: 10px;
             }
         """
         qApp.setStyleSheet(style)

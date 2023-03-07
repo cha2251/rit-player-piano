@@ -3,7 +3,7 @@ import sys
 
 from PyQt5.QtGui import QIcon, QDrag
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
-    QSizePolicy, QToolButton, QStackedLayout, QGridLayout
+    QSizePolicy, QToolButton, QStackedLayout, QGridLayout, QComboBox
 from PyQt5.QtCore import pyqtSlot, Qt, QSize, QRect, QMimeData
 
 from src.user_interface.DragButton import DragButton
@@ -22,6 +22,10 @@ class SettingsPage(QWidget):
         self.nav_home.setIconSize(QSize(55, 55))
         self.nav_home.setText("back")
         self.nav_home.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "navigation", "back-arrow.svg")))
+        self.nav_home.setStyleSheet("""
+        max-width: 3em;
+        min-width: 3em;
+        """)  # it seems like the min-width is the important one
 
         self.title = 'PLayer Piano'
         self.setWindowTitle(self.title)
@@ -56,38 +60,37 @@ class SettingsPage(QWidget):
         vbox.setAlignment(Qt.AlignTop)
         vbox.addLayout(hbox)
         spacer = QSpacerItem(300, 200, QSizePolicy.Expanding)
+        #vbox.addSpacerItem(spacer)
+
+        prompt = QLabel("Select which hand(s) you would like to play")
+        prompt.setStyleSheet("""
+            font: 35px;
+        """)
+        vbox.addWidget(prompt)
+        hand_select = QComboBox()
+        hand_select.addItems(['Right', 'Left', 'Both', 'Neither'])
+        vbox.addWidget(hand_select)
+
         vbox.addSpacerItem(spacer)
 
-        push = """
-            QPushButton{
-                border-style: outset;
-                border-width: 2px;
-                border-color: #792cb0;
-                max-width: 10em;
-                min-width: 5em;
-                padding: 5px;
-                font-family: "Times New Roman", Times, serif;
-                font: 15px;
-                border-radius: 10px;
-            }
-            QPushButton:hover{
-                background: #792cb0;
-            }
-            QPushButton:pressed{
-                border-style: inset;
-            }
-            """
-
+        configure = QLabel("Drag and drop the icons below onto the piano keys to create a custom configuration")
+        configure.setStyleSheet("""
+            font:35px;
+        """)
+        vbox.addWidget(configure)
+        # create draggable buttons
         tool = """
         QToolButton {
-            max-width: 5em;
-            min-width: 5em;
+            color: transparent;
+            background-color: transparent;
+            border-color: transparent;
+            max-width: 3em;
+            min-width: 3em;
             font: 25px;
             padding: 5px;
             font-family: "Times New Roman", Times, serif;
         }
         """
-
         iconsList = QHBoxLayout()
 
         self.arrow_up = DragButton("settings/button-arrow-up.svg")
@@ -266,6 +269,7 @@ class SettingsPage(QWidget):
         #piano_spacer.addLayout(piano)
 
         vbox.addLayout(piano)
+        ##vbox.addSpacerItem(spacer)  # THIS DOESN'T WORK??????
 
         #self.showFullScreen()
         self.showMaximized()
