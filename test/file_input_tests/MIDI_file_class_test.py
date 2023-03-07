@@ -94,7 +94,7 @@ class TestParse:
         # right_hand = [60,62,73,85]
         fileObject = MIDI_FC.MIDIFileObject('MIDI_sample.mid')
 
-        fileObject.set_hand_to_play("right")
+        fileObject.set_hand_to_play(2)
         actual = fileObject.is_correct_hand(60)
         expected = True
         assert actual == expected 
@@ -108,7 +108,7 @@ class TestParse:
         # right_hand = [60,62,73,85]
         fileObject = MIDI_FC.MIDIFileObject('MIDI_sample.mid')
 
-        fileObject.set_hand_to_play("right")
+        fileObject.set_hand_to_play(2)
         actual = fileObject.is_correct_hand(59)
         expected = False
         assert actual == expected 
