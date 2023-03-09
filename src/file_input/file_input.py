@@ -38,7 +38,6 @@ class FileInput(Thread):
                     if self.fileObject is None:
                         MIDIFileObject.hand_to_play = self.hand_to_play
                         self.fileObject = MIDIFileObject(self.filename)         
-                        print(self.fileObject.get_end_time())
                         self.comm_system.send(Message(MessageType.SET_DURATION, self.fileObject.get_end_time()))
                     if self.fileObject.has_next():
                         message = self.fileObject.get_next_message()
