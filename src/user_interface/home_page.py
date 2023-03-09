@@ -21,6 +21,7 @@ class HomePage(QWidget):
         self.height = 200
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+        self.table_buttons = QHBoxLayout()
 
         # button = QPushButton('PyQt5 button', self)
         # button.setIcon(QIcon(r"images\play-solid.svg"))
@@ -77,16 +78,15 @@ class HomePage(QWidget):
         hbox.setAlignment(Qt.AlignCenter)
         hbox.addStretch()
 
-        button = QPushButton("1", self)
-        button.clicked.connect(lambda: self.show_song_page(1))
-
-        hbox.addWidget(button)
-
         stuffs = [hbox]
 
 
         # get list of songs
         songs = self.get_songs_from_directory()
+        self.create_table_buttons()
+        hbox = self.table_buttons
+
+
         count = 0
         for song in songs:
             if count > 20:
@@ -119,6 +119,18 @@ class HomePage(QWidget):
         self.nav_play.click()
 
     def show_song_page(self, page_num):
+        """
+        
+        """
+        if page_num == -1:
+            # we want to display the previous 5 songs
+            pass
+        elif page_num == 0:
+            # we want to do nothing
+            pass
+        elif page_num == 1:
+            # we want to display the next 5 songs
+            pass
         pass
 
     def import_midi(self):
@@ -139,8 +151,36 @@ class HomePage(QWidget):
         #add_song.exec()
 
     def reload_hbox(self):
-        self.song_list_vbox.takeAt(1)
+        layout_rm = self.song_list_vbox.takeAt(1)
+
+        while self.table_buttons.count():
+            widget = self.table_buttons.takeAt(0).widget()
+            self.table_buttons.removeWidget(widget)
+            # widget.setParent(None)
+            # widget.deleteLater()
+
+        layout_rm.setParent(None)
+        layout_rm.deleteLater()
         self.song_list_vbox.addLayout(self.get_current_songs())
+
+    def create_table_buttons(self):
+        self.table_buttons = QHBoxLayout()
+
+        btn1 = QPushButton('<', self)
+        btn1.clicked.connect(lambda: self.show_song_page(-1))
+
+        self.current_table = QPushButton('1', self)
+        self.current_table.clicked.connect(lambda: self.show_song_page(0))
+
+        btn2 = QPushButton('>', self)
+        btn2.clicked.connect(lambda: self.show_song_page(1))
+
+        self.table_buttons.addWidget(btn1)
+        self.table_buttons.addWidget(self.current_table)
+        self.table_buttons.addWidget(btn2)
+
+
+
 
 
 if __name__ == '__main__':
