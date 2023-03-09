@@ -11,6 +11,14 @@ class MessageType(Enum):
     SONG_UPDATE = 6
     SYSTEM_STOP = 7
     NOTE_OUTPUT = 8
+    SET_HAND_TO_PLAY = 9
+    SET_DURATION = 10
+
+class PianoAssistPlaying(Enum):
+    LEFT = 1
+    RIGHT = 2
+    NEITHER = 3
+    BOTH = 4
 
 class PlayingState(Enum):
     PLAY = 1

@@ -6,6 +6,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
 from src.communication.messages import Message, MessageType, PlayingState
+from src.user_interface.song_progress import SongWidget
 
 from src.user_interface.ui_comm import UICommSystem
 
@@ -18,7 +19,7 @@ class PlayingPage(QWidget):
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.nav_home.setIconSize(QSize(55, 55))
         self.nav_home.setText("back")
-        self.nav_home.setIcon(QIcon(r"../../UI_Images/back-arrow.svg"))
+        self.nav_home.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images","navigation", "back-arrow.svg")))
         self.song_name = song_name
         self.title = "TITLE: "
         self.left = 100
@@ -28,19 +29,20 @@ class PlayingPage(QWidget):
         self.title = "RIT Player Piano"
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
-        self.pbar_location = 0
+        self.song_duration = 0
         self.comm_system = UICommSystem()
+        self.comm_system.registerListener(MessageType.SET_DURATION, self.set_song_duration)
+        
 
-        self.progress = QProgressBar(self)
-        self.progress.setGeometry(200, 100, 200, 30)
-        #self.progress.setAlignment(Qt.AlignRight)
-        #self.progress.setFormat("")
-        self.progress_label = QLabel(self)
-        self.progress_label.setText("0:00")
+        #################
+        # Song Timer/Progress Bar
+        #################
+        self.songWidget = SongWidget()
+        #################
 
         playButton = QToolButton()
         playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        playButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "play-solid.svg")))
+        playButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images","playing", "play-solid.svg")))
         playButton.setIconSize(QSize(65, 65))
         playButton.setText("play")
         playButton.setToolTip("play song")
@@ -48,7 +50,7 @@ class PlayingPage(QWidget):
 
         stopButton = QToolButton()
         stopButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        stopButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "stop-solid.svg")))
+        stopButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images","playing", "stop-solid.svg")))
         stopButton.setIconSize(QSize(65, 65))
         stopButton.setText('stop')
         stopButton.setToolTip('stop song')
@@ -56,7 +58,7 @@ class PlayingPage(QWidget):
 
         pauseButton = QToolButton()
         pauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        pauseButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "pause-solid.svg")))
+        pauseButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images","playing", "pause-solid.svg")))
         pauseButton.setIconSize(QSize(65, 65))
         pauseButton.setText('pause')
         pauseButton.setToolTip('pause song')
@@ -64,7 +66,7 @@ class PlayingPage(QWidget):
 
         restartButton = QToolButton()
         restartButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        restartButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "rotate-left-solid.svg")))
+        restartButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images","playing", "rotate-left-solid.svg")))
         restartButton.setIconSize(QSize(65, 65))
         restartButton.setText('restart')
         restartButton.setToolTip('restart song')
@@ -85,8 +87,7 @@ class PlayingPage(QWidget):
         song_hbox = QHBoxLayout()
         song_hbox.setAlignment(Qt.AlignCenter)
         song_hbox.setContentsMargins(500,0,500,0) # setContentsMargin(left, top, right, bottom)
-        song_hbox.addWidget(self.progress)
-        song_hbox.addWidget(self.progress_label)
+        song_hbox.addWidget(self.songWidget)
 
 
         vbox = QVBoxLayout(self)
@@ -117,35 +118,28 @@ class PlayingPage(QWidget):
     @pyqtSlot()
     def on_click_pause(self):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PAUSE))
+        self.songWidget.stopTimer()
 
     @pyqtSlot()
     def on_click_play(self):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
-        self.progress_action()
+        self.songWidget.setDuration(self.song_duration)
+        self.songWidget.startTimer()
 
     @pyqtSlot()
     def on_click_restart(self):
         print('restart pushed')
+        self.songWidget.resetTimer()
 
     def set_song(self, song):
         print("setting song: " + song)
         self.title = song
         ##self.nav_home.setText("SONG: " + song)
         self.setWindowTitle("Player Piano: " + song)
+        #self.songWidget.setDuration(self.song_duration)
 
-    def progress_action(self):
-        # for i in range(101):
-        #     time.sleep(0.05)
-        #     self.progress.setValue(i)
-            #self.progress.setFormat(f'0:{i}')
-        message_delta_time = 1
-        self.progress_label.setText(f'0:{message_delta_time}')
-            
-    def update_song_progress(self):
+    def set_song_duration(self, message : Message):
+        """ Set the song duration once the page has been loaded
         """
-        This function will be called whenever the next message
-        comes in and will update the song progress bar.
-        """
-        self.progress.setValue(self.pbar_location)
-
+        self.song_duration = round(message.data) + 1
 
