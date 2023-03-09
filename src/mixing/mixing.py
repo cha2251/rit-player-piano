@@ -95,9 +95,9 @@ class Mixing(Thread):
                 try:
                     event = self.file_input_queue.get_nowait()
 
-                    # if event.event.type == 'note_on' and event.event.note >= 60:
-                    #     event.should_play = False
-                    #     event.split_note = True
+                    if event.event.type == 'note_on' and event.event.note >= 60:
+                        event.should_play = False
+                        event.split_note = True
 
                     self.current_notes.update({event.event.note:event.event.type})
                     self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))

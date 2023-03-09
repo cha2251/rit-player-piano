@@ -21,13 +21,14 @@ class TimingWidget(QWidget):
         self.label.setText("")
 
         self.score_label = QLabel()
-        self.score_label.setText("Score: 0")
+        self.score_label.setText("Accuracy: 100%")
 
         self.vbox.addWidget(self.score_label)
         self.vbox.addWidget(self.label)
 
         self.last_event_timestamp = 0
-        self.score = 0
+        self.hit_notes = 0
+        self.total_notes = 0
 
         self.refresh_timer = QTimer(self, timeout=self.refresh_label, interval=int(1000 * REFRESH_RATE))
         self.refresh_timer.start()
@@ -41,13 +42,14 @@ class TimingWidget(QWidget):
 
         if event.data.type == TempoModeMessageType.HIT_NOTE:
             if abs(event.data.time_delta) < 0.15:
-                self.label.setText("! PERFECT !")
-                self.score += 10
+                self.label.setText("PERFECT!")
+                self.hit_notes += 1
             elif abs(event.data.time_delta) < 0.25:
                 self.label.setText("GOOD")
-                self.score += 5
+                self.hit_notes += 0.9
             else:
                 self.label.setText("Ok...")
-                self.score += 1
+                self.hit_notes += 0.8
 
-            self.score_label.setText(f"Score: {self.score}")
+        self.total_notes += 1
+        self.score_label.setText(f"Accuracy: {int(100 * self.hit_notes / self.total_notes)}%")

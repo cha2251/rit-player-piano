@@ -112,7 +112,7 @@ class OutputQueue():
                 elif self.state == PlayingState.STOP:
                     self.stop()
 
-            if self.state == PlayingState.PLAY and False:
+            if self.state == PlayingState.PLAY:
                 if not self.button_queue.empty():
                     button_pressed = False
                     button_released = False
@@ -131,13 +131,20 @@ class OutputQueue():
                         for note in sorted_notes:
                             if note.timestamp - relative_time > 0.333:
                                 break
-                            elif note.split_note and (found_time is None or abs(note.timestamp - found_time) < 0.1):
+                            elif not note.was_hit and note.split_note and (found_time is None or abs(note.timestamp - found_time) < 0.1):
                                 if found_time is None:
                                     found_time = note.timestamp
 
                                     self.comm_system.send(Message(MessageType.TEMPO_MODE_UPDATE, TempoModeMessage(TempoModeMessageType.HIT_NOTE, note.timestamp - relative_time)))
 
-                                note.should_play = True
+                                if abs(note.timestamp - relative_time) < 0.15:
+                                    # If they're close enough, make it *sound* perfect
+                                    note.should_play = True
+                                    note.was_hit = True
+                                else:
+                                    # Otherwise make them hear the pain of their bad timing
+                                    note.was_hit = True
+                                    self._send_midi_event(note)
                             elif (found_time is not None and abs(note.timestamp - found_time) >= 0.1):
                                 break
 
@@ -149,6 +156,8 @@ class OutputQueue():
                                     played_missed_note = True
                                     event.timestamp = relative_time
                                     self._send_midi_event(event)
+                                else:
+                                    self.comm_system.send(Message(MessageType.TEMPO_MODE_UPDATE, TempoModeMessage(TempoModeMessageType.MISSED_NOTE, note.timestamp - relative_time)))
 
                             if played_missed_note:
                                 self.comm_system.send(Message(MessageType.TEMPO_MODE_UPDATE, TempoModeMessage(TempoModeMessageType.HIT_NOTE, note.timestamp - relative_time)))
