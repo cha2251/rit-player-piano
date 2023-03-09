@@ -125,12 +125,12 @@ class OutputQueue():
                         If the note should be sent anyway, this should be adjusted.
                         """
                         
-                        self._send_midi_event(midiEvent.event)
+                        self._send_midi_event(midiEvent)
                     elif midiEvent.event.type == "note_on" and not midiEvent.play_note:
                         relative_now = now - self.last_note_time_played + self.last_note_timestamp
                         self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_now, now)))
                     else:
-                        self._send_midi_event(midiEvent.event)
+                        self._send_midi_event(midiEvent)
         except IndexError:
             pass # Expected when the queue is empty
 
