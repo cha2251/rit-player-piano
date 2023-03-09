@@ -67,20 +67,25 @@ class ButtonInput:
     # Updates the keymap with a new set of mappings
     def change_map(self, message : Message):
         new_map = message.data
+        self.keyMap = {} #wipe old mapping
         for key_name in new_map.keys():
             if(len(new_map[key_name])>0):
                 self.change_key(key=new_map[key_name][0],notes=self.string_note_mapping[key_name])
-            else:
-                self.delete_key(key=new_map[key_name])
         print(self.keyMap)
 
     # Updates a single key's mapping or adds a new key mapping if the key lacks a map
     def change_key(self, key, notes):
         # Check if chord or single note
         if isinstance(notes, list):
-            self.keyMap[key] = notes
+            if key in self.keyMap.keys():
+                self.keyMap[key].append(notes)
+            else:
+                self.keyMap[key] = notes
         else:
-            self.keyMap[key] = [notes] # Make single note a chord
+            if key in self.keyMap.keys():
+                self.keyMap[key].append(notes) # Make note a chord
+            else:
+                self.keyMap[key] = [notes]
 
     def delete_key(self, key):
         self.keyMap.pop(key)
