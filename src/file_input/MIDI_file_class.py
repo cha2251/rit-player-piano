@@ -165,7 +165,6 @@ class MIDIFileObject:
                 tempo = msg.tempo
         #print(f'The last message is: {track_messages[-1]}')
         self.end_time = track_messages[-1].timestamp
-        print(f'end time: {self.end_time}')
         #self.comm_system.send(Message(MessageType.SET_DURATION, track_messages[-1].timestamp))
         return track_messages
     
