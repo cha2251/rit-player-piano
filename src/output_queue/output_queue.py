@@ -7,7 +7,7 @@ from multiprocessing import Process, Manager
 
 from src.common.midi_event import MidiEvent
 from src.common.shared_priority_queue import PeekingPriorityQueue
-from src.communication.messages import Message, MessageType, PlayingState
+from src.communication.messages import Message, MessageType, NoteOutputMessage, PlayingState
 from src.output_queue.output_comm import OutputCommSystem
 from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
 
@@ -21,6 +21,7 @@ class OutputQueue():
         self.active = False
         self.last_note_timestamp = 0
         self.last_note_time_played = 0
+        self.paused_delta_time = 0
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.state = PlayingState.STOP
@@ -105,8 +106,11 @@ class OutputQueue():
             if self.queue.peek() is not None and self.state == PlayingState.PLAY:
                 if self.last_note_time_played - self.last_note_timestamp <= now - self.queue.peek().timestamp:
                     midiEvent = self.queue.get()
-                    self.last_note_time_played = now
-                    self.last_note_timestamp = midiEvent.timestamp
+
+                    # Zero represents a note that should be played immediately, and would otherwise mess up the timings
+                    if midiEvent.timestamp > 1e-4:
+                        self.last_note_time_played = now
+                        self.last_note_timestamp = midiEvent.timestamp
 
                     if midiEvent.event.type == "note_off" or midiEvent.event.velocity == 0:
                         if midiEvent.event.note in self.playing_notes.keys():
@@ -121,48 +125,53 @@ class OutputQueue():
                         If the note should be sent anyway, this should be adjusted.
                         """
                         
-                        self._open_port.send(midiEvent.event)
+                        self._send_midi_event(midiEvent)
                     elif midiEvent.event.type == "note_on" and not midiEvent.play_note:
-                        pass # do nothing
+                        relative_now = now - self.last_note_time_played + self.last_note_timestamp
+                        self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_now, now)))
                     else:
-                        self._open_port.send(midiEvent.event)
-
-                    
-
-                    #self._open_port.send(midiEvent.event)
+                        self._send_midi_event(midiEvent)
         except IndexError:
             pass # Expected when the queue is empty
+
+    def _send_midi_event(self, midiEvent: MidiEvent):
+        if type(midiEvent) != MidiEvent:
+            return
+
+        now = time.time()
+        relative_now = now - self.last_note_time_played + self.last_note_timestamp
+
+        self._open_port.send(midiEvent.event)
+        self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_now, now)))
 
     def play(self):
         if self.last_note_timestamp is not None:
             # Restore the difference so that the timing remains correct
-            self.last_note_timestamp += time.time()
+            self.last_note_time_played = time.time() - self.paused_delta_time
 
             for event in self.playing_notes.values():
-                self._open_port.send(event)
-
+                self._send_midi_event(event)
         else:
             # If we are starting from the beginning, clear the queue and reset the timestamp
             self.last_note_timestamp = 0
             self.queue.clear()
 
     def pause(self):
-        if self.last_note_timestamp is not None:
-            self.last_note_timestamp -= time.time() # Store the difference between this and now for later
+        self.paused_delta_time = time.time() - self.last_note_time_played
 
         # Turn off all notes currently playing
         for event in self.playing_notes.values():
-            self._open_port.send(mido.Message('note_off', note=event.note))
+            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
 
     def stop(self):
-        self.last_note_timestamp = None # Signals that we removed all notes from the queue and want to start over
-        self.last_note_time_played = 0
-
         # Turn off all notes currently playing and clear everything
         for event in self.playing_notes.values():
-            self._open_port.send(mido.Message('note_off', note=event.note))
+            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
         self.playing_notes.clear()
         self.queue.clear()
+
+        self.last_note_timestamp = None # Signals that we removed all notes from the queue and want to start over
+        self.last_note_time_played = 0
 
     def run(self):
         self.active = True

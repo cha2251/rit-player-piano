@@ -1,24 +1,35 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QSize, QTimer
+from src.communication.messages import MessageType
+
+from src.user_interface.ui_comm import UICommSystem
 
 WIDGET_REFRESH_RATE = 60
 
 class PianoWidget(QWidget):
-    def __init__(self, config, parent=None, output=None):
+    def __init__(self, config, parent=None):
         super().__init__(parent=parent)
 
         self.config = config
-        self.output = output
+        self.comm_system = UICommSystem()
+        self.playing_notes = []
 
         QTimer(self, timeout=self.update, interval=(1000 / WIDGET_REFRESH_RATE)).start()
+        self.comm_system.registerListener(MessageType.NOTE_OUTPUT, self.on_note_output)
 
         self.setBaseSize(self.sizeHint())
 
+    def on_note_output(self, message):
+        midiEvent = message.data.event
+        if midiEvent.event.type == "note_off" or midiEvent.event.velocity == 0:
+            if midiEvent.event.note in self.playing_notes:
+                self.playing_notes.remove(midiEvent.event.note)
+        else:
+            self.playing_notes += [midiEvent.event.note]
+
     def paintEvent(self, _event):
         qp = QPainter(self)
-
-        playing_notes = self.output.get_playing_notes()
 
         # Draw the white keys
         for i in range(self.config.octaves * 7 + 1):
@@ -43,7 +54,7 @@ class PianoWidget(QWidget):
                 y,
                 self.config.key_width - self.config.key_border_size * 2,
                 self.config.get_key_height(),
-                (self.config.left_hand_color if note < 60 else self.config.right_hand_color) if note in playing_notes else Qt.white,
+                (self.config.left_hand_color if note < 60 else self.config.right_hand_color) if note in self.playing_notes else Qt.white,
             )
 
         # Draw the black keys
@@ -71,7 +82,7 @@ class PianoWidget(QWidget):
                 y,
                 self.config.get_black_key_width() - self.config.key_border_size * 2,
                 self.config.get_black_key_height() - self.config.key_border_size / 2,
-                (self.config.left_hand_color if note < 60 else self.config.right_hand_color) if note in playing_notes else Qt.black,
+                (self.config.left_hand_color if note < 60 else self.config.right_hand_color) if note in self.playing_notes else Qt.black,
             )
 
     def sizeHint(self):
