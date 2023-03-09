@@ -1,5 +1,7 @@
 from enum import Enum
 
+from src.common.midi_event import MidiEvent
+
 class MessageType(Enum):
     ERROR = 1
     OUTPUT_QUEUE_UPDATE = 2
@@ -8,8 +10,9 @@ class MessageType(Enum):
     BUTTON_CONFIG_UPDATE = 5
     SONG_UPDATE = 6
     SYSTEM_STOP = 7
-    SET_HAND_TO_PLAY = 8
-    SET_DURATION = 9
+    NOTE_OUTPUT = 8
+    SET_HAND_TO_PLAY = 9
+    SET_DURATION = 10
 
 class PianoAssistPlaying(Enum):
     LEFT = 1
@@ -26,3 +29,9 @@ class Message():
     def __init__(self, type, data = None):
         self.type = type
         self.data = data
+
+class NoteOutputMessage(Message):
+    def __init__(self, event: MidiEvent, relative_timestamp: float, absolute_timestamp: float):
+        self.event = event
+        self.relative_timestamp = relative_timestamp
+        self.absolute_timestamp = absolute_timestamp
