@@ -13,14 +13,22 @@ from src.user_interface.visualization.visualization import VisualizationWidget
 
 class PlayingPage(QWidget):
     def __init__(self, song_name="DEFAULT"):
+
+        button = """
+        max-width: 3em;
+        min-width: 3em;
+        """
+
         super().__init__()
         self.nav_home = QToolButton()
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.nav_home.setIconSize(QSize(55, 55))
         self.nav_home.setText("back")
         self.nav_home.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images","navigation", "back-arrow.svg")))
+        self.nav_home.setStyleSheet(button
+        )  # it seems like the min-width is the important one
+
         self.song_name = song_name
-        self.title = "TITLE: "
         self.left = 100
         self.top = 50
         self.width = 320
@@ -44,15 +52,9 @@ class PlayingPage(QWidget):
         playButton.setIconSize(QSize(65, 65))
         playButton.setText("play")
         playButton.setToolTip("play song")
+        playButton.setStyleSheet(button)
         playButton.clicked.connect(self.on_click_play)
 
-        stopButton = QToolButton()
-        stopButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        stopButton.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images","playing", "stop-solid.svg")))
-        stopButton.setIconSize(QSize(65, 65))
-        stopButton.setText('stop')
-        stopButton.setToolTip('stop song')
-        stopButton.clicked.connect(self.on_click_stop)
 
         pauseButton = QToolButton()
         pauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -60,6 +62,7 @@ class PlayingPage(QWidget):
         pauseButton.setIconSize(QSize(65, 65))
         pauseButton.setText('pause')
         pauseButton.setToolTip('pause song')
+        pauseButton.setStyleSheet(button)
         pauseButton.clicked.connect(self.on_click_pause)
 
         restartButton = QToolButton()
@@ -68,6 +71,7 @@ class PlayingPage(QWidget):
         restartButton.setIconSize(QSize(65, 65))
         restartButton.setText('restart')
         restartButton.setToolTip('restart song')
+        restartButton.setStyleSheet(button)
         restartButton.clicked.connect(self.on_click_restart)
 
         spacer = QSpacerItem(1000, 5, QSizePolicy.Expanding)
