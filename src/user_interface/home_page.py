@@ -1,3 +1,4 @@
+import shutil
 import sys
 import os
 from PyQt5.QtCore import pyqtSlot, Qt
@@ -46,13 +47,13 @@ class HomePage(QWidget):
         hbox.addSpacerItem(title_spacer)
         hbox.addWidget(self.nav_settings)
         hbox.addSpacerItem(outer_spacer)
-        vbox = QVBoxLayout(self)
-        vbox.setAlignment(Qt.AlignTop)
-        vbox.addLayout(hbox)
+        self.song_list_vbox = QVBoxLayout(self)
+        self.song_list_vbox.setAlignment(Qt.AlignTop)
+        self.song_list_vbox.addLayout(hbox)
         spacer = QSpacerItem(100, 200, QSizePolicy.Expanding)
         ## vbox.addSpacerItem(spacer)
         v = self.get_current_songs()
-        vbox.addLayout(v)
+        self.song_list_vbox.addLayout(v)
         ## spacer_bot = QSpacerItem(100, 200, QSizePolicy.Expanding)
         ## vbox.addSpacerItem(spacer_bot)
         ## vbox.addLayout(h)
@@ -60,7 +61,7 @@ class HomePage(QWidget):
         # vbox.addWidget(button)
         # vbox.setAlignment(Qt.AlignCenter)
         #self.showFullScreen()
-        self.setLayout(vbox)
+        self.setLayout(self.song_list_vbox)
         self.showMaximized()
 
     @pyqtSlot()
@@ -121,8 +122,25 @@ class HomePage(QWidget):
         pass
 
     def import_midi(self):
-        add_song = QFileDialog()
-        add_song.exec()
+        #add_song = QFileDialog()
+
+        file_path, _ = QFileDialog.getOpenFileName(None, "Select File", "", "All Files (*.*)")
+        if not file_path:
+            return
+
+        # Copy the selected file to the project folder
+        project_folder = self.MIDI_FILE_PATH
+        filename = os.path.basename(file_path)
+        new_path = os.path.join(project_folder, filename)
+        print(f'File path is: {new_path}')
+        shutil.copy(file_path, new_path)
+        self.reload_hbox()
+        
+        #add_song.exec()
+
+    def reload_hbox(self):
+        self.song_list_vbox.takeAt(1)
+        self.song_list_vbox.addLayout(self.get_current_songs())
 
 
 if __name__ == '__main__':
