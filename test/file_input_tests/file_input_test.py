@@ -10,7 +10,8 @@ import mido
 class TestCreate:
     def test_copies_queue(self):
         test_queue = Queue()
-        component = FileInput(test_queue)
+        test_queue2 = Queue()
+        component = FileInput(test_queue, test_queue2)
 
         actual = component.file_input_queue
         
@@ -21,7 +22,8 @@ class TestCopyFileToQueue:
     @pytest.mark.timeout(5)
     def test_empty_file(self):
         test_queue = Queue()
-        component = FileInput(test_queue)
+        test_queue2 = Queue()
+        component = FileInput(test_queue, test_queue2)
 
         test_file = MIDIFileObject('')
 
@@ -37,7 +39,8 @@ class TestCopyFileToQueue:
     @pytest.mark.timeout(5)
     def test_mutiple_notes(self):
         test_queue = Queue()
-        component = FileInput(test_queue)
+        test_queue2 = Queue()
+        component = FileInput(test_queue, test_queue2)
         expected = Queue()
 
         component.filename = "TestFile"
@@ -60,7 +63,8 @@ class TestCopyFileToQueue:
     @pytest.mark.timeout(5)
     def test_blacklisted_notes(self):
         test_queue = Queue()
-        component = FileInput(test_queue)
+        test_queue2 = Queue()
+        component = FileInput(test_queue, test_queue2)
         expected = Queue()
 
         component.filename = "TestFile"
@@ -88,7 +92,8 @@ class TestCopyFileToQueue:
 class TestOpenFile:
     def test_adds_extension(self):
         test_queue = Queue()
-        component = FileInput(test_queue)
+        test_queue2 = Queue()
+        component = FileInput(test_queue, test_queue2)
 
         test_file = "TestFile"
 
@@ -104,7 +109,8 @@ class TestOpenFile:
     
     def test_clears_file_object(self):
         test_queue = Queue()
-        component = FileInput(test_queue)
+        test_queue2 = Queue()
+        component = FileInput(test_queue, test_queue2)
 
         test_file = "TestFile"
 
