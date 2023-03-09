@@ -6,6 +6,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
 from src.communication.messages import Message, MessageType, PlayingState
+
 from src.user_interface.song_progress import SongWidget
 
 from src.user_interface.ui_comm import UICommSystem
@@ -39,6 +40,11 @@ class PlayingPage(QWidget):
         #################
         self.songWidget = SongWidget()
         #################
+
+        self.button_ack = QLabel()
+        self.button_ack.setObjectName('buttonAck')
+        self.button_ack.setFixedSize(300,50)
+        self.button_ack.setText('PRESS PLAY')
 
         playButton = QToolButton()
         playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -89,10 +95,15 @@ class PlayingPage(QWidget):
         song_hbox.setContentsMargins(500,0,500,0) # setContentsMargin(left, top, right, bottom)
         song_hbox.addWidget(self.songWidget)
 
+        btn_ack_hbox = QHBoxLayout()
+        btn_ack_hbox.setAlignment(Qt.AlignCenter)
+        btn_ack_hbox.addWidget(self.button_ack)
+
 
         vbox = QVBoxLayout(self)
         vbox.addWidget(self.nav_home)
         vbox.addLayout(song_hbox)
+        vbox.addLayout(btn_ack_hbox)
 
         ############################################################
         ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
@@ -114,17 +125,20 @@ class PlayingPage(QWidget):
     @pyqtSlot()
     def on_click_stop(self):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.STOP))
+        self.button_ack.setText('STOPPED')
 
     @pyqtSlot()
     def on_click_pause(self):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PAUSE))
         self.songWidget.stopTimer()
+        self.button_ack.setText('PAUSED')
 
     @pyqtSlot()
     def on_click_play(self):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
         self.songWidget.setDuration(self.song_duration)
         self.songWidget.startTimer()
+
 
     @pyqtSlot()
     def on_click_restart(self):
@@ -137,6 +151,7 @@ class PlayingPage(QWidget):
         ##self.nav_home.setText("SONG: " + song)
         self.setWindowTitle("Player Piano: " + song)
         #self.songWidget.setDuration(self.song_duration)
+        self.button_ack.setText('PRESS PLAY')
 
     def set_song_duration(self, message : Message):
         """ Set the song duration once the page has been loaded
