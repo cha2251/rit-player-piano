@@ -9,6 +9,7 @@ class MessageType(Enum):
     SONG_UPDATE = 6
     SYSTEM_STOP = 7
     SET_HAND_TO_PLAY = 8
+    SET_DURATION = 9
 
 class PianoAssistPlaying(Enum):
     LEFT = 1

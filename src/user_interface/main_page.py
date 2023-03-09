@@ -146,6 +146,7 @@ class MainPage(QWidget, Thread):
         self.loading_thread.start()
         #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(0)
+        self.play_page.on_click_restart()
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.STOP))
 
     def go_to_play_page(self):

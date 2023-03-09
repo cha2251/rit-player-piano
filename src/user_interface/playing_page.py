@@ -29,7 +29,10 @@ class PlayingPage(QWidget):
         self.title = "RIT Player Piano"
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+        self.song_duration = 0
         self.comm_system = UICommSystem()
+        self.comm_system.registerListener(MessageType.SET_DURATION, self.set_song_duration)
+        
 
         #################
         # Song Timer/Progress Bar
@@ -120,6 +123,7 @@ class PlayingPage(QWidget):
     @pyqtSlot()
     def on_click_play(self):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
+        self.songWidget.setDuration(self.song_duration)
         self.songWidget.startTimer()
 
     @pyqtSlot()
@@ -132,5 +136,10 @@ class PlayingPage(QWidget):
         self.title = song
         ##self.nav_home.setText("SONG: " + song)
         self.setWindowTitle("Player Piano: " + song)
-        self.songWidget.setDuration(180)    # assume 3 minute song until I figure out how long songs are
+        #self.songWidget.setDuration(self.song_duration)
+
+    def set_song_duration(self, message : Message):
+        """ Set the song duration once the page has been loaded
+        """
+        self.song_duration = round(message.data) + 1
 

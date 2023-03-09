@@ -13,7 +13,7 @@ class FileInput(Thread):
     fileObject = None
     active = False
     accessLock = Lock()
-    hand_to_play = PianoAssistPlaying.BOTH
+    hand_to_play = PianoAssistPlaying.BOTH.value
 
     def __init__(self, file_input_queue):
         Thread.__init__(self)
