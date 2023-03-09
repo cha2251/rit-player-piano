@@ -16,6 +16,34 @@ class ButtonInput:
     default = {'q': [53,54,55], 'w': [56], 'e': [57], 'r': [58], 't': [59],
                'y': [60], 'u': [61], 'i': [62], 'o': [63], 'p': [64],
                ControllerButton.A: [65], ControllerButton.B: [66, 68, 70]}
+    
+    string_note_mapping = {
+            "c3": 48, # 3rd C
+            "c#3": 49,
+            "d3": 50,
+            "d#3": 51,
+            "e3": 52,
+            "f3": 53,
+            "f#3": 54,
+            "g3": 55,
+            "g#3": 56,
+            "a3": 57,
+            "a#3": 58,
+            "b3": 59,
+            "c4": 60, # Middle C
+            "c#4": 61,
+            "d4": 62,
+            "d#4": 63,
+            "e4": 64,
+            "f4": 65,
+            "f#4": 66,
+            "g4": 67,
+            "g#4": 68,
+            "a4": 69,
+            "a#4": 70,
+            "b4": 71,
+            "c5": 72, # 5th C
+        }
 
     """ Sets initial values of Thread
     button_input_queue: global queue responsible for carrying midi events to mixing subsystem
@@ -39,7 +67,12 @@ class ButtonInput:
     # Updates the keymap with a new set of mappings
     def change_map(self, message : Message):
         new_map = message.data
-        print(new_map)
+        for key_name in new_map.keys():
+            if(len(new_map[key_name])>0):
+                self.change_key(key=new_map[key_name][0],notes=self.string_note_mapping[key_name])
+            else:
+                self.delete_key(key=new_map[key_name])
+        print(self.keyMap)
 
     # Updates a single key's mapping or adds a new key mapping if the key lacks a map
     def change_key(self, key, notes):
