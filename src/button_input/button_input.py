@@ -6,6 +6,8 @@ import mido
 from src.button_input.controller import ControllerButton, XboxController
 
 from src.common.midi_event import MidiEvent
+from src.communication.messages import Message, MessageType
+from src.mixing.mixing_comm import MixingCommSystem
 
 
 class ButtonInput:
@@ -31,10 +33,13 @@ class ButtonInput:
         self.keyboard_listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.keyboard_listener.start()
         self.controller = XboxController(self.on_controller_update)
+        self.comm_system = MixingCommSystem()
+        self.comm_system.registerListener(MessageType.BUTTON_CONFIG_UPDATE, self.change_map)
 
     # Updates the keymap with a new set of mappings
-    def change_map(self, keyMap):
-        self.keyMap = keyMap
+    def change_map(self, message : Message):
+        new_map = message.data
+        print(new_map)
 
     # Updates a single key's mapping or adds a new key mapping if the key lacks a map
     def change_key(self, key, notes):
