@@ -35,7 +35,8 @@ class MIDIFileObject:
         self.file_name = file_name
         self.curr_pos = 0
         self.current_time_delay = None
-        self.comm_system = MixingCommSystem()
+        #self.comm_system = MixingCommSystem()
+        self.end_time = 0
         try:
             self.messages = self.parse_midi_file(file_name)
         except EOFError: #TODO: For freeplay song, this is thrown. Need to handle this better
@@ -163,8 +164,18 @@ class MIDIFileObject:
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
         #print(f'The last message is: {track_messages[-1]}')
-        self.comm_system.send(Message(MessageType.SET_DURATION, track_messages[-1].timestamp))
+        self.end_time = track_messages[-1].timestamp
+        print(f'end time: {self.end_time}')
+        #self.comm_system.send(Message(MessageType.SET_DURATION, track_messages[-1].timestamp))
         return track_messages
+    
+    def get_end_time(self):
+        """
+        Returns:
+            The end time of the song.
+        """
+        end_time = self.end_time
+        return end_time
 
 
     def set_hand_to_play(self, hand):
