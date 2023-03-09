@@ -8,7 +8,8 @@ from pathlib import Path
 
 from src.common.midi_event import MidiEvent
 from mido import merge_tracks, tick2second
-from src.communication.messages import PianoAssistPlaying
+from src.communication.messages import Message, MessageType, PianoAssistPlaying
+from src.mixing.mixing_comm import MixingCommSystem
 
 class MIDIFileObject:
     """
@@ -21,7 +22,7 @@ class MIDIFileObject:
 
     DEFAULT_TEMPO = 500000
     STARTUP_DELAY = 2.5
-    hand_to_play = PianoAssistPlaying.BOTH
+    hand_to_play = PianoAssistPlaying.BOTH.value
     
 
     def __init__(self, file_name):
@@ -34,6 +35,8 @@ class MIDIFileObject:
         self.file_name = file_name
         self.curr_pos = 0
         self.current_time_delay = None
+        #self.comm_system = MixingCommSystem()
+        self.end_time = 0
         try:
             self.messages = self.parse_midi_file(file_name)
         except EOFError: #TODO: For freeplay song, this is thrown. Need to handle this better
@@ -160,8 +163,18 @@ class MIDIFileObject:
 
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
-                
+        #print(f'The last message is: {track_messages[-1]}')
+        self.end_time = track_messages[-1].timestamp
+        #self.comm_system.send(Message(MessageType.SET_DURATION, track_messages[-1].timestamp))
         return track_messages
+    
+    def get_end_time(self):
+        """
+        Returns:
+            The end time of the song.
+        """
+        end_time = self.end_time
+        return end_time
 
 
     def set_hand_to_play(self, hand):

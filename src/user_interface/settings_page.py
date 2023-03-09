@@ -73,7 +73,7 @@ class SettingsPage(QWidget):
         vbox.addWidget(prompt)
         self.hand_select = QComboBox()
         self.hand_select.addItems(['Right', 'Left', 'Both', 'Neither'])
-        self.hand_select.setCurrentIndex(2)
+        self.hand_select.setCurrentIndex(3)
         self.hand_select.activated.connect(self.on_drop_down_selected)
 
         vbox.addWidget(self.hand_select)

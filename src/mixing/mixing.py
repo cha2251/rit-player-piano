@@ -9,6 +9,7 @@ import mido
 
 class Mixing(Thread):
     file_input_queue = queue.Queue()
+    file_output_queue = queue.Queue()
     button_input_queue = queue.Queue()
     holding_queue: queue.PriorityQueue = None
     active = False
@@ -25,7 +26,7 @@ class Mixing(Thread):
     
     def run(self):
         self.active = True
-        self.file_input = FileInput(self.file_input_queue)
+        self.file_input = FileInput(self.file_input_queue, self.file_output_queue)
         self.file_input.start()
         self.button_input = ButtonInput(self.button_input_queue)
         self.startup()

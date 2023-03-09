@@ -13,6 +13,7 @@ class VisualizationConfig:
         self.key_width = 36 # In pixels
         self.key_border_size = 3 # In pixels
         self.note_width_mult = 0.67 # How much of the key width a note should take up vs a piano key
+        self.visualization_height = 500 # In pixels
 
         self.octaves = 7 # How many octaves to render. Don't touch this for now, it doesn't like being touched
         self.display_lead_time = 3 # How long a note takes to travel down the screen in seconds
@@ -39,13 +40,13 @@ class VisualizationConfig:
 
 
 class VisualizationWidget(QWidget):
-    def __init__(self, parent=None, output=None):
+    def __init__(self, parent=None):
         super().__init__(parent=parent)
 
         self.config = VisualizationConfig()
 
-        self.notes_widget = NotesWidget(self.config, parent=self, output=output)
-        self.piano_widget = PianoWidget(self.config, parent=self, output=output)
+        self.notes_widget = NotesWidget(self.config, parent=self)
+        self.piano_widget = PianoWidget(self.config, parent=self)
 
         hbox = QHBoxLayout(self)
 
