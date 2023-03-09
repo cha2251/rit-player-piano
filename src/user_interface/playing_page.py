@@ -31,7 +31,7 @@ class PlayingPage(QWidget):
 
         self.configure = QToolButton()
         self.configure.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        self.configure.setIcon(QSize(55, 55))
+        self.configure.setIconSize(QSize(55, 55))
         self.configure.setText("Configure input")
         self.configure.setIcon(
             QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "gear.svg")))
@@ -48,7 +48,6 @@ class PlayingPage(QWidget):
         self.song_duration = 0
         self.comm_system = UICommSystem()
         self.comm_system.registerListener(MessageType.SET_DURATION, self.set_song_duration)
-        
 
         self.progress = QProgressBar(self)
         self.progress.setGeometry(200, 100, 200, 30)
