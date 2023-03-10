@@ -108,16 +108,11 @@ class HomePage(QWidget):
             label = QPushButton(song)
             label.clicked.connect(lambda state, x=song: self.song_on_click(x))
             arr.append(label)
-            
-
-            if index > 4:
-                label.hide()            # if there are more than 5, we want to hide the others until we move to that table set
 
             vbox.addWidget(label)
             index += 1
         self.songs_dict.append(arr)
-
-        print(f'======Songs dict: {self.songs_dict[0]}')
+        self.show_song_page(0)
 
 
 
@@ -149,7 +144,7 @@ class HomePage(QWidget):
         """
         
         """
-        print(f'Change table page: {page_num}, total tables: {len(self.songs_dict[page_num])}')
+        #print(f'Change table page: {page_num}, total tables: {len(self.songs_dict[page_num])}')
         self.hide_all_songs()
 
         self.show_songs_at(page_num)
@@ -183,6 +178,22 @@ class HomePage(QWidget):
     def show_songs_at(self, index):
         # if index >= len(self.songs_dict):
         #     return
+        current = self.songs_dict_index
+        if index == -1: 
+            if current > 0:     # move back a page
+                print(f'Getting here: index: {index}, current: {current}')
+                current -= 1
+                
+                
+        elif index == -2:  
+            if current < len(self.songs_dict)-1:
+                print(f'Getting here: index: {index}, current: {current}')
+                current += 1
+        else:
+            current = index
+                
+        index = current
+        self.songs_dict_index = index
         for song in self.songs_dict[index]:
             song.show()
 
@@ -218,24 +229,21 @@ class HomePage(QWidget):
 
     def create_table_buttons(self, num_btns):
         self.table_buttons = QHBoxLayout()
+
+        btn1 = QPushButton('<- BACK', self)
+        btn1.clicked.connect(lambda: self.show_song_page(-1))
+        self.table_buttons.addWidget(btn1)
+
+
         for i in range(num_btns):
             print(f'==============Creating button {i}==============')
             btn = QPushButton(f'{i}', self)
             btn.clicked.connect(lambda _, x=i: self.show_song_page(x))
             self.table_buttons.addWidget(btn)
 
-        # btn1 = QPushButton('<', self)
-        # btn1.clicked.connect(lambda: self.show_song_page(-1))
-
-        # self.current_table = QPushButton('1', self)
-        # self.current_table.clicked.connect(lambda: self.show_song_page(0))
-
-        # btn2 = QPushButton('>', self)
-        # btn2.clicked.connect(lambda: self.show_song_page(1))
-
-        # self.table_buttons.addWidget(btn1)
-        # self.table_buttons.addWidget(self.current_table)
-        # self.table_buttons.addWidget(btn2)
+        btn2 = QPushButton('NEXT ->', self)
+        btn2.clicked.connect(lambda: self.show_song_page(-2))
+        self.table_buttons.addWidget(btn2)
 
         
 
