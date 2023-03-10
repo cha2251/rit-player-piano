@@ -16,7 +16,7 @@ from src.user_interface.visualization.visualization import VisualizationWidget
 class PlayingPage(QWidget):
     def __init__(self, song_name="DEFAULT"):
         button = """
-        max-width: 3em;
+        max-width: 7em;
         min-width: 3em;
         """
 
@@ -69,7 +69,7 @@ class PlayingPage(QWidget):
         playButton.setText("play")
         playButton.setToolTip("play song")
         playButton.setStyleSheet(button)
-        ###playButton.clicked.connect(self.on_click_play)
+        playButton.clicked.connect(self.on_click_play)
 
         pauseButton = QToolButton()
         pauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -79,7 +79,7 @@ class PlayingPage(QWidget):
         pauseButton.setText('pause')
         pauseButton.setToolTip('pause song')
         pauseButton.setStyleSheet(button)
-        ###pauseButton.clicked.connect(self.on_click_pause)
+        pauseButton.clicked.connect(self.on_click_pause)
 
         restartButton = QToolButton()
         restartButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -89,16 +89,37 @@ class PlayingPage(QWidget):
         restartButton.setText('restart')
         restartButton.setToolTip('restart song')
         restartButton.setStyleSheet(button)
-        ###restartButton.clicked.connect(self.on_click_restart)
+        restartButton.clicked.connect(self.on_click_restart)
+
+        rewindTenSec = QToolButton()
+        rewindTenSec.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        rewindTenSec.setIcon(
+            QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "backward-solid.svg")))
+        rewindTenSec.setIconSize(QSize(65, 65))
+        rewindTenSec.setText('rewind 10 seconds')
+        rewindTenSec.setToolTip('rewind 10 seconds')
+        rewindTenSec.setStyleSheet(button)
+        rewindTenSec.clicked.connect(self.on_click_rewind)
+
+        forwardTenSec = QToolButton()
+        forwardTenSec.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        forwardTenSec.setIcon(
+            QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "forward-solid.svg")))
+        forwardTenSec.setIconSize(QSize(65, 65))
+        forwardTenSec.setText('skip 10 seconds')
+        forwardTenSec.setToolTip('skip 10 seconds')
+        forwardTenSec.setStyleSheet(button)
+        forwardTenSec.clicked.connect(self.on_click_forward)
 
         spacer = QSpacerItem(1000, 5, QSizePolicy.Expanding)
 
         hbox = QHBoxLayout()
         hbox.setAlignment(Qt.AlignCenter)
+        hbox.addWidget(rewindTenSec)
         hbox.addWidget(restartButton)
-        ##hbox.addWidget(stopButton)
         hbox.addWidget(pauseButton)
         hbox.addWidget(playButton)
+        hbox.addWidget(forwardTenSec)
 
         ############################################################
         # add song display here
@@ -109,18 +130,14 @@ class PlayingPage(QWidget):
         song_hbox.addWidget(self.progress_label)
         song_hbox.addWidget(self.songWidget)
 
-        ##top = QHBoxLayout()
-        ##top.addWidget(self.nav_home)
-        ##top.addSpacerItem(QSpacerItem(5, 5, QSizePolicy.Expanding))
-        ##top.addWidget(self.configure)
+        top = QHBoxLayout()
+        top.addWidget(self.nav_home)
+        top.addSpacerItem(QSpacerItem(5, 5, QSizePolicy.Expanding))
+        top.addWidget(self.configure)
 
         vbox = QVBoxLayout(self)
-        ##vbox.addLayout(top)
+        vbox.addLayout(top)
         vbox.addLayout(song_hbox)
-
-        ############################################################
-        ## vbox.addWidget()  ## ADD PROGRESS BAR WIDGET HERE to vbox
-        ############################################################
 
         vbox.addWidget(VisualizationWidget(parent=self))
         vbox.addLayout(hbox)
@@ -131,25 +148,27 @@ class PlayingPage(QWidget):
         # self.showFullScreen()
         self.showMaximized()
 
-    @pyqtSlot()
     def on_click_quit(self):
         print('quit pushed')
 
-    @pyqtSlot()
     def on_click_pause(self):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PAUSE))
         self.songWidget.stopTimer()
 
-    @pyqtSlot()
     def on_click_play(self):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
         self.songWidget.setDuration(self.song_duration)
         self.songWidget.startTimer()
 
-    @pyqtSlot()
     def on_click_restart(self):
         print('restart pushed')
         self.songWidget.resetTimer()
+
+    def on_click_rewind(self):
+        pass
+
+    def on_click_forward(self):
+        pass
 
     def set_song(self, song):
         print("setting song: " + song)
