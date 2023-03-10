@@ -49,12 +49,6 @@ class PlayingPage(QWidget):
         self.comm_system = UICommSystem()
         self.comm_system.registerListener(MessageType.SET_DURATION, self.set_song_duration)
 
-        self.progress = QProgressBar(self)
-        self.progress.setGeometry(200, 100, 200, 30)
-        # self.progress.setAlignment(Qt.AlignRight)
-        # self.progress.setFormat("")
-        self.progress_label = QLabel(self)
-        self.progress_label.setText("0:00")
         #################
         # Song Timer/Progress Bar
         #################
@@ -126,8 +120,6 @@ class PlayingPage(QWidget):
         ############################################################
         song_hbox = QHBoxLayout()
         song_hbox.setAlignment(Qt.AlignCenter)
-        song_hbox.addWidget(self.progress)
-        song_hbox.addWidget(self.progress_label)
         song_hbox.addWidget(self.songWidget)
 
         top = QHBoxLayout()
