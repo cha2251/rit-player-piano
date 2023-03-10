@@ -138,6 +138,7 @@ class PlayingPage(QWidget):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
         self.songWidget.setDuration(self.song_duration)
         self.songWidget.startTimer()
+        self.button_ack.setText('')
 
 
     @pyqtSlot()
