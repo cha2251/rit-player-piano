@@ -16,8 +16,9 @@ from src.user_interface.visualization.visualization import VisualizationWidget
 class PlayingPage(QWidget):
     def __init__(self, song_name="DEFAULT"):
         button = """
-        max-width: 7em;
+        max-width: 5em;
         min-width: 3em;
+        word-wrap: break-word;
         """
 
         super().__init__()
