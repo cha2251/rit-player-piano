@@ -86,8 +86,9 @@ class HomePage(QWidget):
 
         # get list of songs
         songs = self.get_songs_from_directory()
-        num_btns = (len(songs) // 4) + 1
-        print(f'# Songs: {len(songs)}, # num btns: {num_btns}')
+        num_btns = (len(songs) // 4)
+        num_btns = num_btns if (len(songs)%4 == 0) else (num_btns+1)
+        #print(f'# Songs: {len(songs)}, # num btns: {num_btns}')
         self.create_table_buttons(num_btns)
         hbox = self.table_buttons
 
@@ -111,6 +112,7 @@ class HomePage(QWidget):
 
             vbox.addWidget(label)
             index += 1
+        #if arr[0] is not None:
         self.songs_dict.append(arr)
         self.show_song_page(0)
 
@@ -149,25 +151,6 @@ class HomePage(QWidget):
 
         self.show_songs_at(page_num)
 
-        # if page_num == -1:
-        #     # we want to display the previous 5 songs
-            
-        #     if self.songs_dict_index <= 0:
-        #         return
-        #     else:                
-        #         self.songs_dict_index -= 1
-        #         print(f'New index: {self.songs_dict_index}')
-        #         self.show_songs_at(self.songs_dict_index)
-        # elif page_num == 0:
-        #     # we want to do nothing
-        #     pass
-        # elif page_num == 1:
-
-        #     if self.songs_dict_index < (len(self.songs_dict)+1):
-        #         self.songs_dict_index += 1
-        #         self.show_songs_at(self.songs_dict_index)
-
-
 
 
     def hide_all_songs(self):
@@ -181,13 +164,10 @@ class HomePage(QWidget):
         current = self.songs_dict_index
         if index == -1: 
             if current > 0:     # move back a page
-                print(f'Getting here: index: {index}, current: {current}')
                 current -= 1
-                
                 
         elif index == -2:  
             if current < len(self.songs_dict)-1:
-                print(f'Getting here: index: {index}, current: {current}')
                 current += 1
         else:
             current = index
@@ -208,7 +188,7 @@ class HomePage(QWidget):
         project_folder = self.MIDI_FILE_PATH
         filename = os.path.basename(file_path)
         new_path = os.path.join(project_folder, filename)
-        print(f'File path is: {new_path}')
+        #print(f'File path is: {new_path}')
         shutil.copy(file_path, new_path)
         self.reload_hbox()
         
@@ -230,18 +210,21 @@ class HomePage(QWidget):
     def create_table_buttons(self, num_btns):
         self.table_buttons = QHBoxLayout()
 
-        btn1 = QPushButton('<- BACK', self)
+        btn1 = QPushButton('< BACK', self)
         btn1.clicked.connect(lambda: self.show_song_page(-1))
+        btn1.setMinimumWidth(200)
+        btn1.setMaximumWidth(200)
         self.table_buttons.addWidget(btn1)
 
 
         for i in range(num_btns):
-            print(f'==============Creating button {i}==============')
             btn = QPushButton(f'{i}', self)
             btn.clicked.connect(lambda _, x=i: self.show_song_page(x))
+            btn.setMinimumWidth(20)
+            btn.setMaximumWidth(20)
             self.table_buttons.addWidget(btn)
 
-        btn2 = QPushButton('NEXT ->', self)
+        btn2 = QPushButton('NEXT >', self)
         btn2.clicked.connect(lambda: self.show_song_page(-2))
         self.table_buttons.addWidget(btn2)
 
