@@ -143,14 +143,10 @@ class HomePage(QWidget):
         self.nav_play.click()
 
     def show_song_page(self, page_num):
-        """
-        
-        """
         #print(f'Change table page: {page_num}, total tables: {len(self.songs_dict[page_num])}')
         self.hide_all_songs()
 
         self.show_songs_at(page_num)
-
 
 
     def hide_all_songs(self):
