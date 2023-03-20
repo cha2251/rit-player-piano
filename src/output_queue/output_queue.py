@@ -18,7 +18,6 @@ WINDOWS_SYNTH_KEYWORDS = "microsoft gs wavetable synth"
 class OutputQueue():
     def __init__(self, input_queue, output_queue):
         self.queue = PeekingPriorityQueue()
-        self.button_queue = queue.Queue()
         self._open_port = None
         self.active = False
         self.last_note_timestamp = 0
@@ -34,19 +33,15 @@ class OutputQueue():
         self.comm_system.set_queues(input_queue, output_queue)
         self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
         self.comm_system.registerListener(MessageType.OUTPUT_QUEUE_UPDATE, self.process_note_event)
-        self.comm_system.registerListener(MessageType.BUTTON_NOTE, self.process_button_note)
         self.comm_system.registerListener(MessageType.STATE_UPDATE, self.stateChanged)
         self.comm_system.start()
 
-        self.tempo_mode = TempoMode(self)
+        self.playing_mode = TempoMode(self)
 
         # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
 
     def process_note_event(self, message : Message):
         self.queue.put(message.data)
-
-    def process_button_note(self, message : Message):
-        self.button_queue.put(message.data)
 
     def stateChanged(self, message : Message):
         if self.state != message.data:
@@ -100,18 +95,21 @@ class OutputQueue():
             return
 
         now = time.time()
-        relative_time = now - self.last_note_time_played + (self.last_note_timestamp if self.state == PlayingState.PLAY else 0)
 
+        # How many seconds into the song we are
+        relative_time = now - self.last_note_time_played + self.last_note_timestamp
+
+        immediate_events = []
         button_events = []
-        immediate_notes = []
 
+        # Separate events from buttons vs events from the song
         while self.queue.qsize() > 0:
             event = self.queue.peek()
 
             if event.from_user_input:
                 button_events += [self.queue.get()]
             elif self.state == PlayingState.PLAY and event.timestamp <= relative_time:
-                immediate_notes += [self.queue.get()]
+                immediate_events += [self.queue.get()]
             else:
                 break
 
@@ -125,18 +123,19 @@ class OutputQueue():
             elif self.state == PlayingState.STOP:
                 self.stop()
 
-        # Handle button input events
-        if self.state == PlayingState.PLAY:
-            self.tempo_mode.update(button_events, relative_time)
-        else:
-            for button_event in button_events:
-                self._send_midi_event(button_event)
+        if self.playing_mode is not None:
+            self.playing_mode.update(immediate_events, button_events, relative_time)
+
+        for button_event in button_events:
+            self._send_midi_event(button_event)
 
         # Handle regular queue events
-        for midiEvent in immediate_notes:
-            # if midiEvent.timestamp > 1e-4:
-            self.last_note_time_played = now
-            self.last_note_timestamp = midiEvent.timestamp
+        for midiEvent in immediate_events:
+            # A timestamp of 0 means the note should be played immediately and is
+            # valid, but would otherwise mess up the timings
+            if midiEvent.timestamp > 1e-4:
+                self.last_note_time_played = now
+                self.last_note_timestamp = midiEvent.timestamp
 
             if midiEvent.event.type == "note_off":
                 if midiEvent.event.note in self.playing_notes.keys():
@@ -144,7 +143,7 @@ class OutputQueue():
             elif midiEvent.event.type == "note_on" and midiEvent.play_note:
                 self.playing_notes[midiEvent.event.note] = midiEvent.event
 
-            self.tempo_mode.on_note_output(midiEvent, relative_time)
+            # self.tempo_mode.on_note_output(midiEvent, relative_time)
 
             if midiEvent.event.type == "note_on" and midiEvent.play_note:
                 self._send_midi_event(midiEvent)

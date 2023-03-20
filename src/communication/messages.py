@@ -11,10 +11,9 @@ class MessageType(Enum):
     SONG_UPDATE = 6
     SYSTEM_STOP = 7
     NOTE_OUTPUT = 8
-    BUTTON_NOTE = 9
-    TEMPO_MODE_UPDATE = 10
-    SET_HAND_TO_PLAY = 11
-    SET_DURATION = 12
+    TEMPO_MODE_UPDATE = 9
+    SET_HAND_TO_PLAY = 10
+    SET_DURATION = 11
 
 class PianoAssistPlaying(Enum):
     LEFT = 1
@@ -27,20 +26,9 @@ class PlayingState(Enum):
     PAUSE = 2
     STOP = 3
 
-class NoteOutputMessage():
-    def __init__(self, event: MidiEvent, relative_timestamp: float, absolute_timestamp: float):
-        self.event = event
-        self.relative_timestamp = relative_timestamp
-        self.absolute_timestamp = absolute_timestamp
-
 class TempoModeMessageType(Enum):
     HIT_NOTE = 1
     MISSED_NOTE = 2
-
-class TempoModeMessage():
-    def __init__(self, type: TempoModeMessageType, time_delta: float):
-        self.type = type
-        self.time_delta = time_delta
 
 class Message():
     def __init__(self, type, data = None):
@@ -52,3 +40,8 @@ class NoteOutputMessage(Message):
         self.event = event
         self.relative_timestamp = relative_timestamp
         self.absolute_timestamp = absolute_timestamp
+
+class TempoModeMessage(Message):
+    def __init__(self, type: TempoModeMessageType, time_delta: float):
+        self.type = type
+        self.time_delta = time_delta
