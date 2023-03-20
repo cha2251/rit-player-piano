@@ -53,6 +53,7 @@ class XboxController:
         self.on_controller_update = on_controller_update
         self.active = True
 
+        # Weird buttons need state tracking to determine off events
         self.current_state = {'ABS_Z': 0, 'ABS_RZ': 0, 'BTN_DPAD_LEFT':0, 'BTN_DPAD_RIGHT':0, 'BTN_DPAD_UP':0, 'BTN_DPAD_DOWN':0}
         
         self.controller_listener = threading.Thread(target=self.listener, args=())

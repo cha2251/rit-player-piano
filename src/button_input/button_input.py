@@ -117,7 +117,6 @@ class ButtonInput:
             
     # Adds a note when a button on the controller is pressed
     def on_controller_update(self, button : ControllerButton, state):
-        print(button, state)
         if state == 1:
             for note in self.get_notes(button):
                 self.button_input_queue.put(
