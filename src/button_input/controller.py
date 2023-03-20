@@ -62,7 +62,7 @@ class XboxController:
         while self.active:
             events = get_gamepad()
             for event in events:
-                print(event.__dict__)
+                # print(event.__dict__)
 
                 if event.code in self.event_button_map:
                     self.on_controller_update(self.event_button_map[event.code], event.state)

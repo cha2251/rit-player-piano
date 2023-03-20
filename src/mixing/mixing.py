@@ -88,7 +88,7 @@ class Mixing(Thread):
         while(self.active):
             try:
                 event = self.button_input_queue.get_nowait()
-                self.comm_system.send(Message(MessageType.BUTTON_NOTE,event))
+                self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
             if(self.state == PlayingState.PLAY):
