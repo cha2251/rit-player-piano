@@ -69,7 +69,7 @@ class XboxController:
                 self.active = False
                 break
             for event in events:
-                #print(event.ev_type, event.code, event.state)
+                print(event.ev_type, event.code, event.state)
                 if event.code in self.event_button_map:
                     if self.clean_event(event):
                         self.on_controller_update(self.event_button_map[event.code], event.state)
