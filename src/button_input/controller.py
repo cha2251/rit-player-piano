@@ -53,7 +53,7 @@ class XboxController:
         self.on_controller_update = on_controller_update
         self.active = True
 
-        self.current_state = {'ABS_Z': 0, 'ABS_RZ': 0}
+        self.current_state = {'ABS_Z': 0, 'ABS_RZ': 0, 'BTN_DPAD_LEFT':0, 'BTN_DPAD_RIGHT':0, 'BTN_DPAD_UP':0, 'BTN_DPAD_DOWN':0}
         
         self.controller_listener = threading.Thread(target=self.listener, args=())
         self.controller_listener.daemon = True
@@ -69,10 +69,11 @@ class XboxController:
                 self.active = False
                 break
             for event in events:
-                #print(event.ev_type, event.code, event.state)
-                if event.code in self.event_button_map:
+                try:
                     if self.clean_event(event):
                         self.on_controller_update(self.event_button_map[event.code], event.state)
+                except KeyError as e:
+                    pass # Expected if the event is not a mapped button press
 
     # Returns false if the event should be ignored
     def clean_event(self, event):
@@ -87,6 +88,49 @@ class XboxController:
                 return True
             else:
                 return False
+        
+        # Converts the DPad from two axis to four buttons
+        if event.code == 'ABS_HAT0X':
+            if event.state == 1:
+                event.code = 'BTN_DPAD_RIGHT'
+                self.current_state['BTN_DPAD_RIGHT'] = 1
+            if event.state == -1:
+                event.code = 'BTN_DPAD_LEFT'
+                event.state = 1
+                self.current_state['BTN_DPAD_LEFT'] = 1
+            
+            # Both DPad right and left off event are the same code, so have to check the state
+            # If both are pressed, then this could fail, and turn off the right button even
+            # though the left button was the one released. This is a known issue.
+            if event.state == 0:
+                if self.current_state['BTN_DPAD_LEFT'] == 1:
+                    event.code = 'BTN_DPAD_LEFT'
+                    event.state = 0
+                elif self.current_state['BTN_DPAD_RIGHT'] == 1:
+                    event.code = 'BTN_DPAD_RIGHT'
+                    event.state = 0
+                else:
+                    return False
+                
+        if event.code == 'ABS_HAT0Y':
+            if event.state == 1:
+                event.code = 'BTN_DPAD_DOWN'
+                self.current_state['BTN_DPAD_DOWN'] = 1
+            if event.state == -1:
+                event.code = 'BTN_DPAD_UP'
+                self.current_state['BTN_DPAD_UP'] = 1
+                event.state = 1
+
+            # Same as above, but for the DPad up and down
+            if event.state == 0:
+                if self.current_state['BTN_DPAD_UP'] == 1:
+                    event.code = 'BTN_DPAD_UP'
+                    event.state = 0
+                elif self.current_state['BTN_DPAD_DOWN'] == 1:
+                    event.code = 'BTN_DPAD_DOWN'
+                    event.state = 0
+                else:
+                    return False
 
         return True
 
