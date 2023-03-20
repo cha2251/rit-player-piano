@@ -52,6 +52,8 @@ class XboxController:
 
         self.on_controller_update = on_controller_update
         self.active = True
+
+        self.current_state = {'ABS_Z': 0, 'ABS_RZ': 0}
         
         self.controller_listener = threading.Thread(target=self.listener, args=())
         self.controller_listener.daemon = True
@@ -67,8 +69,27 @@ class XboxController:
                 self.active = False
                 break
             for event in events:
+                #print(event.ev_type, event.code, event.state)
                 if event.code in self.event_button_map:
-                    self.on_controller_update(self.event_button_map[event.code], event.state)
+                    if self.clean_event(event):
+                        self.on_controller_update(self.event_button_map[event.code], event.state)
+
+    # Returns false if the event should be ignored
+    def clean_event(self, event):
+        # Maps triggers to 0 or 1 instead of analog values
+        if event.code == 'ABS_Z' or event.code == 'ABS_RZ':
+            if event.state == 0:
+                self.current_state[event.code] = 0
+                return True
+            if self.current_state[event.code] == 0:
+                self.current_state[event.code] = 1
+                event.state = 1
+                return True
+            else:
+                return False
+
+        return True
+
 
     def deactivate(self):
         self.active = False
