@@ -7,7 +7,7 @@ from multiprocessing import Process, Manager
 
 from src.common.midi_event import MidiEvent
 from src.common.shared_priority_queue import PeekingPriorityQueue
-from src.communication.messages import Message, MessageType, NoteOutputMessage, PlayingState, TempoModeMessage, TempoModeMessageType
+from src.communication.messages import Message, MessageType, NoteOutputMessage, PlayingState
 from src.output_queue.output_comm import OutputCommSystem
 from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
 from src.output_queue.tempo_mode import TempoMode
@@ -134,21 +134,24 @@ class OutputQueue():
 
         # Handle regular queue events
         for midiEvent in immediate_notes:
+            # if midiEvent.timestamp > 1e-4:
             self.last_note_time_played = now
             self.last_note_timestamp = midiEvent.timestamp
 
             if midiEvent.event.type == "note_off":
                 if midiEvent.event.note in self.playing_notes.keys():
                     del self.playing_notes[midiEvent.event.note]
-            elif midiEvent.event.type == "note_on" and midiEvent.should_play:
+            elif midiEvent.event.type == "note_on" and midiEvent.play_note:
                 self.playing_notes[midiEvent.event.note] = midiEvent.event
 
             self.tempo_mode.on_note_output(midiEvent, relative_time)
 
-            if midiEvent.should_play:
+            if midiEvent.event.type == "note_on" and midiEvent.play_note:
                 self._send_midi_event(midiEvent)
-            else:
+            elif midiEvent.event.type == "note_on" and not midiEvent.play_note:
                 self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_time, now)))
+            else:
+                self._send_midi_event(midiEvent)
 
     def _send_midi_event(self, midiEvent: MidiEvent):
         if type(midiEvent) != MidiEvent:

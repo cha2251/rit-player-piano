@@ -6,6 +6,8 @@ import mido
 from src.button_input.controller import ControllerButton, XboxController
 
 from src.common.midi_event import MidiEvent
+from src.communication.messages import Message, MessageType
+from src.mixing.mixing_comm import MixingCommSystem
 
 
 class ButtonInput:
@@ -14,6 +16,34 @@ class ButtonInput:
     default = {'q': [53,54,55], 'w': [56], 'e': [57], 'r': [58], 't': [59],
                'y': [60], 'u': [61], 'i': [62], 'o': [63], 'p': [64],
                ControllerButton.A: [65], ControllerButton.B: [66, 68, 70]}
+    
+    string_note_mapping = {
+            "c3": 48, # 3rd C
+            "c#3": 49,
+            "d3": 50,
+            "d#3": 51,
+            "e3": 52,
+            "f3": 53,
+            "f#3": 54,
+            "g3": 55,
+            "g#3": 56,
+            "a3": 57,
+            "a#3": 58,
+            "b3": 59,
+            "c4": 60, # Middle C
+            "c#4": 61,
+            "d4": 62,
+            "d#4": 63,
+            "e4": 64,
+            "f4": 65,
+            "f#4": 66,
+            "g4": 67,
+            "g#4": 68,
+            "a4": 69,
+            "a#4": 70,
+            "b4": 71,
+            "c5": 72, # 5th C
+        }
 
     """ Sets initial values of Thread
     button_input_queue: global queue responsible for carrying midi events to mixing subsystem
@@ -31,18 +61,31 @@ class ButtonInput:
         self.keyboard_listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.keyboard_listener.start()
         self.controller = XboxController(self.on_controller_update)
+        self.comm_system = MixingCommSystem()
+        self.comm_system.registerListener(MessageType.BUTTON_CONFIG_UPDATE, self.change_map)
 
     # Updates the keymap with a new set of mappings
-    def change_map(self, keyMap):
-        self.keyMap = keyMap
+    def change_map(self, message : Message):
+        new_map = message.data
+        self.keyMap = {} #wipe old mapping
+        for key_name in new_map.keys():
+            if(len(new_map[key_name])>0):
+                self.change_key(key=new_map[key_name][0],notes=self.string_note_mapping[key_name])
+        print(self.keyMap)
 
     # Updates a single key's mapping or adds a new key mapping if the key lacks a map
     def change_key(self, key, notes):
         # Check if chord or single note
         if isinstance(notes, list):
-            self.keyMap[key] = notes
+            if key in self.keyMap.keys():
+                self.keyMap[key].append(notes)
+            else:
+                self.keyMap[key] = notes
         else:
-            self.keyMap[key] = [notes] # Make single note a chord
+            if key in self.keyMap.keys():
+                self.keyMap[key].append(notes) # Make note a chord
+            else:
+                self.keyMap[key] = [notes]
 
     def delete_key(self, key):
         self.keyMap.pop(key)

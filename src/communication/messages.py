@@ -13,6 +13,14 @@ class MessageType(Enum):
     NOTE_OUTPUT = 8
     BUTTON_NOTE = 9
     TEMPO_MODE_UPDATE = 10
+    SET_HAND_TO_PLAY = 11
+    SET_DURATION = 12
+
+class PianoAssistPlaying(Enum):
+    LEFT = 1
+    RIGHT = 2
+    NEITHER = 3
+    BOTH = 4
 
 class PlayingState(Enum):
     PLAY = 1
@@ -38,3 +46,9 @@ class Message():
     def __init__(self, type, data = None):
         self.type = type
         self.data = data
+
+class NoteOutputMessage(Message):
+    def __init__(self, event: MidiEvent, relative_timestamp: float, absolute_timestamp: float):
+        self.event = event
+        self.relative_timestamp = relative_timestamp
+        self.absolute_timestamp = absolute_timestamp

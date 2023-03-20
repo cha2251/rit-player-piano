@@ -4,6 +4,7 @@ from pynput import keyboard
 
 from src.button_input.button_input import ButtonInput
 from src.button_input.controller import ControllerButton
+from src.communication.messages import Message, MessageType
 
 
 class TestCreate:
@@ -41,16 +42,19 @@ class TestModify:
     def test_change_map(self):
         testQueue = Queue()
         component = ButtonInput(testQueue)
-        testDict = {'q': [1], 'w': 2}
+        testDict = {"c4":[ControllerButton.A], "d4":[ControllerButton.B], "e4":[ControllerButton.B]}
+
+        expectedDict = {ControllerButton.A:[60], ControllerButton.B: [62,64]}
+
+        testMessage = Message(MessageType.BUTTON_CONFIG_UPDATE, testDict)
 
         assert component.keyMap != testDict
 
-        component.change_map(testDict)
+        component.change_map(testMessage)
 
-        expected = testDict
         actual = component.keyMap
 
-        assert actual == expected
+        assert actual == expectedDict
 
         component.deactivate()
 

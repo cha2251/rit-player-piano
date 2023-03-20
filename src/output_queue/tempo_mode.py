@@ -32,7 +32,7 @@ class TempoMode():
 
                 if abs(note.timestamp - relative_time) < 0.15:
                     # If they're close enough, make it *sound* perfect by letting it play normally
-                    note.should_play = True
+                    note.play_note = True
                     note.was_hit = True
                 else:
                     # Otherwise make them hear the pain of their bad timing
@@ -63,7 +63,7 @@ class TempoMode():
         if midiEvent.event.type == "note_off":
             self.playing_missed_notes = list(filter(lambda x: x.event.note != midiEvent.event.note, self.playing_missed_notes))
 
-        if midiEvent.split_note and midiEvent.should_play:
+        if midiEvent.split_note and midiEvent.play_note:
             pass # print("HIT THIS")
-        elif midiEvent.split_note and not midiEvent.should_play:
+        elif midiEvent.split_note and not midiEvent.play_note:
             self.playing_missed_notes += [midiEvent]
