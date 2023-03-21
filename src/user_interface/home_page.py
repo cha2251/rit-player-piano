@@ -1,3 +1,4 @@
+import shutil
 import sys
 import os
 from PyQt5.QtCore import pyqtSlot, Qt
@@ -20,6 +21,9 @@ class HomePage(QWidget):
         self.height = 200
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+        self.table_buttons = QHBoxLayout()
+        self.songs_dict = []
+        self.songs_dict_index = 0
 
         # button = QPushButton('PyQt5 button', self)
         # button.setIcon(QIcon(r"images\play-solid.svg"))
@@ -46,13 +50,13 @@ class HomePage(QWidget):
         hbox.addSpacerItem(title_spacer)
         hbox.addWidget(self.nav_settings)
         hbox.addSpacerItem(outer_spacer)
-        vbox = QVBoxLayout(self)
-        vbox.setAlignment(Qt.AlignTop)
-        vbox.addLayout(hbox)
+        self.song_list_vbox = QVBoxLayout(self)
+        self.song_list_vbox.setAlignment(Qt.AlignTop)
+        self.song_list_vbox.addLayout(hbox)
         spacer = QSpacerItem(100, 200, QSizePolicy.Expanding)
         ## vbox.addSpacerItem(spacer)
         v = self.get_current_songs()
-        vbox.addLayout(v)
+        self.song_list_vbox.addLayout(v)
         ## spacer_bot = QSpacerItem(100, 200, QSizePolicy.Expanding)
         ## vbox.addSpacerItem(spacer_bot)
         ## vbox.addLayout(h)
@@ -60,7 +64,7 @@ class HomePage(QWidget):
         # vbox.addWidget(button)
         # vbox.setAlignment(Qt.AlignCenter)
         #self.showFullScreen()
-        self.setLayout(vbox)
+        self.setLayout(self.song_list_vbox)
         self.showMaximized()
 
     @pyqtSlot()
@@ -71,28 +75,49 @@ class HomePage(QWidget):
         bigHbox = QHBoxLayout()
         vbox = QVBoxLayout()
         hbox = QHBoxLayout()
+        self.songs_dict = []
         
         vbox.addSpacerItem(QSpacerItem(100, 100, QSizePolicy.Expanding))
         hbox.setAlignment(Qt.AlignCenter)
         hbox.addStretch()
-
-        button = QPushButton("1", self)
-        button.clicked.connect(lambda: self.show_song_page(1))
-
-        hbox.addWidget(button)
 
         stuffs = [hbox]
 
 
         # get list of songs
         songs = self.get_songs_from_directory()
+        num_btns = (len(songs) // 4)
+        num_btns = num_btns if (len(songs)%4 == 0) else (num_btns+1)
+        #print(f'# Songs: {len(songs)}, # num btns: {num_btns}')
+        self.create_table_buttons(num_btns)
+        hbox = self.table_buttons
+
+
         count = 0
+        index = 0
+        current_dict_idx = 0
+        arr = []
         for song in songs:
             if count > 20:
                 count = 0
+
+            if index%4 == 0 and index > 0:
+                #current_dict_idx+=1     # if there are 5 in the current row, move to the next
+                self.songs_dict.append(arr)
+                arr = []
+
             label = QPushButton(song)
             label.clicked.connect(lambda state, x=song: self.song_on_click(x))
+            arr.append(label)
+
             vbox.addWidget(label)
+            index += 1
+        #if arr[0] is not None:
+        self.songs_dict.append(arr)
+        self.show_song_page(0)
+
+
+
         vbox.addSpacerItem(QSpacerItem(100, 100, QSizePolicy.Expanding))
         hbox.addStretch()
         vbox.addLayout(hbox)
@@ -118,11 +143,91 @@ class HomePage(QWidget):
         self.nav_play.click()
 
     def show_song_page(self, page_num):
-        pass
+        #print(f'Change table page: {page_num}, total tables: {len(self.songs_dict[page_num])}')
+        self.hide_all_songs()
+
+        self.show_songs_at(page_num)
+
+
+    def hide_all_songs(self):
+        for arr in self.songs_dict:
+            for song in arr:
+                song.hide()
+
+    def show_songs_at(self, index):
+        # if index >= len(self.songs_dict):
+        #     return
+        current = self.songs_dict_index
+        if index == -1: 
+            if current > 0:     # move back a page
+                current -= 1
+                
+        elif index == -2:  
+            if current < len(self.songs_dict)-1:
+                current += 1
+        else:
+            current = index
+                
+        index = current
+        self.songs_dict_index = index
+        for song in self.songs_dict[index]:
+            song.show()
 
     def import_midi(self):
-        add_song = QFileDialog()
-        add_song.exec()
+        #add_song = QFileDialog()
+
+        file_path, _ = QFileDialog.getOpenFileName(None, "Select File", "", "All Files (*.*)")
+        if not file_path:
+            return
+
+        # Copy the selected file to the project folder
+        project_folder = self.MIDI_FILE_PATH
+        filename = os.path.basename(file_path)
+        new_path = os.path.join(project_folder, filename)
+        #print(f'File path is: {new_path}')
+        shutil.copy(file_path, new_path)
+        self.reload_hbox()
+        
+        #add_song.exec()
+
+    def reload_hbox(self):
+        layout_rm = self.song_list_vbox.takeAt(1)
+
+        while self.table_buttons.count():
+            widget = self.table_buttons.takeAt(0).widget()
+            self.table_buttons.removeWidget(widget)
+            # widget.setParent(None)
+            # widget.deleteLater()
+
+        layout_rm.setParent(None)
+        layout_rm.deleteLater()
+        self.song_list_vbox.addLayout(self.get_current_songs())
+
+    def create_table_buttons(self, num_btns):
+        self.table_buttons = QHBoxLayout()
+
+        btn1 = QPushButton('< BACK', self)
+        btn1.clicked.connect(lambda: self.show_song_page(-1))
+        btn1.setMinimumWidth(200)
+        btn1.setMaximumWidth(200)
+        self.table_buttons.addWidget(btn1)
+
+
+        for i in range(num_btns):
+            btn = QPushButton(f'{i}', self)
+            btn.clicked.connect(lambda _, x=i: self.show_song_page(x))
+            btn.setMinimumWidth(20)
+            btn.setMaximumWidth(20)
+            self.table_buttons.addWidget(btn)
+
+        btn2 = QPushButton('NEXT >', self)
+        btn2.clicked.connect(lambda: self.show_song_page(-2))
+        self.table_buttons.addWidget(btn2)
+
+        
+
+
+
 
 
 if __name__ == '__main__':
