@@ -106,9 +106,11 @@ class XboxController:
             if event.state == 0:
                 if self.current_state['BTN_DPAD_LEFT'] == 1:
                     event.code = 'BTN_DPAD_LEFT'
+                    self.current_state['BTN_DPAD_LEFT'] = 0
                     event.state = 0
                 elif self.current_state['BTN_DPAD_RIGHT'] == 1:
                     event.code = 'BTN_DPAD_RIGHT'
+                    self.current_state['BTN_DPAD_RIGHT'] = 0
                     event.state = 0
                 else:
                     return False
@@ -126,9 +128,11 @@ class XboxController:
             if event.state == 0:
                 if self.current_state['BTN_DPAD_UP'] == 1:
                     event.code = 'BTN_DPAD_UP'
+                    self.current_state['BTN_DPAD_UP'] = 0
                     event.state = 0
                 elif self.current_state['BTN_DPAD_DOWN'] == 1:
                     event.code = 'BTN_DPAD_DOWN'
+                    self.current_state['BTN_DPAD_DOWN'] = 0
                     event.state = 0
                 else:
                     return False
