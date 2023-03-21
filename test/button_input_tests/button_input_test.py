@@ -22,9 +22,9 @@ class TestCreate:
                 ControllerButton.B: [66],
                 ControllerButton.UpDPad: [67],
                 ControllerButton.A: [68],
-                ControllerButton.DownDPad: [69],
+                ControllerButton.RightThumb: [69],
                 ControllerButton.RightBumper: [70],
-                ControllerButton.LeftDPad: [71]
+                ControllerButton.LeftThumb: [71]
                 }
     
         expected = testDict
