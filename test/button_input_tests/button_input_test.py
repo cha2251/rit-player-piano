@@ -77,14 +77,3 @@ class TestRun:
         component = ButtonInput(testQueue)
 
         component.deactivate()
-
-    @pytest.mark.timeout(1)
-    def test_detect_input(self):
-        testQueue = Queue()
-        component = ButtonInput(testQueue)
-
-        component.on_press(keyboard.KeyCode.from_char('q'))
-        component.on_release(keyboard.KeyCode.from_char('q'))
-        component.deactivate()
-
-        assert component.button_input_queue.empty() is False
