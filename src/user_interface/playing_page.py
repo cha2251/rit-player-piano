@@ -139,7 +139,6 @@ class PlayingPage(QWidget):
         self.songWidget.startTimer()
         self.button_ack.setText('')
 
-
     @pyqtSlot()
     def on_click_restart(self):
         print('restart pushed')
