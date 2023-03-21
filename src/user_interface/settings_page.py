@@ -328,9 +328,6 @@ class SettingsPage(QWidget):
         self.hand_to_play = index + 1
         self.comm_system.send(Message(MessageType.SET_HAND_TO_PLAY, self.hand_to_play))
         
-
-
-
     def get_piano_dict(self):
         return self.piano_dict
 

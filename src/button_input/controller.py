@@ -1,5 +1,5 @@
 import threading
-from inputs import get_gamepad
+from inputs import get_gamepad, UnpluggedError
 from enum import Enum
 
 class ControllerButton(Enum):
@@ -52,13 +52,20 @@ class XboxController:
 
         self.on_controller_update = on_controller_update
         self.active = True
+        
         self.controller_listener = threading.Thread(target=self.listener, args=())
         self.controller_listener.daemon = True
         self.controller_listener.start()
 
+
     def listener(self):
         while self.active:
-            events = get_gamepad()
+            try:
+                events = get_gamepad()
+            except UnpluggedError as e:
+                print("No Gamepad Found")
+                self.active = False
+                break
             for event in events:
                 if event.code in self.event_button_map:
                     self.on_controller_update(self.event_button_map[event.code], event.state)
