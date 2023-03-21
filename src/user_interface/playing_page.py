@@ -6,7 +6,6 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
 from src.communication.messages import Message, MessageType, PlayingState
-
 from src.user_interface.song_progress import SongWidget
 
 from src.user_interface.ui_comm import UICommSystem
