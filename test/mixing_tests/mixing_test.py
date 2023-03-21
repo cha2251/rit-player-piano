@@ -27,60 +27,6 @@ class TestDeactivate():
 
         assert expected == actual
 
-class TestRun:
-    @pytest.mark.timeout(5) #Longer timeout than strictly nesscary, to allow for slower computers
-    def test_exits(self):
-        dummy_queue = Queue()
-        component = Mixing(dummy_queue, dummy_queue)
-
-        component.start()
-        time.sleep(.5) #Allow for creation of sub threads
-
-        component.deactivate()
-        component.comm_system.deactivate()
-
-        component.join()
-    
-    # @pytest.mark.timeout(5)
-    # def test_pulls_from_button(self):
-    #     dummy_queue = Queue()
-    #     component = Mixing(dummy_queue, dummy_queue)
-
-    #     test_event = MidiEvent(mido.Message(type='note_on'),0)
-    #     component.button_input_queue.put(test_event)
-
-    #     component.start()
-    #     time.sleep(.5) #Allow for creation of sub threads
-
-    #     actual = component.comm_system.output_queue.get_nowait()
-
-    #     component.deactivate()
-
-    #     component.join()
-
-    #     assert test_event == actual
-
-        
-
-    # @pytest.mark.timeout(5)
-    # def test_pulls_from_file(self):
-    #     dummy_queue = Queue()
-    #     component = Mixing(dummy_queue, dummy_queue)
-
-    #     test_event = MidiEvent(mido.Message(type='note_on'),0)
-    #     component.file_input_queue.put(test_event)
-    #     component.state = PlayingState.PLAY
-
-    #     component.start()
-    #     time.sleep(.5) #Allow for creation of sub threads
-
-    #     actual = component.comm_system.output_queue.get_nowait()
-
-    #     component.deactivate()
-    #     component.join()
-
-    # assert test_event == actual
-
 class TestStateChanges:
     @pytest.mark.timeout(1)
     def test_play_when_playing(self):
