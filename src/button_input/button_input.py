@@ -13,9 +13,20 @@ from src.mixing.mixing_comm import MixingCommSystem
 class ButtonInput:
     button_input_queue: queue.Queue
     keyMap = dict
-    default = {'q': [53,54,55], 'w': [56], 'e': [57], 'r': [58], 't': [59],
-               'y': [60], 'u': [61], 'i': [62], 'o': [63], 'p': [64],
-               ControllerButton.A: [65], ControllerButton.B: [66, 68, 70]}
+    default = {'q': [53,54,55], 'w': [56], 'e': [57], 'r': [58], 't': [59], 'y': [60],
+                ControllerButton.RightTrigger: [60],
+                ControllerButton.Y: [61], 
+                ControllerButton.LeftTrigger: [62],
+                ControllerButton.X: [63],
+                ControllerButton.LeftBumper: [64],
+                ControllerButton.RightDPad: [65],
+                ControllerButton.B: [66],
+                ControllerButton.UpDPad: [67],
+                ControllerButton.A: [68],
+                ControllerButton.RightThumb: [69],
+                ControllerButton.RightBumper: [70],
+                ControllerButton.LeftThumb: [71]
+                }
     
     string_note_mapping = {
             "c3": 48, # 3rd C

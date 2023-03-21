@@ -110,6 +110,10 @@ class MainPage(QWidget, Thread):
                 width: 3.5em;
                 height: 3.5em;
             }
+            QLabel#buttonAck {
+                color: #"""+font_color+""";
+                font: bold 40px;
+            }
         """
         qApp.setStyleSheet(style)
 
