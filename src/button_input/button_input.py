@@ -131,7 +131,7 @@ class ButtonInput:
         if state == 1:
             for note in self.get_notes(button):
                 self.button_input_queue.put(
-                    MidiEvent(mido.Message('note_on', note=note, velocity=40), 0, from_user_input=True))
+                    MidiEvent(mido.Message('note_on', note=note, velocity=120), 0, from_user_input=True))
         else:
             for note in self.get_notes(button):
                 self.button_input_queue.put(

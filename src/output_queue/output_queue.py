@@ -36,7 +36,8 @@ class OutputQueue():
         self.comm_system.registerListener(MessageType.STATE_UPDATE, self.stateChanged)
         self.comm_system.start()
 
-        self.playing_mode = TempoMode(self)
+        # TODO DJA-PROC Add a mode system to allow for different play modes
+        self.playing_mode = None # TempoMode(self)
 
         # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
 
