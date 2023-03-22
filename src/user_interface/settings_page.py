@@ -81,10 +81,15 @@ class SettingsPage(QWidget):
         vbox.addSpacerItem(spacer)
 
         configure = QLabel("Drag and drop the icons below onto the piano keys to create a custom configuration")
+        configure2 = QLabel("Click a key to remove assigned mapping")
         configure.setStyleSheet("""
             font:35px;
         """)
+        configure2.setStyleSheet("""
+            font:35px;
+        """)
         vbox.addWidget(configure)
+        vbox.addWidget(configure2)
         # create draggable buttons
         tool = """
         QToolButton {
@@ -106,17 +111,21 @@ class SettingsPage(QWidget):
         self.arrow_up.setIconSize(QSize(60, 60))
         iconsList.addWidget(self.arrow_up)
 
-        self.arrow_down = DragButton("button-arrow-down")
-        self.arrow_down.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-down.svg")))
-        self.arrow_down.setStyleSheet(tool)
-        self.arrow_down.setIconSize(QSize(60, 60))
-        iconsList.addWidget(self.arrow_down)
+        # The down arrow and left arrow have been commented out because
+        # up and down cannot be pressed at the same time and left and
+        # right cannot be played at the same time either so we decided
+        # to remove them so the user cannot account this problem
+        ## self.arrow_down = DragButton("button-arrow-down")
+        ## self.arrow_down.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-down.svg")))
+        ## self.arrow_down.setStyleSheet(tool)
+        ## self.arrow_down.setIconSize(QSize(60, 60))
+        ## iconsList.addWidget(self.arrow_down)
 
-        self.arrow_left = DragButton("button-arrow-left")
-        self.arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-left.svg")))
-        self.arrow_left.setStyleSheet(tool)
-        self.arrow_left.setIconSize(QSize(60, 50))
-        iconsList.addWidget(self.arrow_left)
+        ## self.arrow_left = DragButton("button-arrow-left")
+        ## self.arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-left.svg")))
+        ## self.arrow_left.setStyleSheet(tool)
+        ## self.arrow_left.setIconSize(QSize(60, 50))
+        ## iconsList.addWidget(self.arrow_left)
 
         self.arrow_right = DragButton("button-arrow-right")
         self.arrow_right.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-right.svg")))
