@@ -4,6 +4,8 @@ from src.communication.messages import Message, MessageType, PlayingState, Tempo
 from src.output_queue.output_comm import OutputCommSystem
 from src.output_queue.playing_mode import PlayingMode
 
+MISSED_NOTE_DELTA = 100
+
 class TempoMode(PlayingMode):
 
     def __init__(self, output_queue):
@@ -35,7 +37,7 @@ class TempoMode(PlayingMode):
         # Look if there's a note that's close enough to the button press
         for note in sorted_notes:
             # Skip notes the user has already hit or can't hit
-            if note.was_hit or not note.split_note:
+            if note.was_hit or not note.note_for_user:
                 continue
             # Only look at notes that are close enough
             elif note.timestamp - relative_time > 0.333:
@@ -74,7 +76,11 @@ class TempoMode(PlayingMode):
     def on_note_output(self, midiEvent: MidiEvent):
         # Remove any missed notes that are now done completely
         if midiEvent.event.type == "note_off":
+            original_length = len(self.playing_missed_notes)
             self.playing_missed_notes = list(filter(lambda x: x.event.note != midiEvent.event.note, self.playing_missed_notes))
 
-        if midiEvent.split_note and not midiEvent.play_note:
+            for _ in range(original_length - len(self.playing_missed_notes)):
+                self.comm_system.send(Message(MessageType.TEMPO_MODE_UPDATE, TempoModeMessage(TempoModeMessageType.MISSED_NOTE, MISSED_NOTE_DELTA)))
+
+        if midiEvent.note_for_user and not midiEvent.play_note:
             self.playing_missed_notes += [midiEvent]

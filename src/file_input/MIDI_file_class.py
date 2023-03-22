@@ -159,9 +159,9 @@ class MIDIFileObject:
 
             if msg.type == 'note_on':
                 if self.is_correct_hand(msg.note):
-                    track_messages.append(MidiEvent(msg,curr_time, play_note=True, split_note=False))
+                    track_messages.append(MidiEvent(msg,curr_time, play_note=True, note_for_user=False))
                 else:
-                    track_messages.append(MidiEvent(msg,curr_time, play_note=False, split_note=True))
+                    track_messages.append(MidiEvent(msg,curr_time, play_note=False, note_for_user=True))
             else:
                 track_messages.append(MidiEvent(msg,curr_time, play_note=True))
 

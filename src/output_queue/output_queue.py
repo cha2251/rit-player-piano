@@ -37,7 +37,7 @@ class OutputQueue():
         self.comm_system.start()
 
         # TODO DJA-PROC Add a mode system to allow for different play modes
-        self.playing_mode = None # TempoMode(self)
+        self.playing_mode = TempoMode(self)
 
         # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
 
@@ -143,8 +143,6 @@ class OutputQueue():
                     del self.playing_notes[midiEvent.event.note]
             elif midiEvent.event.type == "note_on" and midiEvent.play_note:
                 self.playing_notes[midiEvent.event.note] = midiEvent.event
-
-            # self.tempo_mode.on_note_output(midiEvent, relative_time)
 
             if midiEvent.event.type == "note_on" and midiEvent.play_note:
                 self._send_midi_event(midiEvent)
