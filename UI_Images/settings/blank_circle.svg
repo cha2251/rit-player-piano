@@ -16,7 +16,14 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
-     id="defs21" />
+     id="defs21">
+    <rect
+       x="268.53147"
+       y="258.27506"
+       width="277.0963"
+       height="267.59407"
+       id="rect3691" />
+  </defs>
   <sodipodi:namedview
      id="namedview19"
      pagecolor="#ffffff"
@@ -26,9 +33,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="1.5593736"
-     inkscape:cx="442.80601"
-     inkscape:cy="438.95831"
+     inkscape:zoom="1.0948272"
+     inkscape:cx="202.31503"
+     inkscape:cy="437.05527"
      inkscape:window-width="1920"
      inkscape:window-height="1051"
      inkscape:window-x="-9"
@@ -42,9 +49,29 @@
      id="SVGRepo_tracerCarrier"
      stroke-linecap="round"
      stroke-linejoin="round" />
-  <path
-     style="fill:#000000;stroke:none;stroke-width:0.0479093"
-     d="M 3.1404445,1.5184477 C 2.5299741,1.5520463 2.5451958,1.5352439 2.1366407,2.0133063 1.8807065,2.3127835 1.9211519,2.7430827 1.921735,3.1082853 1.923295,4.0865746 2.0908709,5.096003 2.2952266,6.039597 c 0.5448202,4.075265 3.5329729,8.185574 7.0777956,8.731993 1.3190218,0.175016 2.7333338,0.229119 4.0599968,0.0694 0.471298,-0.05675 0.883645,-0.07682 1.234669,-0.465506 C 15.767386,13.888608 15.929624,2.2331508 15.122184,1.8570364 14.455499,1.4303949 13.927695,1.5586118 13.385282,1.5152712"
-     id="path1320"
-     sodipodi:nodetypes="ccccccccc" />
+  <g
+     id="SVGRepo_iconCarrier">
+    <title
+       id="title4">1187</title>
+    <defs
+       id="defs6" />
+    <g
+       stroke="none"
+       stroke-width="1"
+       fill="none"
+       fill-rule="evenodd"
+       id="g14">
+      <g
+         transform="translate(1.000000, 0.000000)"
+         fill="#000000"
+         id="g12">
+        <path
+           id="path8"
+           style="stroke-width:47.0588"
+           class="si-glyph-fill"
+           transform="matrix(0.02125,0,0,0.02125,-1,-0.5)"
+           d="M 422.77734,26.210938 C 216.28323,26.210937 48.234375,193.83566 48.234375,399.90625 c 0,205.97647 168.001795,373.59961 374.542965,373.59961 206.54118,0 374.54102,-167.62314 374.54102,-373.59961 0,-206.07059 -167.99984,-373.695312 -374.54102,-373.695312 z m -0.70703,87.529292 c 157.50588,0 285.83594,128.47153 285.83594,286.25977 0,157.83529 -128.33006,286.25977 -285.83594,286.25977 -157.6,0 -285.78711,-128.42448 -285.78711,-286.25977 0,-157.78824 128.18711,-286.25977 285.78711,-286.25977 z" />
+      </g>
+    </g>
+  </g>
 </svg>
