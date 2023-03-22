@@ -187,6 +187,12 @@ class SettingsPage(QWidget):
         self.LS.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.LS)
 
+        self.RS = DragButton("button-RS")
+        self.RS.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-RS.svg")))
+        self.RS.setStyleSheet(tool)
+        self.RS.setIconSize(QSize(60, 50))
+        iconsList.addWidget(self.LS)
+
         vbox.addLayout(iconsList)
 
         # CREATE PIANO
