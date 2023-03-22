@@ -148,6 +148,18 @@ class SettingsPage(QWidget):
         self.Y.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.Y)
 
+        self.RB = DragButton("button-RB")
+        self.RB.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-RB.svg")))
+        self.RB.setStyleSheet(tool)
+        self.RB.setIconSize(QSize(60, 50))
+        iconsList.addWidget(self.RB)
+
+        self.LB = DragButton("button-LB")
+        self.LB.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-LB.svg")))
+        self.LB.setStyleSheet(tool)
+        self.LB.setIconSize(QSize(60, 50))
+        iconsList.addWidget(self.LB)
+
         self.RT = DragButton("button-RT")
         self.RT.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-RT.svg")))
         self.RT.setStyleSheet(tool)
@@ -159,6 +171,12 @@ class SettingsPage(QWidget):
         self.LT.setStyleSheet(tool)
         self.LT.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.LT)
+
+        self.LS = DragButton("button-LS")
+        self.LS.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-LS.svg")))
+        self.LS.setStyleSheet(tool)
+        self.LS.setIconSize(QSize(60, 50))
+        iconsList.addWidget(self.LS)
 
         vbox.addLayout(iconsList)
 
