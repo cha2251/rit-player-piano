@@ -57,4 +57,6 @@ class VisualizationWidget(QWidget):
         vbox.addWidget(self.piano_widget)
 
         hbox.addLayout(vbox)
-        hbox.addWidget(self.timing_widget)
+
+        # TODO DJA-PROC Add a mode system to allow for different play modes
+        # hbox.addWidget(self.timing_widget)
