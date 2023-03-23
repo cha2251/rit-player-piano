@@ -4,9 +4,9 @@ import pyaudio
 import itertools
 import numpy as np
 
-BUFFER_SIZE = 128
+BUFFER_SIZE = 256
 SAMPLE_RATE = 32000
-NOTE_AMPLITUDE = 0.05
+NOTE_AMPLITUDE = 0.1
 
 SYNTHESIZER_NAME = "CodeToJoy Synthesizer"
 
