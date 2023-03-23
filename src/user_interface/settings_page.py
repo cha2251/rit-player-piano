@@ -81,10 +81,15 @@ class SettingsPage(QWidget):
         vbox.addSpacerItem(spacer)
 
         configure = QLabel("Drag and drop the icons below onto the piano keys to create a custom configuration")
+        configure2 = QLabel("Click a key to remove assigned mapping")
         configure.setStyleSheet("""
             font:35px;
         """)
+        configure2.setStyleSheet("""
+            font:35px;
+        """)
         vbox.addWidget(configure)
+        vbox.addWidget(configure2)
         # create draggable buttons
         tool = """
         QToolButton {
@@ -106,17 +111,21 @@ class SettingsPage(QWidget):
         self.arrow_up.setIconSize(QSize(60, 60))
         iconsList.addWidget(self.arrow_up)
 
-        self.arrow_down = DragButton("button-arrow-down")
-        self.arrow_down.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-down.svg")))
-        self.arrow_down.setStyleSheet(tool)
-        self.arrow_down.setIconSize(QSize(60, 60))
-        iconsList.addWidget(self.arrow_down)
+        # The down arrow and left arrow have been commented out because
+        # up and down cannot be pressed at the same time and left and
+        # right cannot be played at the same time either so we decided
+        # to remove them so the user cannot account this problem
+        ## self.arrow_down = DragButton("button-arrow-down")
+        ## self.arrow_down.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-down.svg")))
+        ## self.arrow_down.setStyleSheet(tool)
+        ## self.arrow_down.setIconSize(QSize(60, 60))
+        ## iconsList.addWidget(self.arrow_down)
 
-        self.arrow_left = DragButton("button-arrow-left")
-        self.arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-left.svg")))
-        self.arrow_left.setStyleSheet(tool)
-        self.arrow_left.setIconSize(QSize(60, 50))
-        iconsList.addWidget(self.arrow_left)
+        ## self.arrow_left = DragButton("button-arrow-left")
+        ## self.arrow_left.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-left.svg")))
+        ## self.arrow_left.setStyleSheet(tool)
+        ## self.arrow_left.setIconSize(QSize(60, 50))
+        ## iconsList.addWidget(self.arrow_left)
 
         self.arrow_right = DragButton("button-arrow-right")
         self.arrow_right.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-arrow-right.svg")))
@@ -148,6 +157,18 @@ class SettingsPage(QWidget):
         self.Y.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.Y)
 
+        self.RB = DragButton("button-RB")
+        self.RB.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-RB.svg")))
+        self.RB.setStyleSheet(tool)
+        self.RB.setIconSize(QSize(60, 50))
+        iconsList.addWidget(self.RB)
+
+        self.LB = DragButton("button-LB")
+        self.LB.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-LB.svg")))
+        self.LB.setStyleSheet(tool)
+        self.LB.setIconSize(QSize(60, 50))
+        iconsList.addWidget(self.LB)
+
         self.RT = DragButton("button-RT")
         self.RT.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-RT.svg")))
         self.RT.setStyleSheet(tool)
@@ -159,6 +180,18 @@ class SettingsPage(QWidget):
         self.LT.setStyleSheet(tool)
         self.LT.setIconSize(QSize(60, 50))
         iconsList.addWidget(self.LT)
+
+        self.LS = DragButton("button-LS")
+        self.LS.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-LS.svg")))
+        self.LS.setStyleSheet(tool)
+        self.LS.setIconSize(QSize(60, 50))
+        iconsList.addWidget(self.LS)
+
+        self.RS = DragButton("button-RS")
+        self.RS.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-RS.svg")))
+        self.RS.setStyleSheet(tool)
+        self.RS.setIconSize(QSize(60, 50))
+        iconsList.addWidget(self.RS)
 
         vbox.addLayout(iconsList)
 

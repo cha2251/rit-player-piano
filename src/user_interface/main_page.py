@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QStackedLayout, qApp
 
 from src.file_input import file_input
 from src.mixing import mixing
-from src.communication.messages import Message, MessageType, PlayingState
+from src.communication.messages import Message, MessageType, PlayingState, Song
 from src.user_interface.home_page import HomePage
 from src.user_interface.playing_page import PlayingPage
 from src.user_interface.settings_page import SettingsPage
@@ -167,8 +167,10 @@ class MainPage(QWidget, Thread):
 
     def update_playing_page_song(self, song_name):
         self.play_page.set_song(song_name)
-        print("MAIN UPDATE SONG NAME")
-        self.comm_system.send(Message(MessageType.SONG_UPDATE, song_name))
+        if song_name == "Freeplay Mode":
+            self.comm_system.send(Message(MessageType.SONG_UPDATE,Song.FREEPLAY))
+        else:
+            self.comm_system.send(Message(MessageType.SONG_UPDATE, song_name))
 
 
     def closeEvent(self, event):

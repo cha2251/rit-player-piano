@@ -1,6 +1,6 @@
 import queue
 from threading import Lock, Thread
-from src.communication.messages import Message, MessageType, PianoAssistPlaying
+from src.communication.messages import Message, MessageType, PianoAssistPlaying, Song
 from src.file_input.MIDI_file_class import MIDIFileObject
 import time
 
@@ -50,6 +50,11 @@ class FileInput(Thread):
         filename = message.data
         with self.accessLock:
             self.file_input_queue.queue.clear()
+
+            if filename == Song.FREEPLAY:
+                self.filename = None
+                self.fileObject = None
+                return
 
             if not filename.endswith(".mid"):
                 filename += ".mid"

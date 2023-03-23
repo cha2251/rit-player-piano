@@ -37,13 +37,7 @@ class MIDIFileObject:
         self.current_time_delay = None
         #self.comm_system = MixingCommSystem()
         self.end_time = 0
-        try:
-            self.messages = self.parse_midi_file(file_name)
-        except EOFError: #TODO: For freeplay song, this is thrown. Need to handle this better
-            self.messages = []
-        
-
-
+        self.messages = self.parse_midi_file(file_name)
 
 
     def __str__(self):
