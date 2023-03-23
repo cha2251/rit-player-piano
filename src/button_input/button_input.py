@@ -113,7 +113,7 @@ class ButtonInput:
         if k in self.keyMap.keys():
             for note in self.get_notes(k):
                 self.button_input_queue.put(
-                    MidiEvent(mido.Message('note_on', note=note, velocity=120), 0))
+                    MidiEvent(mido.Message('note_on', note=note, velocity=120), 0, from_user_input=True))
 
     # Reacts to key releases and sends a midi event if the key is mapped
     def on_release(self, key):
@@ -124,18 +124,18 @@ class ButtonInput:
         if k in self.keyMap.keys():
             for note in self.get_notes(k):
                 self.button_input_queue.put(
-                    MidiEvent(mido.Message('note_off', note=note, velocity=120), 0))
+                    MidiEvent(mido.Message('note_off', note=note, velocity=120), 0, from_user_input=True))
             
     # Adds a note when a button on the controller is pressed
     def on_controller_update(self, button : ControllerButton, state):
         if state == 1:
             for note in self.get_notes(button):
                 self.button_input_queue.put(
-                    MidiEvent(mido.Message('note_on', note=note, velocity=120), 0))
+                    MidiEvent(mido.Message('note_on', note=note, velocity=120), 0, from_user_input=True))
         else:
             for note in self.get_notes(button):
                 self.button_input_queue.put(
-                    MidiEvent(mido.Message('note_off', note=note, velocity=0), 0))
+                    MidiEvent(mido.Message('note_off', note=note, velocity=0), 0, from_user_input=True))
             
     def get_notes(self, button : ControllerButton):
         try:
