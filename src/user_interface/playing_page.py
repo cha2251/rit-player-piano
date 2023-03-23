@@ -16,7 +16,7 @@ from src.user_interface.visualization.visualization import VisualizationWidget
 class PlayingPage(QWidget):
     def __init__(self, song_name="DEFAULT"):
         button = """
-        max-width: 5em;
+        max-width: 10em;
         min-width: 3em;
         word-wrap: break-word;
         """
@@ -96,8 +96,8 @@ class PlayingPage(QWidget):
         rewindTenSec.setIcon(
             QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "backward-solid.svg")))
         rewindTenSec.setIconSize(QSize(65, 65))
-        rewindTenSec.setText('rewind 10 seconds')
-        rewindTenSec.setToolTip('rewind 10 seconds')
+        rewindTenSec.setText('back 10 seconds')
+        rewindTenSec.setToolTip('back 10 seconds')
         rewindTenSec.setStyleSheet(button)
         rewindTenSec.clicked.connect(self.on_click_rewind)
 
