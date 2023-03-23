@@ -1,4 +1,4 @@
-from queue import PriorityQueue, Empty
+import queue
 import mido
 import time
 import platform
@@ -10,6 +10,7 @@ from src.common.shared_priority_queue import PeekingPriorityQueue
 from src.communication.messages import Message, MessageType, NoteOutputMessage, PlayingState
 from src.output_queue.output_comm import OutputCommSystem
 from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
+from src.output_queue.tempo_mode import TempoMode
 
 LINUX_SYNTH_KEYWORDS = "midi through port"
 WINDOWS_SYNTH_KEYWORDS = "microsoft gs wavetable synth"
@@ -27,12 +28,16 @@ class OutputQueue():
         self.state = PlayingState.STOP
         self.state_changed = False
         self.playing_notes = {}
+
         self.comm_system = OutputCommSystem()
         self.comm_system.set_queues(input_queue, output_queue)
         self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
         self.comm_system.registerListener(MessageType.OUTPUT_QUEUE_UPDATE, self.process_note_event)
         self.comm_system.registerListener(MessageType.STATE_UPDATE, self.stateChanged)
         self.comm_system.start()
+
+        # TODO DJA-PROC Add a mode system to allow for different play modes
+        self.playing_mode = None # TempoMode(self)
 
         # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
 
@@ -92,47 +97,59 @@ class OutputQueue():
 
         now = time.time()
 
-        try:
-            if self.state_changed:
-                self.state_changed = False
+        # How many seconds into the song we are
+        relative_time = now - self.last_note_time_played + self.last_note_timestamp
 
-                if self.state == PlayingState.PLAY:
-                    self.play()
-                elif self.state == PlayingState.PAUSE:
-                    self.pause()
-                elif self.state == PlayingState.STOP:
-                    self.stop()
+        immediate_events = []
+        button_events = []
 
-            if self.queue.peek() is not None and self.state == PlayingState.PLAY:
-                if self.last_note_time_played - self.last_note_timestamp <= now - self.queue.peek().timestamp:
-                    midiEvent = self.queue.get()
+        # Separate events from buttons vs events from the song
+        while self.queue.qsize() > 0:
+            event = self.queue.peek()
 
-                    # Zero represents a note that should be played immediately, and would otherwise mess up the timings
-                    if midiEvent.timestamp > 1e-4:
-                        self.last_note_time_played = now
-                        self.last_note_timestamp = midiEvent.timestamp
+            if event.from_user_input:
+                button_events += [self.queue.get()]
+            elif self.state == PlayingState.PLAY and event.timestamp <= relative_time:
+                immediate_events += [self.queue.get()]
+            else:
+                break
 
-                    if midiEvent.event.type == "note_off" or midiEvent.event.velocity == 0:
-                        if midiEvent.event.note in self.playing_notes.keys():
-                            del self.playing_notes[midiEvent.event.note]
-                    elif midiEvent.event.type == "note_on":                        
-                        self.playing_notes[midiEvent.event.note] = midiEvent.event
+        if self.state_changed:
+            self.state_changed = False
 
+            if self.state == PlayingState.PLAY:
+                self.play()
+            elif self.state == PlayingState.PAUSE:
+                self.pause()
+            elif self.state == PlayingState.STOP:
+                self.stop()
 
-                    if midiEvent.event.type == "note_on" and midiEvent.play_note:
-                        """ TODO: Here's where we filter for the split hands.
-                        If the note is not on the correct hand it will not be sent.
-                        If the note should be sent anyway, this should be adjusted.
-                        """
-                        
-                        self._send_midi_event(midiEvent)
-                    elif midiEvent.event.type == "note_on" and not midiEvent.play_note:
-                        relative_now = now - self.last_note_time_played + self.last_note_timestamp
-                        self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_now, now)))
-                    else:
-                        self._send_midi_event(midiEvent)
-        except IndexError:
-            pass # Expected when the queue is empty
+        if self.playing_mode is not None:
+            self.playing_mode.update(immediate_events, button_events, relative_time)
+
+        for button_event in button_events:
+            self._send_midi_event(button_event)
+
+        # Handle regular queue events
+        for midiEvent in immediate_events:
+            # A timestamp of 0 means the note should be played immediately and is
+            # valid, but would otherwise mess up the timings
+            if midiEvent.timestamp > 1e-4:
+                self.last_note_time_played = now
+                self.last_note_timestamp = midiEvent.timestamp
+
+            if midiEvent.event.type == "note_off":
+                if midiEvent.event.note in self.playing_notes.keys():
+                    del self.playing_notes[midiEvent.event.note]
+            elif midiEvent.event.type == "note_on" and midiEvent.play_note:
+                self.playing_notes[midiEvent.event.note] = midiEvent.event
+
+            if midiEvent.event.type == "note_on" and midiEvent.play_note:
+                self._send_midi_event(midiEvent)
+            elif midiEvent.event.type == "note_on" and not midiEvent.play_note:
+                self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_time, now)))
+            else:
+                self._send_midi_event(midiEvent)
 
     def _send_midi_event(self, midiEvent: MidiEvent):
         if type(midiEvent) != MidiEvent:

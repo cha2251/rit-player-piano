@@ -153,13 +153,17 @@ class MIDIFileObject:
 
             curr_time += delta
 
+            # Clean up note_on messages with velocity 0 to make things easier
+            if msg.type == 'note_on' and msg.velocity == 0:
+                msg = mido.Message('note_off', note=msg.note, velocity=msg.velocity, time=msg.time)
+
             if msg.type == 'note_on':
                 if self.is_correct_hand(msg.note):
-                    track_messages.append(MidiEvent(msg,curr_time, True))
+                    track_messages.append(MidiEvent(msg,curr_time, play_note=True, note_for_user=False))
                 else:
-                    track_messages.append(MidiEvent(msg,curr_time, False))
+                    track_messages.append(MidiEvent(msg,curr_time, play_note=False, note_for_user=True))
             else:
-                track_messages.append(MidiEvent(msg,curr_time, True))
+                track_messages.append(MidiEvent(msg,curr_time, play_note=True))
 
             if msg.type == 'set_tempo':
                 tempo = msg.tempo

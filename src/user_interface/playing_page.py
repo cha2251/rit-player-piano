@@ -56,6 +56,11 @@ class PlayingPage(QWidget):
         self.songWidget = SongWidget()
         #################
 
+        self.button_ack = QLabel()
+        self.button_ack.setObjectName('buttonAck')
+        self.button_ack.setFixedSize(300,50)
+        self.button_ack.setText('PRESS PLAY')
+
         playButton = QToolButton()
         playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         playButton.setIcon(
@@ -127,10 +132,15 @@ class PlayingPage(QWidget):
         top.addWidget(self.nav_home)
         top.addSpacerItem(QSpacerItem(5, 5, QSizePolicy.Expanding))
         top.addWidget(self.configure)
+        btn_ack_hbox = QHBoxLayout()
+        btn_ack_hbox.setAlignment(Qt.AlignCenter)
+        btn_ack_hbox.addWidget(self.button_ack)
+
 
         vbox = QVBoxLayout(self)
         vbox.addLayout(top)
         vbox.addLayout(song_hbox)
+        vbox.addLayout(btn_ack_hbox)
 
         vbox.addWidget(VisualizationWidget(parent=self))
         vbox.addLayout(hbox)
@@ -144,14 +154,22 @@ class PlayingPage(QWidget):
     def on_click_quit(self):
         print('quit pushed')
 
+    @pyqtSlot()
+    def on_click_stop(self):
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.STOP))
+        self.button_ack.setText('STOPPED')
+
+    @pyqtSlot()
     def on_click_pause(self):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PAUSE))
         self.songWidget.stopTimer()
+        self.button_ack.setText('PAUSED')
 
     def on_click_play(self):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
         self.songWidget.setDuration(self.song_duration)
         self.songWidget.startTimer()
+        self.button_ack.setText('')
 
     def on_click_restart(self):
         print('restart pushed')
@@ -169,6 +187,7 @@ class PlayingPage(QWidget):
         ##self.nav_home.setText("SONG: " + song)
         self.setWindowTitle("Player Piano: " + song)
         #self.songWidget.setDuration(self.song_duration)
+        self.button_ack.setText('PRESS PLAY')
 
     def set_song_duration(self, message : Message):
         """ Set the song duration once the page has been loaded

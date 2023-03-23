@@ -13,9 +13,20 @@ from src.mixing.mixing_comm import MixingCommSystem
 class ButtonInput:
     button_input_queue: queue.Queue
     keyMap = dict
-    default = {'q': [53,54,55], 'w': [56], 'e': [57], 'r': [58], 't': [59],
-               'y': [60], 'u': [61], 'i': [62], 'o': [63], 'p': [64],
-               ControllerButton.A: [65], ControllerButton.B: [66, 68, 70]}
+    default = {'q': [53,54,55], 'w': [56], 'e': [57], 'r': [58], 't': [59], 'y': [60],
+                ControllerButton.RightTrigger: [60],
+                ControllerButton.Y: [61], 
+                ControllerButton.LeftTrigger: [62],
+                ControllerButton.X: [63],
+                ControllerButton.LeftBumper: [64],
+                ControllerButton.RightDPad: [65],
+                ControllerButton.B: [66],
+                ControllerButton.UpDPad: [67],
+                ControllerButton.A: [68],
+                ControllerButton.RightThumb: [69],
+                ControllerButton.RightBumper: [70],
+                ControllerButton.LeftThumb: [71]
+                }
     
     string_note_mapping = {
             "c3": 48, # 3rd C
@@ -102,7 +113,7 @@ class ButtonInput:
         if k in self.keyMap.keys():
             for note in self.get_notes(k):
                 self.button_input_queue.put(
-                    MidiEvent(mido.Message('note_on', note=note, velocity=120), 0))
+                    MidiEvent(mido.Message('note_on', note=note, velocity=120), 0, from_user_input=True))
 
     # Reacts to key releases and sends a midi event if the key is mapped
     def on_release(self, key):
@@ -113,18 +124,18 @@ class ButtonInput:
         if k in self.keyMap.keys():
             for note in self.get_notes(k):
                 self.button_input_queue.put(
-                    MidiEvent(mido.Message('note_off', note=note, velocity=120), 0))
+                    MidiEvent(mido.Message('note_off', note=note, velocity=120), 0, from_user_input=True))
             
     # Adds a note when a button on the controller is pressed
     def on_controller_update(self, button : ControllerButton, state):
         if state == 1:
             for note in self.get_notes(button):
                 self.button_input_queue.put(
-                    MidiEvent(mido.Message('note_on', note=note, velocity=120), 0))
+                    MidiEvent(mido.Message('note_on', note=note, velocity=120), 0, from_user_input=True))
         else:
             for note in self.get_notes(button):
                 self.button_input_queue.put(
-                    MidiEvent(mido.Message('note_off', note=note, velocity=0), 0))
+                    MidiEvent(mido.Message('note_off', note=note, velocity=0), 0, from_user_input=True))
             
     def get_notes(self, button : ControllerButton):
         try:
