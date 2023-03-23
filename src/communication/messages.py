@@ -20,6 +20,9 @@ class PianoAssistPlaying(Enum):
     NEITHER = 3
     BOTH = 4
 
+class Song(Enum):
+    FREEPLAY = 1
+
 class PlayingState(Enum):
     PLAY = 1
     PAUSE = 2

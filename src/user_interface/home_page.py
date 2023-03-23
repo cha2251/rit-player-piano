@@ -86,6 +86,7 @@ class HomePage(QWidget):
 
         # get list of songs
         songs = self.get_songs_from_directory()
+        songs.insert(0, "Freeplay Mode")
         num_btns = (len(songs) // 4)
         num_btns = num_btns if (len(songs)%4 == 0) else (num_btns+1)
         #print(f'# Songs: {len(songs)}, # num btns: {num_btns}')
