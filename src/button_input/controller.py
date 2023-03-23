@@ -1,3 +1,4 @@
+import json
 import threading
 from inputs import get_gamepad, UnpluggedError
 from enum import Enum
@@ -23,6 +24,11 @@ class ControllerButton(Enum):
     RightDPad = 18
     UpDPad = 19
     DownDPad = 20
+
+def serialize_enum(obj):
+    if isinstance(obj, Enum):
+        return obj.value
+    return json.JSONEncoder.default(obj)
 
 class XboxController:
     def __init__(self, on_controller_update):

@@ -1,6 +1,9 @@
+import json
+import os
 import queue
 from threading import Lock, Thread
 from src.communication.messages import Message, MessageType, PianoAssistPlaying, Song
+from src.button_input import controller
 from src.file_input.MIDI_file_class import MIDIFileObject
 import time
 
@@ -30,6 +33,7 @@ class FileInput(Thread):
     def registerCallbacks(self):        
         self.comm_system.registerListener(MessageType.SET_HAND_TO_PLAY, self.set_hand_to_play)
         self.comm_system.registerListener(MessageType.SONG_UPDATE, self.openFile)
+        self.comm_system.registerListener(MessageType.STORE_BUTTON_MAPPING, self.store_button_mappings)
     
     def copy_file_to_queue(self):
         while self.active:
@@ -70,5 +74,17 @@ class FileInput(Thread):
     def set_hand_to_play(self, message : Message):
         print(f'Update hand (in file_input.py): {message.data}')
         self.hand_to_play = message.data
+
+    def store_button_mappings(self, message : Message):
+        """ Depending on the format of the data, we will store them in a file.
+        """
+        file_name = os.path.join(os.path.dirname(__file__), "..", "..", "config_files", "button_mappings.json")
+
+        with open(file_name, "r+") as f:
+            file_data = json.load(f)
+            file_data["mappings"].append(message.data)
+            f.seek(0)
+            json.dump(file_data, f, indent=4, default=controller.serialize_enum)
+
 
     

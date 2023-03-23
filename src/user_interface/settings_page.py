@@ -29,6 +29,7 @@ class SettingsPage(QWidget):
         max-width: 3em;
         min-width: 3em;
         """)  # it seems like the min-width is the important one
+        self.nav_home.clicked.connect(self.save_button_mapping)
 
         self.title = 'PLayer Piano'
         self.setWindowTitle(self.title)
@@ -363,6 +364,11 @@ class SettingsPage(QWidget):
         
     def get_piano_dict(self):
         return self.piano_dict
+    
+    def save_button_mapping(self):
+        print(self.piano_dict)
+        self.comm_system.send(Message(MessageType.STORE_BUTTON_MAPPING, self.piano_dict))
+    
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

@@ -14,6 +14,7 @@ class MessageType(Enum):
     TEMPO_MODE_UPDATE = 9
     SET_HAND_TO_PLAY = 10
     SET_DURATION = 11
+    STORE_BUTTON_MAPPING = 12
 
 class PianoAssistPlaying(Enum):
     LEFT = 1
