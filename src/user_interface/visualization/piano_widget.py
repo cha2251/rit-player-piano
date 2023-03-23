@@ -13,7 +13,7 @@ class PianoWidget(QWidget):
 
         self.config = config
         self.comm_system = UICommSystem()
-        self.playing_notes = []
+        self.playing_notes = {}
 
         QTimer(self, timeout=self.update, interval=(1000 / WIDGET_REFRESH_RATE)).start()
         self.comm_system.registerListener(MessageType.NOTE_OUTPUT, self.on_note_output)
@@ -24,9 +24,9 @@ class PianoWidget(QWidget):
         midiEvent = message.data.event
         if midiEvent.event.type == "note_off" or midiEvent.event.velocity == 0:
             if midiEvent.event.note in self.playing_notes:
-                self.playing_notes.remove(midiEvent.event.note)
+                del self.playing_notes[midiEvent.event.note]
         else:
-            self.playing_notes += [midiEvent.event.note]
+            self.playing_notes[midiEvent.event.note] = True
 
     def paintEvent(self, _event):
         qp = QPainter(self)
@@ -54,7 +54,7 @@ class PianoWidget(QWidget):
                 y,
                 self.config.key_width - self.config.key_border_size * 2,
                 self.config.get_key_height(),
-                (self.config.left_hand_color if note < 60 else self.config.right_hand_color) if note in self.playing_notes else Qt.white,
+                (self.config.left_hand_color if note < 60 else self.config.right_hand_color) if note in self.playing_notes.keys() else Qt.white,
             )
 
         # Draw the black keys
@@ -82,7 +82,7 @@ class PianoWidget(QWidget):
                 y,
                 self.config.get_black_key_width() - self.config.key_border_size * 2,
                 self.config.get_black_key_height() - self.config.key_border_size / 2,
-                (self.config.left_hand_color if note < 60 else self.config.right_hand_color) if note in self.playing_notes else Qt.black,
+                (self.config.left_hand_color if note < 60 else self.config.right_hand_color) if note in self.playing_notes.keys() else Qt.black,
             )
 
     def sizeHint(self):

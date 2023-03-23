@@ -10,7 +10,7 @@ from src.output_queue.output_queue import OutputQueue
 from src.output_queue.synth import SYNTHESIZER_NAME
 from src.common.midi_event import MidiEvent
 
-FAR_FUTURE_TIMESTAMP = 1e10
+FAR_FUTURE_TIMESTAMP = 1e12
 DUMMY_PORT_NAME = "DummyPort"
 
 class DummyPort:
@@ -101,7 +101,7 @@ class TestRun:
         output_queue_process.comm_system.deactivate()
 
     def test_one_message(self, output_queue_process):
-        test_message = MidiEvent(mido.Message('note_on',note=60,), 42, True)
+        test_message = MidiEvent(mido.Message('note_on',note=60,), 42, play_note=True)
         output_queue_process.select_device(DUMMY_PORT_NAME)
         output_queue_process.state = PlayingState.PLAY
 
@@ -120,7 +120,7 @@ class TestRun:
         output_queue_process.comm_system.deactivate()
 
     def test_future_message(self, output_queue_process):
-        test_message = MidiEvent(mido.Message('note_on',note=60), FAR_FUTURE_TIMESTAMP, True)
+        test_message = MidiEvent(mido.Message('note_on',note=60), FAR_FUTURE_TIMESTAMP, play_note=True)
         output_queue_process.select_device(DUMMY_PORT_NAME)
         output_queue_process.state = PlayingState.PLAY
 
@@ -141,12 +141,12 @@ class TestRun:
         output_queue_process.state = PlayingState.PLAY
 
         for i in range(expected_past_messages):
-            test_message = MidiEvent(mido.Message('note_on', note=60), 0, True)
+            test_message = MidiEvent(mido.Message('note_on', note=60), 0, play_note=True)
             past_messages += [test_message]
             output_queue_process.queue.put(test_message)
 
         for i in range(expected_future_messages):
-            output_queue_process.queue.put(MidiEvent(mido.Message('note_on', note=60), FAR_FUTURE_TIMESTAMP + i * 10, True))
+            output_queue_process.queue.put(MidiEvent(mido.Message('note_on', note=60), FAR_FUTURE_TIMESTAMP + i * 10, play_note=True))
 
         output_queue_process.select_device(DUMMY_PORT_NAME)
         for i in range(expected_past_messages + expected_future_messages + 1):
