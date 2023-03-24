@@ -18,10 +18,10 @@ class PlayingPage(QWidget):
         button = """
         max-width: 10em;
         min-width: 3em;
-        word-wrap: break-word;
         """
 
         super().__init__()
+        self.playingFlag = False # flag for play pause toggle true means the song is playing
         self.nav_home = QToolButton()
         self.nav_home.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.nav_home.setIconSize(QSize(55, 55))
@@ -61,25 +61,39 @@ class PlayingPage(QWidget):
         self.button_ack.setFixedSize(300,50)
         self.button_ack.setText('PRESS PLAY')
 
-        playButton = QToolButton()
-        playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        playButton.setIcon(
-            QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "play-solid.svg")))
-        playButton.setIconSize(QSize(65, 65))
-        playButton.setText("play")
-        playButton.setToolTip("play song")
-        playButton.setStyleSheet(button)
-        playButton.clicked.connect(self.on_click_play)
 
-        pauseButton = QToolButton()
-        pauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        pauseButton.setIcon(
-            QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "pause-solid.svg")))
-        pauseButton.setIconSize(QSize(65, 65))
-        pauseButton.setText('pause')
-        pauseButton.setToolTip('pause song')
-        pauseButton.setStyleSheet(button)
-        pauseButton.clicked.connect(self.on_click_pause)
+
+        ##### playButton = QToolButton()
+        ##### playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        ##### playButton.setIcon(
+        #####     QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "play-solid.svg")))
+        ##### playButton.setIconSize(QSize(65, 65))
+        ##### playButton.setText("play")
+        ##### playButton.setToolTip("play song")
+        ##### playButton.setStyleSheet(button)
+        ##### playButton.clicked.connect(self.on_click_play)
+
+        #### pauseButton = QToolButton()
+        #### pauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        #### pauseButton.setIcon(
+        ####     QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "pause-solid.svg")))
+        #### pauseButton.setIconSize(QSize(65, 65))
+        #### pauseButton.setText('pause')
+        #### pauseButton.setToolTip('pause song')
+        #### pauseButton.setStyleSheet(button)
+        #### pauseButton.clicked.connect(self.on_click_pause)
+
+        self.playPauseButton = QToolButton()
+        self.playPauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        self.playPauseButton.setIcon(
+            QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "play-solid.svg")))
+        self.playPauseButton.setIconSize(QSize(65, 65))
+        self.playPauseButton.setText("play")
+        self.playPauseButton.setToolTip("play song")
+        self.playPauseButton.setStyleSheet(button)
+        self.playPauseButton.clicked.connect(self.on_click_play_pause)
+
+
 
         restartButton = QToolButton()
         restartButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -117,8 +131,7 @@ class PlayingPage(QWidget):
         hbox.setAlignment(Qt.AlignCenter)
         hbox.addWidget(rewindTenSec)
         hbox.addWidget(restartButton)
-        hbox.addWidget(pauseButton)
-        hbox.addWidget(playButton)
+        hbox.addWidget(self.playPauseButton)
         hbox.addWidget(forwardTenSec)
 
         ############################################################
@@ -159,17 +172,26 @@ class PlayingPage(QWidget):
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.STOP))
         self.button_ack.setText('STOPPED')
 
-    @pyqtSlot()
-    def on_click_pause(self):
-        self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PAUSE))
-        self.songWidget.stopTimer()
-        self.button_ack.setText('PAUSED')
-
-    def on_click_play(self):
-        self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
-        self.songWidget.setDuration(self.song_duration)
-        self.songWidget.startTimer()
-        self.button_ack.setText('')
+    def on_click_play_pause(self):
+        if self.playingFlag: # pause state
+            self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PAUSE))
+            self.songWidget.stopTimer()
+            self.button_ack.setText('PAUSED')
+            self.playingFlag = False
+            self.playPauseButton.setIcon(
+                QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "play-solid.svg")))
+            self.playPauseButton.setText('play')
+            self.playPauseButton.setToolTip('play song')
+        else: # play state
+            self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
+            self.songWidget.setDuration(self.song_duration)
+            self.songWidget.startTimer()
+            self.button_ack.setText('')
+            self.playingFlag = True
+            self.playPauseButton.setIcon(
+                QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "pause-solid.svg")))
+            self.playPauseButton.setText('pause')
+            self.playPauseButton.setToolTip('pause song')
 
     def on_click_restart(self):
         print('restart pushed')
