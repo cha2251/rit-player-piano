@@ -55,35 +55,42 @@ class OutputQueue():
 
     def timeSkip(self, message : Message):
         if message.data == TimeSkipMessageType.FORWARD:
-            self.skip_forward(10)
+            time_change = self.skip_forward(10)
         elif message.data == TimeSkipMessageType.BACKWARD:
-            self.skip_backward(10)
+            time_change = self.skip_backward(10)
+        self.comm_system.send(Message(MessageType.TIME_CHANGE, time_change))
 
     def skip_forward(self, seconds : int):
+        time_change = 0
         try:
             with self.accessLock:
                 current_time = self.queue.peek().timestamp
                 while self.queue.peek().timestamp < current_time + seconds:
                         event = self.queue.get_nowait()
                         self.last_note_timestamp = event.timestamp
+                        time_change = event.timestamp - current_time
                         self.played_notes.append(event)
         except queue.Empty as e:
             pass # Expected if we dont have anything in the queue
         except AttributeError as e:
             pass # Expected if we dont have anything in the queue
+        return time_change
     
     def skip_backward(self, seconds : int):
+        time_change = 0
         try:
             with self.accessLock:
                 current_time = self.queue.peek().timestamp
                 while self.played_notes[len(self.played_notes)-1].timestamp > current_time - seconds:
                         event = self.played_notes.pop(len(self.played_notes)-1)
                         self.last_note_timestamp = event.timestamp
+                        time_change = event.timestamp - current_time
                         self.queue.put(event)
         except IndexError as e:
             pass # Expected if we dont have anything in the queue
         except AttributeError as e:
             pass # Expected if we dont have anything in the queue
+        return time_change
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
     def select_device(self, name):

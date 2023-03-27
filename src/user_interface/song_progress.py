@@ -1,6 +1,9 @@
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QWidget, QProgressBar, QLabel, QHBoxLayout
 from PyQt5.QtGui import QPainter, QColor, QPen, QFont
+from src.communication.messages import Message, MessageType
+
+from src.user_interface.ui_comm import UICommSystem
 
 class SongWidget(QWidget):
     def __init__(self, parent=None):
@@ -14,6 +17,8 @@ class SongWidget(QWidget):
         self.progressBar.setRange(0, 100)
         self.progressBar.setValue(0)
         self.progressBar.setTextVisible(False)
+        self.comm_system = UICommSystem()
+        self.comm_system.registerListener(MessageType.TIME_CHANGE, self.time_change)
 
         layout = QHBoxLayout()
         layout.addWidget(self.timeLabel)
@@ -56,4 +61,8 @@ class SongWidget(QWidget):
         seconds = int(self.value % 60)
         timeStr = "{:02d}:{:02d}".format(minutes, seconds)
         self.timeLabel.setText(timeStr)
+    
+    def time_change(self, message : Message):
+        current = self.progressBar.value()
+        self.progressBar.setValue(current + message.data)
 

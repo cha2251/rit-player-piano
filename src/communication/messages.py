@@ -15,6 +15,7 @@ class MessageType(Enum):
     SET_HAND_TO_PLAY = 10
     SET_DURATION = 11
     TIME_SKIP = 12
+    TIME_CHANGE = 13
 
 class PianoAssistPlaying(Enum):
     LEFT = 1
