@@ -56,7 +56,9 @@ class SongWidget(QWidget):
     def updateTimer(self):
         self.value = self.progressBar.value() + 1
         self.progressBar.setValue(self.value)
+        self.setLabel()
 
+    def setLabel(self):
         minutes = int(self.value / 60)
         seconds = int(self.value % 60)
         timeStr = "{:02d}:{:02d}".format(minutes, seconds)
@@ -65,4 +67,5 @@ class SongWidget(QWidget):
     def time_change(self, message : Message):
         current = self.progressBar.value()
         self.progressBar.setValue(current + message.data)
+        self.setLabel()
 
