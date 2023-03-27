@@ -4,7 +4,7 @@ import time
 from src.button_input.button_input import ButtonInput
 from src.file_input.file_input import FileInput
 from src.mixing.mixing_comm import MixingCommSystem
-from src.communication.messages import Message, MessageType, PlayingState, TimeSkipMessageType
+from src.communication.messages import Message, MessageType, PlayingState
 import mido
 
 class Mixing(Thread):
@@ -13,8 +13,6 @@ class Mixing(Thread):
     played_file_notes = queue.Queue()
     holding_queue: queue.PriorityQueue = None
     active = False
-    processing = False
-    accessLock = Lock()
     state = PlayingState.STOP
 
     current_notes = {}
@@ -42,7 +40,6 @@ class Mixing(Thread):
         self.comm_system.registerListener(MessageType.MODE_UPDATE, self.modeChanged)
         self.comm_system.registerListener(MessageType.SONG_UPDATE, self.songChanged)
         self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
-        self.comm_system.registerListener(MessageType.TIME_SKIP, self.timeSkip)
 
     def stateChanged(self, message : Message):
         if message.data == PlayingState.PLAY:
@@ -56,29 +53,7 @@ class Mixing(Thread):
         self.stop_pushed() # Mixing does not care about song name, but should stop current song
 
     def modeChanged(self, message : Message):
-        pass #TODO Implement when mutiple play modes are enabled
-
-    def timeSkip(self, message : Message):
-        self.processing = True
-        if message.data == TimeSkipMessageType.FORWARD:
-            self.skip_forward(10)
-        elif message.data == TimeSkipMessageType.BACKWARD:
-            print("SKIP BACKWARD")
-        self.processing = False
-
-    def skip_forward(self, seconds : int):
-        try:
-            with self.accessLock:
-                current_time = self.file_input_queue.queue[0].event.time # Poor man's peek function
-                print("Current Time: " + str(current_time))
-                while self.file_input_queue.queue[0].event.time < current_time + seconds:
-                        print("Skipping: " + str(self.file_input_queue.queue[0].event.time))
-                        self.played_file_notes.put(self.file_input_queue.get_nowait())
-        except queue.Empty as e:
-            pass # Expected if we dont have anything in the queue
-        except IndexError as e:
-            pass # Expected if we dont have anything in the queue
-        
+        pass #TODO Implement when mutiple play modes are enabled    
 
     def play(self):
         self.state = PlayingState.PLAY
@@ -112,22 +87,20 @@ class Mixing(Thread):
     
     def main_loop(self):
         while(self.active):
-            while(not self.processing):
-                with self.accessLock:
-                    try:
-                        event = self.button_input_queue.get_nowait()
-                        self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
-                    except queue.Empty:
-                        pass # Expected if we dont have anything in the queue
-                    if(self.state == PlayingState.PLAY):
-                        try:
-                            event = self.file_input_queue.get_nowait()
-                            self.played_file_notes.put(event)
-                            self.current_notes.update({event.event.note:event.event.type})
-                            self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
-                        except queue.Empty:
-                            pass # Expected if we dont have anything in the queue
-                time.sleep(0)
+            try:
+                event = self.button_input_queue.get_nowait()
+                self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
+            except queue.Empty:
+                pass # Expected if we dont have anything in the queue
+            if(self.state == PlayingState.PLAY):
+                try:
+                    event = self.file_input_queue.get_nowait()
+                    self.played_file_notes.put(event)
+                    self.current_notes.update({event.event.note:event.event.type})
+                    self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
+                except queue.Empty:
+                    pass # Expected if we dont have anything in the queue
+            time.sleep(0)
         
 
     def deactivate(self, message=None):
