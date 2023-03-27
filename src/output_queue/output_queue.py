@@ -69,8 +69,9 @@ class OutputQueue():
                         self.played_queue.put(self.queue.get_nowait())
         except queue.Empty as e:
             pass # Expected if we dont have anything in the queue
-        except IndexError as e:
+        except AttributeError as e:
             pass # Expected if we dont have anything in the queue
+        self.last_note_timestamp += 10
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
     def select_device(self, name):
