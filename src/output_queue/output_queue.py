@@ -18,7 +18,7 @@ WINDOWS_SYNTH_KEYWORDS = "microsoft gs wavetable synth"
 class OutputQueue():
     def __init__(self, input_queue, output_queue):
         self.queue = PeekingPriorityQueue()
-        self.played_queue = PeekingPriorityQueue()
+        self.played_notes = []
         self._open_port = None
         self.active = False
         self.last_note_timestamp = 0
@@ -57,21 +57,33 @@ class OutputQueue():
         if message.data == TimeSkipMessageType.FORWARD:
             self.skip_forward(10)
         elif message.data == TimeSkipMessageType.BACKWARD:
-            print("SKIP BACKWARD")
+            self.skip_backward(10)
 
     def skip_forward(self, seconds : int):
         try:
             with self.accessLock:
                 current_time = self.queue.peek().timestamp
-                print("Current Time: " + str(current_time))
                 while self.queue.peek().timestamp < current_time + seconds:
-                        print("Skipping: " + str(self.queue.peek().timestamp))
-                        self.played_queue.put(self.queue.get_nowait())
+                        event = self.queue.get_nowait()
+                        self.last_note_timestamp = event.timestamp
+                        self.played_notes.append(event)
         except queue.Empty as e:
             pass # Expected if we dont have anything in the queue
         except AttributeError as e:
             pass # Expected if we dont have anything in the queue
-        self.last_note_timestamp += 10
+    
+    def skip_backward(self, seconds : int):
+        try:
+            with self.accessLock:
+                current_time = self.queue.peek().timestamp
+                while self.played_notes[len(self.played_notes)-1].timestamp > current_time - seconds:
+                        event = self.played_notes.pop(len(self.played_notes)-1)
+                        self.last_note_timestamp = event.timestamp
+                        self.queue.put(event)
+        except IndexError as e:
+            pass # Expected if we dont have anything in the queue
+        except AttributeError as e:
+            pass # Expected if we dont have anything in the queue
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
     def select_device(self, name):
@@ -134,7 +146,9 @@ class OutputQueue():
                 if event.from_user_input:
                     button_events += [self.queue.get()]
                 elif self.state == PlayingState.PLAY and event.timestamp <= relative_time:
-                    immediate_events += [self.queue.get()]
+                    event = self.queue.get()
+                    immediate_events += [event]
+                    self.played_notes.append(event)
                 else:
                     break
 
@@ -172,7 +186,6 @@ class OutputQueue():
                     self._send_midi_event(midiEvent)
                 elif midiEvent.event.type == "note_on" and not midiEvent.play_note:
                     self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_time, now)))
-                    self.played_queue.put(midiEvent)
                 else:
                     self._send_midi_event(midiEvent)
 
@@ -185,7 +198,6 @@ class OutputQueue():
 
         self._open_port.send(midiEvent.event)
         self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_now, now)))
-        self.played_queue.put(midiEvent)
 
     def play(self):
         if self.last_note_timestamp is not None:
