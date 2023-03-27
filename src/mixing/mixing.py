@@ -1,5 +1,5 @@
 import queue
-from threading import Thread
+from threading import Lock, Thread
 import time
 from src.button_input.button_input import ButtonInput
 from src.file_input.file_input import FileInput
@@ -9,10 +9,12 @@ import mido
 
 class Mixing(Thread):
     file_input_queue = queue.Queue()
-    file_output_queue = queue.Queue()
     button_input_queue = queue.Queue()
+    played_file_notes = queue.Queue()
     holding_queue: queue.PriorityQueue = None
     active = False
+    processing = False
+    accessLock = Lock()
     state = PlayingState.STOP
 
     current_notes = {}
@@ -26,7 +28,7 @@ class Mixing(Thread):
     
     def run(self):
         self.active = True
-        self.file_input = FileInput(self.file_input_queue, self.file_output_queue)
+        self.file_input = FileInput(self.file_input_queue)
         self.file_input.start()
         self.button_input = ButtonInput(self.button_input_queue)
         self.startup()
@@ -57,10 +59,26 @@ class Mixing(Thread):
         pass #TODO Implement when mutiple play modes are enabled
 
     def timeSkip(self, message : Message):
+        self.processing = True
         if message.data == TimeSkipMessageType.FORWARD:
-            print("SKIP FORWARD")
+            self.skip_forward(10)
         elif message.data == TimeSkipMessageType.BACKWARD:
             print("SKIP BACKWARD")
+        self.processing = False
+
+    def skip_forward(self, seconds : int):
+        try:
+            with self.accessLock:
+                current_time = self.file_input_queue.queue[0].event.time # Poor man's peek function
+                print("Current Time: " + str(current_time))
+                while self.file_input_queue.queue[0].event.time < current_time + seconds:
+                        print("Skipping: " + str(self.file_input_queue.queue[0].event.time))
+                        self.played_file_notes.put(self.file_input_queue.get_nowait())
+        except queue.Empty as e:
+            pass # Expected if we dont have anything in the queue
+        except IndexError as e:
+            pass # Expected if we dont have anything in the queue
+        
 
     def play(self):
         self.state = PlayingState.PLAY
@@ -94,19 +112,22 @@ class Mixing(Thread):
     
     def main_loop(self):
         while(self.active):
-            try:
-                event = self.button_input_queue.get_nowait()
-                self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
-            except queue.Empty:
-                pass # Expected if we dont have anything in the queue
-            if(self.state == PlayingState.PLAY):
-                try:
-                    event = self.file_input_queue.get_nowait()
-                    self.current_notes.update({event.event.note:event.event.type})
-                    self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
-                except queue.Empty:
-                    pass # Expected if we dont have anything in the queue
-            time.sleep(0)
+            while(not self.processing):
+                with self.accessLock:
+                    try:
+                        event = self.button_input_queue.get_nowait()
+                        self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
+                    except queue.Empty:
+                        pass # Expected if we dont have anything in the queue
+                    if(self.state == PlayingState.PLAY):
+                        try:
+                            event = self.file_input_queue.get_nowait()
+                            self.played_file_notes.put(event)
+                            self.current_notes.update({event.event.note:event.event.type})
+                            self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
+                        except queue.Empty:
+                            pass # Expected if we dont have anything in the queue
+                time.sleep(0)
         
 
     def deactivate(self, message=None):
