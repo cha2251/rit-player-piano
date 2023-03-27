@@ -4,7 +4,7 @@ import time
 from src.button_input.button_input import ButtonInput
 from src.file_input.file_input import FileInput
 from src.mixing.mixing_comm import MixingCommSystem
-from src.communication.messages import Message, MessageType, PlayingState
+from src.communication.messages import Message, MessageType, PlayingState, TimeSkipMessageType
 import mido
 
 class Mixing(Thread):
@@ -40,6 +40,7 @@ class Mixing(Thread):
         self.comm_system.registerListener(MessageType.MODE_UPDATE, self.modeChanged)
         self.comm_system.registerListener(MessageType.SONG_UPDATE, self.songChanged)
         self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
+        self.comm_system.registerListener(MessageType.TIME_SKIP, self.timeSkip)
 
     def stateChanged(self, message : Message):
         if message.data == PlayingState.PLAY:
@@ -54,6 +55,12 @@ class Mixing(Thread):
 
     def modeChanged(self, message : Message):
         pass #TODO Implement when mutiple play modes are enabled
+
+    def timeSkip(self, message : Message):
+        if message.data == TimeSkipMessageType.FORWARD:
+            print("SKIP FORWARD")
+        elif message.data == TimeSkipMessageType.BACKWARD:
+            print("SKIP BACKWARD")
 
     def play(self):
         self.state = PlayingState.PLAY
