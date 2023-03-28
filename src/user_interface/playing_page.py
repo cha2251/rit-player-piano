@@ -176,12 +176,7 @@ class PlayingPage(QWidget):
         if self.playingFlag: # pause state
             self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PAUSE))
             self.songWidget.stopTimer()
-            self.button_ack.setText('PAUSED')
-            self.playingFlag = False
-            self.playPauseButton.setIcon(
-                QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "play-solid.svg")))
-            self.playPauseButton.setText('play')
-            self.playPauseButton.setToolTip('play song')
+            self.set_to_play()
         else: # play state
             self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
             self.songWidget.setDuration(self.song_duration)
@@ -192,6 +187,15 @@ class PlayingPage(QWidget):
                 QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "pause-solid.svg")))
             self.playPauseButton.setText('pause')
             self.playPauseButton.setToolTip('pause song')
+
+    # set the play pause button to play, this is for navigating to this page to make sure it is correct
+    def set_to_play(self):
+        self.button_ack.setText('PAUSED')
+        self.playingFlag = False
+        self.playPauseButton.setIcon(
+            QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "play-solid.svg")))
+        self.playPauseButton.setText('play')
+        self.playPauseButton.setToolTip('play song')
 
     def on_click_restart(self):
         print('restart pushed')
