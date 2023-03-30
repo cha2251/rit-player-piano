@@ -61,7 +61,6 @@ class PianoWidget(QWidget):
             self.playing_notes[midiEvent.event.note] = True
 
     def button_config_update(self, message):
-        # self.button_config = message.data
         self.button_icons = {}
 
         for (file, button) in CONTROLLER_BUTTON_MAP.items():
@@ -76,8 +75,6 @@ class PianoWidget(QWidget):
                         icon.invertPixels(QImage.InvertMode.InvertRgb)
 
                     self.button_icons[midi_note] = icon
-
-        print(self.button_icons)
 
     def paintEvent(self, _event):
         qp = QPainter(self)
@@ -175,4 +172,3 @@ class PianoWidget(QWidget):
 
     def loadIcon(self, file):
         return QImage(os.path.join(os.path.dirname(__file__), "..", "..", "..", "UI_Images", "settings", (file + ".svg")),)
-        # return QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "..", "UI_Images", "settings", (file + ".svg")),)
