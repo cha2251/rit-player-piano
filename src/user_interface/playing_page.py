@@ -50,38 +50,12 @@ class PlayingPage(QWidget):
         self.comm_system = UICommSystem()
         self.comm_system.registerListener(MessageType.SET_DURATION, self.set_song_duration)
 
-        #################
-        # Song Timer/Progress Bar
-        #################
         self.songWidget = SongWidget()
-        #################
 
         self.button_ack = QLabel()
         self.button_ack.setObjectName('buttonAck')
         self.button_ack.setFixedSize(300,50)
         self.button_ack.setText('PRESS PLAY')
-
-
-
-        ##### playButton = QToolButton()
-        ##### playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        ##### playButton.setIcon(
-        #####     QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "play-solid.svg")))
-        ##### playButton.setIconSize(QSize(65, 65))
-        ##### playButton.setText("play")
-        ##### playButton.setToolTip("play song")
-        ##### playButton.setStyleSheet(button)
-        ##### playButton.clicked.connect(self.on_click_play)
-
-        #### pauseButton = QToolButton()
-        #### pauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        #### pauseButton.setIcon(
-        ####     QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "pause-solid.svg")))
-        #### pauseButton.setIconSize(QSize(65, 65))
-        #### pauseButton.setText('pause')
-        #### pauseButton.setToolTip('pause song')
-        #### pauseButton.setStyleSheet(button)
-        #### pauseButton.clicked.connect(self.on_click_pause)
 
         self.playPauseButton = QToolButton()
         self.playPauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -92,8 +66,6 @@ class PlayingPage(QWidget):
         self.playPauseButton.setToolTip("play song")
         self.playPauseButton.setStyleSheet(button)
         self.playPauseButton.clicked.connect(self.on_click_play_pause)
-
-
 
         restartButton = QToolButton()
         restartButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -148,7 +120,6 @@ class PlayingPage(QWidget):
         btn_ack_hbox = QHBoxLayout()
         btn_ack_hbox.setAlignment(Qt.AlignCenter)
         btn_ack_hbox.addWidget(self.button_ack)
-
 
         vbox = QVBoxLayout(self)
         vbox.addLayout(top)
