@@ -93,9 +93,9 @@ class PianoWidget(QWidget):
             # Draw the key border
             qp.setPen(QPen(self.config.key_border_color, self.config.key_border_size))
             qp.drawRect(
-                x + self.config.key_border_size,
+                x + self.config.key_border_size / 2,
                 y,
-                self.config.key_width - self.config.key_border_size * 2,
+                self.config.key_width - self.config.key_border_size,
                 self.config.get_key_height() - self.config.key_border_size / 2,
             )
 
@@ -111,25 +111,19 @@ class PianoWidget(QWidget):
             # Draw the note icon if there is one
             if note in self.button_icons:
                 icon = self.button_icons[note]
-                icon_size = (self.config.key_width - self.config.key_border_size * 2) * 0.8
+                icon_size = (self.config.key_width - self.config.key_border_size * 2) * 0.667
+                icon_x = x + (self.config.key_width - icon_size) / 2
+                icon_y = self.config.get_key_height() - (self.config.get_key_height() - self.config.get_black_key_height() + icon_size) / 2
 
                 qp.drawImage(
                     QRect(
-                        x + self.config.key_border_size * 2,
-                        self.config.get_key_height() - icon_size,
+                        icon_x,
+                        icon_y,
                         icon_size,
                         icon_size,
                     ),
                     icon,
                 )
-
-                # icon.paint(
-                #     qp,
-                #     x + self.config.key_border_size * 2,
-                #     self.config.get_key_height() - icon_size,
-                #     icon_size,
-                #     icon_size,
-                # )
 
         # Draw the black keys
         for i in range(self.config.octaves * 5):
@@ -138,15 +132,15 @@ class PianoWidget(QWidget):
 
             octave_offset = (i // 5) * 7 * self.config.key_width
             note_offset = self.config.note_offsets[octave_note] * self.config.key_width
-            x = octave_offset + note_offset + self.config.get_black_key_width() / 4
+            x = octave_offset + note_offset + (self.config.key_width - self.config.get_black_key_width()) / 2
             y = 0
 
             # Draw the key border
             qp.setPen(QPen(QColor(50, 50, 50, 255), self.config.key_border_size))
             qp.drawRect(
-                x + self.config.key_border_size,
+                x + self.config.key_border_size / 2,
                 y,
-                self.config.get_black_key_width() - self.config.key_border_size * 2,
+                self.config.get_black_key_width() - self.config.key_border_size,
                 self.config.get_black_key_height() - self.config.key_border_size / 2,
             )
 
@@ -162,25 +156,19 @@ class PianoWidget(QWidget):
             # Draw the note icon if there is one
             if note in self.button_icons:
                 icon = self.button_icons[note]
-                icon_size = (self.config.key_width - self.config.key_border_size * 2) * 0.8
+                icon_size = (self.config.key_width - self.config.key_border_size * 2) * 0.667
+                icon_x = x + (self.config.get_black_key_width() - icon_size) / 2
+                icon_y = self.config.get_black_key_height() / 2 - icon_size / 2
 
                 qp.drawImage(
                     QRect(
-                        x + self.config.key_border_size,
-                        self.config.get_black_key_width() - icon_size,
+                        icon_x,
+                        icon_y,
                         icon_size,
                         icon_size,
                     ),
                     icon,
                 )
-
-                # icon.paint(
-                #     qp,
-                #     x + self.config.key_border_size * 2,
-                #     self.config.get_black_key_width() - icon_size,
-                #     icon_size,
-                #     icon_size,
-                # )
 
     def sizeHint(self):
         return QSize(self.config.octaves * 7 * self.config.key_width, self.config.get_key_height())
