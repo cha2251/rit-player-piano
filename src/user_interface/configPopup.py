@@ -12,7 +12,8 @@ class ConfigPopup(QDialog):
         stacked = QStackedLayout()
         gray = QRect()
         layout = QVBoxLayout()
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        # Uncomment this later when you can gray out the background
+        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setGeometry(100, 100, 500, 200)
         layout.addLayout(IconsList())
         layout.addLayout(Piano())
