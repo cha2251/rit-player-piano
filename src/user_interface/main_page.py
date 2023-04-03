@@ -158,6 +158,7 @@ class MainPage(QWidget, Thread):
         self.loading_thread.start()
         #self.loading_gif.start_loading(self.loading_thread)
         self.stackLayout.setCurrentIndex(1)
+        self.play_page.set_to_play()
 
     def go_to_settings_page(self):
         self.loading_dialog.showMaximized()
