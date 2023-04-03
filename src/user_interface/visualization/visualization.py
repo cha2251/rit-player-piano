@@ -5,18 +5,19 @@ from src.user_interface.visualization.piano_widget import PianoWidget
 from src.user_interface.visualization.notes_widget import NotesWidget
 from src.user_interface.visualization.timing_widget import TimingWidget
 
-KEY_ASPECT_RATIO = 4
-BLACK_KEY_WIDTH_MULT = 0.67
+KEY_ASPECT_RATIO = 3
+BLACK_KEY_WIDTH_MULT = 0.75
 BLACK_KEY_HEIGHT_MULT = 0.61
 
 class VisualizationConfig:
     def __init__(self):
-        self.key_width = 36 # In pixels
+        self.key_width = 64 # In pixels
         self.key_border_size = 3 # In pixels
         self.note_width_mult = 0.67 # How much of the key width a note should take up vs a piano key
         self.visualization_height = 400 # In pixels
 
-        self.octaves = 7 # How many octaves to render. Don't touch this for now, it doesn't like being touched
+        self.start_note = 36 # The first MIDI note to render. Should be a C
+        self.octaves = 4 # How many octaves to render. Don't touch this for now, it doesn't like being touched
         self.display_lead_time = 3 # How long a note takes to travel down the screen in seconds
 
         self.left_hand_color = QColor(0, 179, 255, 255)

@@ -111,6 +111,8 @@ class PlayingPage(QWidget):
         ############################################################
         song_hbox = QHBoxLayout()
         song_hbox.setAlignment(Qt.AlignCenter)
+        song_hbox.setContentsMargins(500,0,500,0) # setContentsMargin(left, top, right, bottom)
+        song_hbox.addWidget(self.nav_home)
         song_hbox.addWidget(self.songWidget)
 
         top = QHBoxLayout()
@@ -123,6 +125,7 @@ class PlayingPage(QWidget):
 
         vbox = QVBoxLayout(self)
         vbox.addLayout(top)
+        # vbox.addWidget(self.nav_home)
         vbox.addLayout(song_hbox)
         vbox.addLayout(btn_ack_hbox)
 
