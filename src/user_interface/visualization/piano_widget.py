@@ -85,7 +85,7 @@ class PianoWidget(QWidget):
             y = 0
 
             octave_note = self.config.white_key_indices[i % 7]
-            note = 36 + octave_note + (i // 7) * 12
+            note = self.config.start_note + octave_note + (i // 7) * 12
 
             # Draw the key border
             qp.setPen(QPen(self.config.key_border_color, self.config.key_border_size))
@@ -125,7 +125,7 @@ class PianoWidget(QWidget):
         # Draw the black keys
         for i in range(self.config.octaves * 5):
             octave_note = self.config.black_key_indices[i % 5]
-            note = 36 + octave_note + (i // 5) * 12
+            note = self.config.start_note + octave_note + (i // 5) * 12
 
             octave_offset = (i // 5) * 7 * self.config.key_width
             note_offset = self.config.note_offsets[octave_note] * self.config.key_width

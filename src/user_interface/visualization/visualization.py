@@ -16,6 +16,7 @@ class VisualizationConfig:
         self.note_width_mult = 0.67 # How much of the key width a note should take up vs a piano key
         self.visualization_height = 400 # In pixels
 
+        self.start_note = 36 # The first MIDI note to render. Should be a C
         self.octaves = 4 # How many octaves to render. Don't touch this for now, it doesn't like being touched
         self.display_lead_time = 3 # How long a note takes to travel down the screen in seconds
 
