@@ -2,15 +2,14 @@ import os
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QLabel, QToolButton, QProgressBar
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QShowEvent
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
 from src.communication.messages import Message, MessageType, PlayingState
 from src.user_interface.song_progress import SongWidget
-
 from src.user_interface.ui_comm import UICommSystem
-
 from src.user_interface.visualization.visualization import VisualizationWidget
+from src.user_interface.configPopup import ConfigPopup
 
 
 class PlayingPage(QWidget):
@@ -37,6 +36,7 @@ class PlayingPage(QWidget):
         self.configure.setIcon(
             QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "gear.svg")))
         self.configure.setStyleSheet(button)
+        self.configure.clicked.connect(self.on_click_configure_pop_up)
 
         self.song_name = song_name
         self.left = 100
@@ -129,6 +129,10 @@ class PlayingPage(QWidget):
         vbox.addWidget(VisualizationWidget(parent=self))
         vbox.addLayout(hbox)
 
+        # pop-up for configuration
+        ##self.config = ConfigPopup()
+        ##vbox.addLayout(self.config)
+
         self.initUI()
 
     def initUI(self):
@@ -177,6 +181,14 @@ class PlayingPage(QWidget):
 
     def on_click_forward(self):
         pass
+
+    def on_click_configure_pop_up(self):
+        self.config = ConfigPopup()
+        self.config.setWindowTitle("Configure popup")
+        self.config.setWindowModality(Qt.ApplicationModal)
+        self.config.setFixedWidth(1700)
+        self.config.move(100, 300)
+        ##self.config.exec_()
 
     def set_song(self, song):
         print("setting song: " + song)
