@@ -176,7 +176,7 @@ class PlayingPage(QWidget):
         self.playPauseButton.setToolTip('play song')
 
     def on_click_restart(self):
-        self.songWidget.resetTimer()
+        self.reset_timer()
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.STOP))
         self.comm_system.send(Message(MessageType.SONG_UPDATE, Song.RESTART))
 
@@ -185,6 +185,9 @@ class PlayingPage(QWidget):
 
     def on_click_forward(self):
         pass
+
+    def reset_timer(self):
+        self.songWidget.resetTimer()
 
     def on_click_configure_pop_up(self):
         self.config = ConfigPopup()

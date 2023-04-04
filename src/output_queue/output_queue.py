@@ -98,7 +98,10 @@ class OutputQueue():
         now = time.time()
 
         # How many seconds into the song we are
-        relative_time = now - self.last_note_time_played + self.last_note_timestamp
+        if self.last_note_timestamp is not None:
+            relative_time = now - self.last_note_time_played + self.last_note_timestamp
+        else: # Last song was stopped
+            relative_time = now
 
         immediate_events = []
         button_events = []
