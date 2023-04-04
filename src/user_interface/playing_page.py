@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHB
 from PyQt5.QtGui import QIcon, QShowEvent
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
-from src.communication.messages import Message, MessageType, PlayingState
+from src.communication.messages import Message, MessageType, PlayingState, Song
 from src.user_interface.song_progress import SongWidget
 from src.user_interface.ui_comm import UICommSystem
 from src.user_interface.visualization.visualization import VisualizationWidget
@@ -176,8 +176,9 @@ class PlayingPage(QWidget):
         self.playPauseButton.setToolTip('play song')
 
     def on_click_restart(self):
-        print('restart pushed')
         self.songWidget.resetTimer()
+        self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.STOP))
+        self.comm_system.send(Message(MessageType.SONG_UPDATE, Song.RESTART))
 
     def on_click_rewind(self):
         pass

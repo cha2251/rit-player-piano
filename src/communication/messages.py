@@ -23,6 +23,7 @@ class PianoAssistPlaying(Enum):
 
 class Song(Enum):
     FREEPLAY = 1
+    RESTART = 2
 
 class PlayingState(Enum):
     PLAY = 1
