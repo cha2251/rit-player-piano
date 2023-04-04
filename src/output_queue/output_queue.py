@@ -23,8 +23,10 @@ class OutputQueue():
         self.last_note_timestamp = 0
         self.last_note_time_played = 0
         self.paused_delta_time = 0
+        self.last_time_sync_time = 0
         self.input_queue = input_queue
         self.output_queue = output_queue
+        self.current_song = None
         self.state = PlayingState.STOP
         self.previous_state = self.state
         self.playing_notes = {}
@@ -34,6 +36,7 @@ class OutputQueue():
         self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
         self.comm_system.registerListener(MessageType.OUTPUT_QUEUE_UPDATE, self.process_note_event)
         self.comm_system.registerListener(MessageType.STATE_UPDATE, self.stateChanged)
+        self.comm_system.registerListener(MessageType.SONG_UPDATE, self.songChanged)
         self.comm_system.start()
 
         # TODO DJA-PROC Add a mode system to allow for different play modes
@@ -42,10 +45,16 @@ class OutputQueue():
         # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
 
     def process_note_event(self, message : Message):
+        if message.data.song_name != self.current_song:
+            return
+
         self.queue.put(message.data)
 
     def stateChanged(self, message : Message):
         self.state = message.data
+
+    def songChanged(self, message : Message):
+        self.current_song = message.data
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
     def select_device(self, name):
@@ -112,6 +121,10 @@ class OutputQueue():
         # How many seconds into the song we are
         relative_time = now - self.last_note_time_played + self.last_note_timestamp
 
+        if self.state == PlayingState.PLAY and time.time() - self.last_time_sync_time > 0.25:
+            self.last_time_sync_time = time.time()
+            self.comm_system.send(Message(MessageType.SONG_TIME_SYNC, relative_time))
+
         immediate_events = []
         button_events = []
 
@@ -171,6 +184,7 @@ class OutputQueue():
         else:
             # If we are starting from the beginning, clear the queue and reset the timestamp
             self.last_note_timestamp = 0
+            self.last_note_time_played = time.time()
             self.queue.clear()
 
     def pause(self):
