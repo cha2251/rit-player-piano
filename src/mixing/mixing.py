@@ -10,7 +10,6 @@ import mido
 class Mixing(Thread):
     file_input_queue = queue.Queue()
     button_input_queue = queue.Queue()
-    played_file_notes = queue.Queue()
     holding_queue: queue.PriorityQueue = None
     active = False
     state = PlayingState.STOP
@@ -95,7 +94,6 @@ class Mixing(Thread):
             if(self.state == PlayingState.PLAY):
                 try:
                     event = self.file_input_queue.get_nowait()
-                    self.played_file_notes.put(event)
                     self.current_notes.update({event.event.note:event.event.type})
                     self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
                 except queue.Empty:

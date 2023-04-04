@@ -134,67 +134,67 @@ class OutputQueue():
 
     # Checks the queue for messages and sends them to the output as needed and returns the number of message sent (mainly for testing)
     def _check_priority_queue(self):
-        with self.accessLock:
-            if self._open_port == None:
-                return
+    
+        if self._open_port == None:
+            return
 
-            now = time.time()
+        now = time.time()
 
-            # How many seconds into the song we are
-            relative_time = now - self.last_note_time_played + self.last_note_timestamp
+        # How many seconds into the song we are
+        relative_time = now - self.last_note_time_played + self.last_note_timestamp
 
-            immediate_events = []
-            button_events = []
+        immediate_events = []
+        button_events = []
 
-            # Separate events from buttons vs events from the song
-            while self.queue.qsize() > 0:
-                event = self.queue.peek()
+        # Separate events from buttons vs events from the song
+        while self.queue.qsize() > 0:
+            event = self.queue.peek()
 
-                if event.from_user_input:
-                    button_events += [self.queue.get()]
-                elif self.state == PlayingState.PLAY and event.timestamp <= relative_time:
-                    event = self.queue.get()
-                    immediate_events += [event]
-                    self.played_notes.append(event)
-                else:
-                    break
+            if event.from_user_input:
+                button_events += [self.queue.get()]
+            elif self.state == PlayingState.PLAY and event.timestamp <= relative_time:
+                event = self.queue.get()
+                immediate_events += [event]
+                self.played_notes.append(event)
+            else:
+                break
 
-            if self.state_changed:
-                self.state_changed = False
+        if self.state_changed:
+            self.state_changed = False
 
-                if self.state == PlayingState.PLAY:
-                    self.play()
-                elif self.state == PlayingState.PAUSE:
-                    self.pause()
-                elif self.state == PlayingState.STOP:
-                    self.stop()
+            if self.state == PlayingState.PLAY:
+                self.play()
+            elif self.state == PlayingState.PAUSE:
+                self.pause()
+            elif self.state == PlayingState.STOP:
+                self.stop()
 
-            if self.playing_mode is not None:
-                self.playing_mode.update(immediate_events, button_events, relative_time)
+        if self.playing_mode is not None:
+            self.playing_mode.update(immediate_events, button_events, relative_time)
 
-            for button_event in button_events:
-                self._send_midi_event(button_event)
+        for button_event in button_events:
+            self._send_midi_event(button_event)
 
-            # Handle regular queue events
-            for midiEvent in immediate_events:
-                # A timestamp of 0 means the note should be played immediately and is
-                # valid, but would otherwise mess up the timings
-                if midiEvent.timestamp > 1e-4:
-                    self.last_note_time_played = now
-                    self.last_note_timestamp = midiEvent.timestamp
+        # Handle regular queue events
+        for midiEvent in immediate_events:
+            # A timestamp of 0 means the note should be played immediately and is
+            # valid, but would otherwise mess up the timings
+            if midiEvent.timestamp > 1e-4:
+                self.last_note_time_played = now
+                self.last_note_timestamp = midiEvent.timestamp
 
-                if midiEvent.event.type == "note_off":
-                    if midiEvent.event.note in self.playing_notes.keys():
-                        del self.playing_notes[midiEvent.event.note]
-                elif midiEvent.event.type == "note_on" and midiEvent.play_note:
-                    self.playing_notes[midiEvent.event.note] = midiEvent.event
+            if midiEvent.event.type == "note_off":
+                if midiEvent.event.note in self.playing_notes.keys():
+                    del self.playing_notes[midiEvent.event.note]
+            elif midiEvent.event.type == "note_on" and midiEvent.play_note:
+                self.playing_notes[midiEvent.event.note] = midiEvent.event
 
-                if midiEvent.event.type == "note_on" and midiEvent.play_note:
-                    self._send_midi_event(midiEvent)
-                elif midiEvent.event.type == "note_on" and not midiEvent.play_note:
-                    self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_time, now)))
-                else:
-                    self._send_midi_event(midiEvent)
+            if midiEvent.event.type == "note_on" and midiEvent.play_note:
+                self._send_midi_event(midiEvent)
+            elif midiEvent.event.type == "note_on" and not midiEvent.play_note:
+                self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_time, now)))
+            else:
+                self._send_midi_event(midiEvent)
 
     def _send_midi_event(self, midiEvent: MidiEvent):
         if type(midiEvent) != MidiEvent:
@@ -239,7 +239,8 @@ class OutputQueue():
         self.active = True
         self.select_device(None)
         while self.active:
-            self._check_priority_queue()
+            with self.accessLock:
+                self._check_priority_queue()
             time.sleep(0)
 
         self._open_port.close()
