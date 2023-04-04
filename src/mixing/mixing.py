@@ -55,9 +55,6 @@ class Mixing(Thread):
     def modeChanged(self, message : Message):
         pass #TODO Implement when mutiple play modes are enabled
 
-    def play(self):
-        self.state = PlayingState.PLAY
-
     def play_pushed(self):
         if self.state is PlayingState.STOP:
             self.play()
@@ -76,15 +73,18 @@ class Mixing(Thread):
         elif self.state is PlayingState.PAUSE:
             self.stop()
 
+    def play(self):
+        self.state = PlayingState.PLAY
+
     def pause(self):
         self.state = PlayingState.PAUSE
 
     def unpause(self):
         self.state = PlayingState.PLAY
-    
+
     def stop(self):
         self.state = PlayingState.STOP
-    
+
     def main_loop(self):
         while(self.active):
             try:
@@ -92,6 +92,7 @@ class Mixing(Thread):
                 self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
+
             if(self.state == PlayingState.PLAY):
                 try:
                     event = self.file_input_queue.get_nowait()
@@ -100,7 +101,6 @@ class Mixing(Thread):
                 except queue.Empty:
                     pass # Expected if we dont have anything in the queue
             time.sleep(0)
-        
 
     def deactivate(self, message=None):
         print("Mixing System Deactivated")

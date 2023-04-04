@@ -26,7 +26,7 @@ class OutputQueue():
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.state = PlayingState.STOP
-        self.state_changed = False
+        self.previous_state = self.state
         self.playing_notes = {}
 
         self.comm_system = OutputCommSystem()
@@ -45,9 +45,6 @@ class OutputQueue():
         self.queue.put(message.data)
 
     def stateChanged(self, message : Message):
-        if self.state != message.data:
-            self.state_changed = True
-
         self.state = message.data
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
@@ -95,6 +92,21 @@ class OutputQueue():
         if self._open_port == None:
             return
 
+        if self.previous_state != self.state:
+            if self.state == PlayingState.PLAY:
+                self.play()
+                self.previous_state = self.state
+            elif self.state == PlayingState.PAUSE:
+                if self.previous_state == PlayingState.PLAY:
+                    self.pause()
+                    self.previous_state = self.state
+                else:
+                    # Only pause if coming from a PLAY state
+                    self.state = self.previous_state
+            elif self.state == PlayingState.STOP:
+                self.stop()
+                self.previous_state = self.state
+
         now = time.time()
 
         # How many seconds into the song we are
@@ -113,16 +125,6 @@ class OutputQueue():
                 immediate_events += [self.queue.get()]
             else:
                 break
-
-        if self.state_changed:
-            self.state_changed = False
-
-            if self.state == PlayingState.PLAY:
-                self.play()
-            elif self.state == PlayingState.PAUSE:
-                self.pause()
-            elif self.state == PlayingState.STOP:
-                self.stop()
 
         if self.playing_mode is not None:
             self.playing_mode.update(immediate_events, button_events, relative_time)
@@ -144,9 +146,7 @@ class OutputQueue():
             elif midiEvent.event.type == "note_on" and midiEvent.play_note:
                 self.playing_notes[midiEvent.event.note] = midiEvent.event
 
-            if midiEvent.event.type == "note_on" and midiEvent.play_note:
-                self._send_midi_event(midiEvent)
-            elif midiEvent.event.type == "note_on" and not midiEvent.play_note:
+            if not midiEvent.play_note:
                 self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_time, now)))
             else:
                 self._send_midi_event(midiEvent)
@@ -162,12 +162,12 @@ class OutputQueue():
         self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_now, now)))
 
     def play(self):
-        if self.last_note_timestamp is not None:
+        if self.previous_state != PlayingState.STOP:
             # Restore the difference so that the timing remains correct
             self.last_note_time_played = time.time() - self.paused_delta_time
 
-            for event in self.playing_notes.values():
-                self._send_midi_event(event)
+            for midoMessage in self.playing_notes.values():
+                self._open_port.send(midoMessage)
         else:
             # If we are starting from the beginning, clear the queue and reset the timestamp
             self.last_note_timestamp = 0
@@ -178,7 +178,7 @@ class OutputQueue():
 
         # Turn off all notes currently playing
         for event in self.playing_notes.values():
-            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
+            self._open_port.send(mido.Message('note_off', note=event.note))
 
     def stop(self):
         # Turn off all notes currently playing and clear everything
@@ -187,8 +187,9 @@ class OutputQueue():
         self.playing_notes.clear()
         self.queue.clear()
 
-        self.last_note_timestamp = None # Signals that we removed all notes from the queue and want to start over
+        self.last_note_timestamp = 0
         self.last_note_time_played = 0
+        self.paused_delta_time = 0
 
     def run(self):
         self.active = True
