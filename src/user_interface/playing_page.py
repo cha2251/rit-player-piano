@@ -179,6 +179,7 @@ class PlayingPage(QWidget):
         self.reset_timer()
         self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.STOP))
         self.comm_system.send(Message(MessageType.SONG_UPDATE, Song.RESTART))
+        self.set_to_play()
 
     def on_click_rewind(self):
         pass
