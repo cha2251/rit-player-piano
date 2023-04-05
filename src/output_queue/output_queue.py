@@ -66,10 +66,12 @@ class OutputQueue():
             with self.accessLock:
                 current_time = self.queue.peek().timestamp
                 while self.queue.peek().timestamp < current_time + seconds:
-                        event = self.queue.get_nowait()
-                        self.last_note_timestamp = event.timestamp
-                        time_change = event.timestamp - current_time
-                        self.played_notes.append(event)
+                    event = self.queue.get_nowait()
+                    self.last_note_timestamp = event.timestamp
+                    time_change = event.timestamp - current_time
+                    self.played_notes.append(event)
+
+                self.stop_playing_notes()
         except queue.Empty as e:
             pass # Expected if we dont have anything in the queue
         except AttributeError as e:
@@ -82,10 +84,12 @@ class OutputQueue():
             with self.accessLock:
                 current_time = self.queue.peek().timestamp
                 while self.played_notes[len(self.played_notes)-1].timestamp > current_time - seconds:
-                        event = self.played_notes.pop(len(self.played_notes)-1)
-                        self.last_note_timestamp = event.timestamp
-                        time_change = event.timestamp - current_time
-                        self.queue.put(event)
+                    event = self.played_notes.pop(len(self.played_notes)-1)
+                    self.last_note_timestamp = event.timestamp
+                    time_change = event.timestamp - current_time
+                    self.queue.put(event)
+
+                self.stop_playing_notes()
         except IndexError as e:
             pass # Expected if we dont have anything in the queue
         except AttributeError as e:
@@ -210,9 +214,7 @@ class OutputQueue():
         if self.last_note_timestamp is not None:
             # Restore the difference so that the timing remains correct
             self.last_note_time_played = time.time() - self.paused_delta_time
-
-            for event in self.playing_notes.values():
-                self._send_midi_event(event)
+            self.resume_playing_notes()
         else:
             # If we are starting from the beginning, clear the queue and reset the timestamp
             self.last_note_timestamp = 0
@@ -220,20 +222,23 @@ class OutputQueue():
 
     def pause(self):
         self.paused_delta_time = time.time() - self.last_note_time_played
-
-        # Turn off all notes currently playing
-        for event in self.playing_notes.values():
-            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
+        self.stop_playing_notes()
 
     def stop(self):
-        # Turn off all notes currently playing and clear everything
-        for event in self.playing_notes.values():
-            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
+        self.stop_playing_notes()
         self.playing_notes.clear()
         self.queue.clear()
 
         self.last_note_timestamp = None # Signals that we removed all notes from the queue and want to start over
         self.last_note_time_played = 0
+
+    def stop_playing_notes(self):
+        for event in self.playing_notes.values():
+            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
+
+    def resume_playing_notes(self):
+        for event in self.playing_notes.values():
+            self._send_midi_event(event)
 
     def run(self):
         self.active = True

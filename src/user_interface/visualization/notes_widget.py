@@ -88,12 +88,12 @@ class NotesWidget(QWidget):
             self.anim.start()
 
     def paintSceneTimer(self):
-        Timer(RENDER_RATE, self.paintSceneTimer).start()
         self.paintScene()
 
     def paintScene(self):
         if self.last_note_timestamp is None:
             self.last_rendered_time = time.time()
+            Timer(RENDER_RATE, self.paintSceneTimer).start()
             return
 
         current_time = time.time()
@@ -170,6 +170,8 @@ class NotesWidget(QWidget):
         elapsed = time.time() - current_time
         if elapsed > RENDER_RATE:
             print("Warning: NotesWidget took too long to render ({:.1} ms).".format(elapsed * 1e3))
+
+        Timer(max(0, RENDER_RATE - elapsed), self.paintSceneTimer).start()
 
     def play(self):
         self.paused_timestamp = None

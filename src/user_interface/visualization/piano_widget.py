@@ -1,3 +1,5 @@
+from threading import Lock, Timer
+import time
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QSize, QTimer
@@ -5,7 +7,7 @@ from src.communication.messages import MessageType
 
 from src.user_interface.ui_comm import UICommSystem
 
-WIDGET_REFRESH_RATE = 60
+WIDGET_REFRESH_RATE = 1.0 / 60
 
 class PianoWidget(QWidget):
     def __init__(self, config, parent=None):
@@ -14,21 +16,24 @@ class PianoWidget(QWidget):
         self.config = config
         self.comm_system = UICommSystem()
         self.playing_notes = {}
+        self.accessLock = Lock()
 
-        QTimer(self, timeout=self.update, interval=(1000 / WIDGET_REFRESH_RATE)).start()
+        self.update()
         self.comm_system.registerListener(MessageType.NOTE_OUTPUT, self.on_note_output)
 
         self.setBaseSize(self.sizeHint())
 
     def on_note_output(self, message):
-        midiEvent = message.data.event
-        if midiEvent.event.type == "note_off" or midiEvent.event.velocity == 0:
-            if midiEvent.event.note in self.playing_notes:
-                del self.playing_notes[midiEvent.event.note]
-        else:
-            self.playing_notes[midiEvent.event.note] = True
+        with self.accessLock:
+            midiEvent = message.data.event
+            if midiEvent.event.type == "note_off" or midiEvent.event.velocity == 0:
+                if midiEvent.event.note in self.playing_notes:
+                    del self.playing_notes[midiEvent.event.note]
+            else:
+                self.playing_notes[midiEvent.event.note] = True
 
     def paintEvent(self, _event):
+        start_time = time.time()
         qp = QPainter(self)
 
         # Draw the white keys
@@ -84,6 +89,11 @@ class PianoWidget(QWidget):
                 self.config.get_black_key_height() - self.config.key_border_size / 2,
                 (self.config.left_hand_color if note < 60 else self.config.right_hand_color) if note in self.playing_notes.keys() else Qt.black,
             )
+
+        qp.end()
+
+        elapsed = time.time() - start_time
+        Timer(max(0, WIDGET_REFRESH_RATE - elapsed), self.update).start()
 
     def sizeHint(self):
         return QSize(self.config.octaves * 7 * self.config.key_width, self.config.get_key_height())
