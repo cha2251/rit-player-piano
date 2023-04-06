@@ -45,7 +45,7 @@ class OutputQueue():
         # TODO CHA-PROC Listen for Stop and Song Changes and reset timing variables to 0
 
     def process_note_event(self, message : Message):
-        if message.data.song_name != self.current_song:
+        if message.data.song_name != self.current_song and not message.data.from_user_input:
             return
 
         self.queue.put(message.data)
@@ -144,6 +144,7 @@ class OutputQueue():
 
         for button_event in button_events:
             self._send_midi_event(button_event)
+            time.sleep(0.001)
 
         # Handle regular queue events
         for midiEvent in immediate_events:
@@ -161,8 +162,10 @@ class OutputQueue():
 
             if not midiEvent.play_note:
                 self.comm_system.send(Message(MessageType.NOTE_OUTPUT, NoteOutputMessage(midiEvent, relative_time, now)))
+                time.sleep(0.001)
             else:
                 self._send_midi_event(midiEvent)
+                time.sleep(0.001)
 
     def _send_midi_event(self, midiEvent: MidiEvent):
         if type(midiEvent) != MidiEvent:
