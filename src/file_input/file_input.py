@@ -9,17 +9,15 @@ from src.mixing.mixing_comm import MixingCommSystem
 class FileInput(Thread):
     whitelisted_types = ['note_on','note_off']
     file_input_queue: queue.Queue = None
-    file_output_queue: queue.Queue = None
     filename = None
     fileObject = None
     active = False
     accessLock = Lock()
     hand_to_play = PianoAssistPlaying.BOTH.value
 
-    def __init__(self, file_input_queue, file_output_queue):
+    def __init__(self, file_input_queue):
         Thread.__init__(self)
         self.file_input_queue = file_input_queue
-        self.file_output_queue = file_output_queue
         self.comm_system = MixingCommSystem()
     
     def run(self):
@@ -44,6 +42,7 @@ class FileInput(Thread):
                         if message.event.type in self.whitelisted_types:
                             self.file_input_queue.put(message)
                             time.sleep(0)
+                time.sleep(0)
             time.sleep(0)
 
     def openFile(self,message : Message):

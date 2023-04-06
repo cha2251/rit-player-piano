@@ -1,6 +1,12 @@
+from threading import Lock
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QWidget, QProgressBar, QLabel, QHBoxLayout
 from PyQt5.QtGui import QPainter, QColor, QPen, QFont
+from src.communication.messages import Message, MessageType
+
+from src.user_interface.ui_comm import UICommSystem
+
+UPDATE_INTERVAL = 0.1 # In seconds
 
 class SongWidget(QWidget):
     def __init__(self, parent=None):
@@ -8,12 +14,16 @@ class SongWidget(QWidget):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.updateTimer)
         self.value = 0
+        self.accessLock = Lock()
 
         self.timeLabel = QLabel("00:00")
         self.progressBar = QProgressBar()
         self.progressBar.setRange(0, 100)
         self.progressBar.setValue(0)
         self.progressBar.setTextVisible(False)
+        self.comm_system = UICommSystem()
+        self.comm_system.registerListener(MessageType.TIME_CHANGE, self.time_change)
+        self.time = 0
 
         layout = QHBoxLayout()
         layout.addWidget(self.timeLabel)
@@ -34,26 +44,35 @@ class SongWidget(QWidget):
         self.progressBar.setStyleSheet(styleSheet)
 
     def startTimer(self):
-        self.timer.start(1000)  # update every second
+        self.timer.start(int(1000 * UPDATE_INTERVAL))
 
     def stopTimer(self):
         self.timer.stop()
 
     def resetTimer(self):
         self.timer.stop()
-        self.progressBar.setValue(0)
-        self.timeLabel.setText("00:00")
+        with self.accessLock:
+            self.progressBar.setValue(0)
+            self.time = 0
+            self.timeLabel.setText("00:00")
 
     def setDuration(self, duration):
         self.duration = duration
-        self.progressBar.setMaximum(self.duration)
+        with self.accessLock:
+            self.progressBar.setMaximum(self.duration)
 
     def updateTimer(self):
-        self.value = self.progressBar.value() + 1
-        self.progressBar.setValue(self.value)
+        with self.accessLock:
+            self.time += UPDATE_INTERVAL
+            self.progressBar.setValue(int(self.time))
+            self.setLabel()
 
-        minutes = int(self.value / 60)
-        seconds = int(self.value % 60)
+    def setLabel(self):
+        minutes = int(self.time / 60)
+        seconds = int(self.time % 60)
         timeStr = "{:02d}:{:02d}".format(minutes, seconds)
         self.timeLabel.setText(timeStr)
+
+    def time_change(self, message : Message):
+        self.time = max(self.time + message.data, 0)
 
