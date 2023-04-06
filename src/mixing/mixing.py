@@ -7,6 +7,8 @@ from src.mixing.mixing_comm import MixingCommSystem
 from src.communication.messages import Message, MessageType, NoteOutputMessage, PlayingState
 import mido
 
+FUTURE_TIME_LIMIT = 30 # In seconds
+
 class Mixing(Thread):
     file_input_queue = queue.Queue()
     button_input_queue = queue.Queue()
@@ -97,7 +99,7 @@ class Mixing(Thread):
 
             if self.state == PlayingState.PLAY and self.file_input_queue.qsize() > 0:
                 try:
-                    if self.file_input_queue.queue[0].timestamp <= self.relative_time + 20:
+                    if self.file_input_queue.queue[0].timestamp <= self.relative_time + FUTURE_TIME_LIMIT:
                         event = self.file_input_queue.get_nowait()
                         self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
                 except:
