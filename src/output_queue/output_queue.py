@@ -3,11 +3,11 @@ import mido
 import time
 import platform
 from threading import Thread
-from multiprocessing import Process, Manager
+from multiprocessing import Lock, Process, Manager
 
 from src.common.midi_event import MidiEvent
 from src.common.shared_priority_queue import PeekingPriorityQueue
-from src.communication.messages import Message, MessageType, NoteOutputMessage, PlayingState
+from src.communication.messages import Message, MessageType, NoteOutputMessage, PlayingState, TimeSkipMessageType
 from src.output_queue.output_comm import OutputCommSystem
 from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
 from src.output_queue.tempo_mode import TempoMode
@@ -18,6 +18,7 @@ WINDOWS_SYNTH_KEYWORDS = "microsoft gs wavetable synth"
 class OutputQueue():
     def __init__(self, input_queue, output_queue):
         self.queue = PeekingPriorityQueue()
+        self.played_notes = []
         self._open_port = None
         self.active = False
         self.last_note_timestamp = 0
@@ -28,12 +29,14 @@ class OutputQueue():
         self.state = PlayingState.STOP
         self.state_changed = False
         self.playing_notes = {}
+        self.accessLock = Lock()
 
         self.comm_system = OutputCommSystem()
         self.comm_system.set_queues(input_queue, output_queue)
         self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
         self.comm_system.registerListener(MessageType.OUTPUT_QUEUE_UPDATE, self.process_note_event)
         self.comm_system.registerListener(MessageType.STATE_UPDATE, self.stateChanged)
+        self.comm_system.registerListener(MessageType.TIME_SKIP, self.timeSkip)
         self.comm_system.start()
 
         # TODO DJA-PROC Add a mode system to allow for different play modes
@@ -49,6 +52,49 @@ class OutputQueue():
             self.state_changed = True
 
         self.state = message.data
+
+    def timeSkip(self, message : Message):
+        if message.data == TimeSkipMessageType.FORWARD:
+            time_change = self.skip_forward(10)
+        elif message.data == TimeSkipMessageType.BACKWARD:
+            time_change = self.skip_backward(10)
+        self.comm_system.send(Message(MessageType.TIME_CHANGE, time_change))
+
+    def skip_forward(self, seconds : int):
+        time_change = 0
+        try:
+            with self.accessLock:
+                current_time = self.queue.peek().timestamp
+                while self.queue.peek().timestamp < current_time + seconds:
+                    event = self.queue.get_nowait()
+                    self.last_note_timestamp = event.timestamp
+                    time_change = event.timestamp - current_time
+                    self.played_notes.append(event)
+
+                self.stop_playing_notes()
+        except queue.Empty as e:
+            pass # Expected if we dont have anything in the queue
+        except AttributeError as e:
+            pass # Expected if we dont have anything in the queue
+        return time_change
+    
+    def skip_backward(self, seconds : int):
+        time_change = 0
+        try:
+            with self.accessLock:
+                current_time = self.queue.peek().timestamp
+                while self.played_notes[len(self.played_notes)-1].timestamp > current_time - seconds:
+                    event = self.played_notes.pop(len(self.played_notes)-1)
+                    self.last_note_timestamp = event.timestamp
+                    time_change = event.timestamp - current_time
+                    self.queue.put(event)
+
+                self.stop_playing_notes()
+        except IndexError as e:
+            pass # Expected if we dont have anything in the queue
+        except AttributeError as e:
+            pass # Expected if we dont have anything in the queue
+        return time_change
 
     # Selects the output device to send MIDI to. If `name` is None then the system default is used
     def select_device(self, name):
@@ -92,6 +138,7 @@ class OutputQueue():
 
     # Checks the queue for messages and sends them to the output as needed and returns the number of message sent (mainly for testing)
     def _check_priority_queue(self):
+    
         if self._open_port == None:
             return
 
@@ -110,7 +157,9 @@ class OutputQueue():
             if event.from_user_input:
                 button_events += [self.queue.get()]
             elif self.state == PlayingState.PLAY and event.timestamp <= relative_time:
-                immediate_events += [self.queue.get()]
+                event = self.queue.get()
+                immediate_events += [event]
+                self.played_notes.append(event)
             else:
                 break
 
@@ -165,9 +214,7 @@ class OutputQueue():
         if self.last_note_timestamp is not None:
             # Restore the difference so that the timing remains correct
             self.last_note_time_played = time.time() - self.paused_delta_time
-
-            for event in self.playing_notes.values():
-                self._send_midi_event(event)
+            self.resume_playing_notes()
         else:
             # If we are starting from the beginning, clear the queue and reset the timestamp
             self.last_note_timestamp = 0
@@ -175,26 +222,30 @@ class OutputQueue():
 
     def pause(self):
         self.paused_delta_time = time.time() - self.last_note_time_played
-
-        # Turn off all notes currently playing
-        for event in self.playing_notes.values():
-            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
+        self.stop_playing_notes()
 
     def stop(self):
-        # Turn off all notes currently playing and clear everything
-        for event in self.playing_notes.values():
-            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
+        self.stop_playing_notes()
         self.playing_notes.clear()
         self.queue.clear()
 
         self.last_note_timestamp = None # Signals that we removed all notes from the queue and want to start over
         self.last_note_time_played = 0
 
+    def stop_playing_notes(self):
+        for event in self.playing_notes.values():
+            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
+
+    def resume_playing_notes(self):
+        for event in self.playing_notes.values():
+            self._send_midi_event(event)
+
     def run(self):
         self.active = True
         self.select_device(None)
         while self.active:
-            self._check_priority_queue()
+            with self.accessLock:
+                self._check_priority_queue()
             time.sleep(0)
 
         self._open_port.close()
