@@ -4,8 +4,10 @@ import time
 from src.button_input.button_input import ButtonInput
 from src.file_input.file_input import FileInput
 from src.mixing.mixing_comm import MixingCommSystem
-from src.communication.messages import Message, MessageType, PlayingState
+from src.communication.messages import Message, MessageType, NoteOutputMessage, PlayingState
 import mido
+
+FUTURE_TIME_LIMIT = 30 # In seconds
 
 class Mixing(Thread):
     file_input_queue = queue.Queue()
@@ -14,14 +16,12 @@ class Mixing(Thread):
     active = False
     state = PlayingState.STOP
 
-    current_notes = {}
-
     def __init__(self, input_queue, output_queue):
         Thread.__init__(self)
         self.comm_system = MixingCommSystem()
         self.comm_system.set_queues(input_queue, output_queue)
         self.comm_system.start()
-        
+        self.relative_time = 0
     
     def run(self):
         self.active = True
@@ -39,6 +39,7 @@ class Mixing(Thread):
         self.comm_system.registerListener(MessageType.MODE_UPDATE, self.modeChanged)
         self.comm_system.registerListener(MessageType.SONG_UPDATE, self.songChanged)
         self.comm_system.registerListener(MessageType.SYSTEM_STOP, self.deactivate)
+        self.comm_system.registerListener(MessageType.SONG_TIME_SYNC, self.syncTime)
 
     def stateChanged(self, message : Message):
         if message.data == PlayingState.PLAY:
@@ -54,8 +55,8 @@ class Mixing(Thread):
     def modeChanged(self, message : Message):
         pass #TODO Implement when mutiple play modes are enabled    
 
-    def play(self):
-        self.state = PlayingState.PLAY
+    def syncTime(self, message : Message):
+        self.relative_time = message.data
 
     def play_pushed(self):
         if self.state is PlayingState.STOP:
@@ -75,15 +76,19 @@ class Mixing(Thread):
         elif self.state is PlayingState.PAUSE:
             self.stop()
 
+    def play(self):
+        self.state = PlayingState.PLAY
+
     def pause(self):
         self.state = PlayingState.PAUSE
 
     def unpause(self):
         self.state = PlayingState.PLAY
-    
+
     def stop(self):
         self.state = PlayingState.STOP
-    
+        self.file_input_queue.queue.clear()
+
     def main_loop(self):
         while(self.active):
             try:
@@ -91,15 +96,15 @@ class Mixing(Thread):
                 self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
-            if(self.state == PlayingState.PLAY):
+
+            if self.state == PlayingState.PLAY and self.file_input_queue.qsize() > 0:
                 try:
-                    event = self.file_input_queue.get_nowait()
-                    self.current_notes.update({event.event.note:event.event.type})
-                    self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
-                except queue.Empty:
+                    if self.file_input_queue.queue[0].timestamp <= self.relative_time + FUTURE_TIME_LIMIT:
+                        event = self.file_input_queue.get_nowait()
+                        self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
+                except:
                     pass # Expected if we dont have anything in the queue
             time.sleep(0)
-        
 
     def deactivate(self, message=None):
         print("Mixing System Deactivated")

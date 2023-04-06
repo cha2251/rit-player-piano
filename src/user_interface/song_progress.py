@@ -53,6 +53,7 @@ class SongWidget(QWidget):
         self.timer.stop()
         with self.accessLock:
             self.progressBar.setValue(0)
+            self.time = 0
             self.timeLabel.setText("00:00")
 
     def setDuration(self, duration):

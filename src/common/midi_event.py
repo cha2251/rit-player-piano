@@ -10,6 +10,7 @@ class MidiEvent:
     note_for_user: bool = False              # If this is a note the user has to play
     was_hit: bool = False                    # If this note was successfuly played by the user
     play_note: bool = False                  # If false, don't send the note
+    song_name: str = None                    # The name of the song this note is from
 
     # Add time in seconds to this event's timestamp
     def addTime(self, time):

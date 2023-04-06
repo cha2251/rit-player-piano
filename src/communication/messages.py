@@ -16,6 +16,7 @@ class MessageType(Enum):
     SET_DURATION = 11
     TIME_SKIP = 12
     TIME_CHANGE = 13
+    SONG_TIME_SYNC = 14
 
 class PianoAssistPlaying(Enum):
     LEFT = 1

@@ -139,6 +139,11 @@ class MIDIFileObject:
         tempo = self.DEFAULT_TEMPO # Tempo changes as we go, so default till first tempo event
         ticks_per_beat = mid_fi.ticks_per_beat # Ticks Per Beat is only in header
     
+        # Parse the song name to be used in the MIDI message
+        song_name = file_name
+        if song_name.endswith('.mid'):
+            song_name = song_name[:-4]
+
         for msg in merge_tracks(mid_fi.tracks): # merge_tracks merges w/ respect to time
             if msg.time > 0:
                 delta = tick2second(msg.time, ticks_per_beat, tempo)
@@ -153,11 +158,11 @@ class MIDIFileObject:
 
             if msg.type == 'note_on':
                 if self.is_correct_hand(msg.note):
-                    track_messages.append(MidiEvent(msg,curr_time, play_note=True, note_for_user=False))
+                    track_messages.append(MidiEvent(msg,curr_time, play_note=True, note_for_user=False, song_name=song_name))
                 else:
-                    track_messages.append(MidiEvent(msg,curr_time, play_note=False, note_for_user=True))
+                    track_messages.append(MidiEvent(msg,curr_time, play_note=False, note_for_user=True, song_name=song_name))
             else:
-                track_messages.append(MidiEvent(msg,curr_time, play_note=True))
+                track_messages.append(MidiEvent(msg,curr_time, play_note=True, song_name=song_name))
 
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
