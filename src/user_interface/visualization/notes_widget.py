@@ -153,7 +153,7 @@ class NotesWidget(QWidget):
                             break
 
                 # Figure out the positions of the rectangle to render for this note
-                key = event.event.note - 24
+                key = event.event.note - self.config.start_note
                 x = ((key // 12) * 7 + self.config.note_offsets[key % 12]) * self.config.key_width
                 y = self.back_buffer.height() * (1 - ((start_timestamp - relative_time) / self.max_render_time))
                 y2 = self.back_buffer.height() * (1 - ((end_timestamp - relative_time) / self.max_render_time))

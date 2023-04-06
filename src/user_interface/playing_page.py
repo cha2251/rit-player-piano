@@ -2,15 +2,15 @@ import os
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, \
     QSizePolicy, QLabel, QToolButton, QProgressBar
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QShowEvent
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
 from src.communication.messages import Message, MessageType, PlayingState, TimeSkipMessageType
 from src.user_interface.song_progress import SongWidget
-
 from src.user_interface.ui_comm import UICommSystem
-
 from src.user_interface.visualization.visualization import VisualizationWidget
+from src.user_interface.configPopup import ConfigPopup
+
 
 
 class PlayingPage(QWidget):
@@ -37,6 +37,7 @@ class PlayingPage(QWidget):
         self.configure.setIcon(
             QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "gear.svg")))
         self.configure.setStyleSheet(button)
+        self.configure.clicked.connect(self.on_click_configure_pop_up)
 
         self.song_name = song_name
         self.left = 100
@@ -50,38 +51,12 @@ class PlayingPage(QWidget):
         self.comm_system = UICommSystem()
         self.comm_system.registerListener(MessageType.SET_DURATION, self.set_song_duration)
 
-        #################
-        # Song Timer/Progress Bar
-        #################
         self.songWidget = SongWidget()
-        #################
 
         self.button_ack = QLabel()
         self.button_ack.setObjectName('buttonAck')
         self.button_ack.setFixedSize(300,50)
         self.button_ack.setText('PRESS PLAY')
-
-
-
-        ##### playButton = QToolButton()
-        ##### playButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        ##### playButton.setIcon(
-        #####     QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "play-solid.svg")))
-        ##### playButton.setIconSize(QSize(65, 65))
-        ##### playButton.setText("play")
-        ##### playButton.setToolTip("play song")
-        ##### playButton.setStyleSheet(button)
-        ##### playButton.clicked.connect(self.on_click_play)
-
-        #### pauseButton = QToolButton()
-        #### pauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        #### pauseButton.setIcon(
-        ####     QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "pause-solid.svg")))
-        #### pauseButton.setIconSize(QSize(65, 65))
-        #### pauseButton.setText('pause')
-        #### pauseButton.setToolTip('pause song')
-        #### pauseButton.setStyleSheet(button)
-        #### pauseButton.clicked.connect(self.on_click_pause)
 
         self.playPauseButton = QToolButton()
         self.playPauseButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -92,8 +67,6 @@ class PlayingPage(QWidget):
         self.playPauseButton.setToolTip("play song")
         self.playPauseButton.setStyleSheet(button)
         self.playPauseButton.clicked.connect(self.on_click_play_pause)
-
-
 
         restartButton = QToolButton()
         restartButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -139,6 +112,8 @@ class PlayingPage(QWidget):
         ############################################################
         song_hbox = QHBoxLayout()
         song_hbox.setAlignment(Qt.AlignCenter)
+        song_hbox.setContentsMargins(500,0,500,0) # setContentsMargin(left, top, right, bottom)
+        song_hbox.addWidget(self.nav_home)
         song_hbox.addWidget(self.songWidget)
 
         top = QHBoxLayout()
@@ -149,14 +124,18 @@ class PlayingPage(QWidget):
         btn_ack_hbox.setAlignment(Qt.AlignCenter)
         btn_ack_hbox.addWidget(self.button_ack)
 
-
         vbox = QVBoxLayout(self)
         vbox.addLayout(top)
+        # vbox.addWidget(self.nav_home)
         vbox.addLayout(song_hbox)
         vbox.addLayout(btn_ack_hbox)
 
         vbox.addWidget(VisualizationWidget(parent=self))
         vbox.addLayout(hbox)
+
+        # pop-up for configuration
+        ##self.config = ConfigPopup()
+        ##vbox.addLayout(self.config)
 
         self.initUI()
 
@@ -176,12 +155,7 @@ class PlayingPage(QWidget):
         if self.playingFlag: # pause state
             self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PAUSE))
             self.songWidget.stopTimer()
-            self.button_ack.setText('PAUSED')
-            self.playingFlag = False
-            self.playPauseButton.setIcon(
-                QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "play-solid.svg")))
-            self.playPauseButton.setText('play')
-            self.playPauseButton.setToolTip('play song')
+            self.set_to_play()
         else: # play state
             self.comm_system.send(Message(MessageType.STATE_UPDATE,PlayingState.PLAY))
             self.songWidget.setDuration(self.song_duration)
@@ -193,6 +167,15 @@ class PlayingPage(QWidget):
             self.playPauseButton.setText('pause')
             self.playPauseButton.setToolTip('pause song')
 
+    # set the play pause button to play, this is for navigating to this page to make sure it is correct
+    def set_to_play(self):
+        self.button_ack.setText('PAUSED')
+        self.playingFlag = False
+        self.playPauseButton.setIcon(
+            QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "playing", "play-solid.svg")))
+        self.playPauseButton.setText('play')
+        self.playPauseButton.setToolTip('play song')
+
     def on_click_restart(self):
         print('restart pushed')
         self.songWidget.resetTimer()
@@ -202,6 +185,14 @@ class PlayingPage(QWidget):
 
     def on_click_forward(self):
         self.comm_system.send(Message(MessageType.TIME_SKIP,TimeSkipMessageType.FORWARD))
+
+    def on_click_configure_pop_up(self):
+        self.config = ConfigPopup()
+        self.config.setWindowTitle("Configure popup")
+        self.config.setWindowModality(Qt.ApplicationModal)
+        self.config.setFixedWidth(1700)
+        self.config.move(100, 300)
+        ##self.config.exec_()
 
     def set_song(self, song):
         print("setting song: " + song)
