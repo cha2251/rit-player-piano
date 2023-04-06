@@ -93,7 +93,10 @@ class PianoWidget(QWidget):
         qp.end()
 
         elapsed = time.time() - start_time
-        Timer(max(0, WIDGET_REFRESH_RATE - elapsed), self.update).start()
+        if elapsed >= WIDGET_REFRESH_RATE:
+            self.update()
+        else:
+            Timer(WIDGET_REFRESH_RATE - elapsed, self.update).start()
 
     def sizeHint(self):
         return QSize(self.config.octaves * 7 * self.config.key_width, self.config.get_key_height())

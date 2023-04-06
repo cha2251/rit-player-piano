@@ -46,14 +46,14 @@ class VisualizationWidget(QWidget):
 
         self.config = VisualizationConfig()
 
-        # self.notes_widget = NotesWidget(self.config, parent=self)
+        self.notes_widget = NotesWidget(self.config, parent=self)
         self.piano_widget = PianoWidget(self.config, parent=self)
-        # self.timing_widget = TimingWidget(parent=self)
+        self.timing_widget = TimingWidget(parent=self)
 
         hbox = QHBoxLayout(self)
 
         vbox = QVBoxLayout()
-        # vbox.addWidget(self.notes_widget)
+        vbox.addWidget(self.notes_widget)
         vbox.addWidget(self.piano_widget)
 
         hbox.addLayout(vbox)

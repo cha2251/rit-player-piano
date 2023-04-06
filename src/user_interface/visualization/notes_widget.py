@@ -44,7 +44,8 @@ class NotesWidget(QWidget):
         self.front_buffer = QImage(self.sizeHint().width(), self.sizeHint().height() * (self.max_render_time / self.config.display_lead_time), QImage.Format_ARGB32)
         self.back_buffer = QImage(self.sizeHint().width(), self.sizeHint().height() * (self.max_render_time / self.config.display_lead_time), QImage.Format_ARGB32)
         self.buffer_lock = Lock()
-        self.paintSceneTimer()
+        self.painting_lock = Lock()
+        self.paintSceneLoop()
 
         self.anim_timer = QTimer(self, timeout=self.update_animation, interval=int(ANIMATION_RATE * 1000))
         self.anim_timer.start()
@@ -87,91 +88,96 @@ class NotesWidget(QWidget):
             self.anim.setDuration(int(ANIMATION_RATE * 1000))
             self.anim.start()
 
-    def paintSceneTimer(self):
+    def paintSceneLoop(self):
+        start_time = time.time()
         self.paintScene()
+        elapsed_time = time.time() - start_time
+
+        if elapsed_time > RENDER_RATE:
+            self.paintSceneLoop()
+        else:
+            Timer(RENDER_RATE - elapsed_time, self.paintSceneLoop).start()
 
     def paintScene(self):
-        if self.last_note_timestamp is None:
-            self.last_rendered_time = time.time()
-            Timer(RENDER_RATE, self.paintSceneTimer).start()
-            return
+        with self.painting_lock:
+            if self.last_note_timestamp is None:
+                self.last_rendered_time = time.time()
+                return
 
-        current_time = time.time()
+            current_time = time.time()
 
-        self.back_buffer.fill(Qt.transparent)
-        qp = QPainter()
-        qp.begin(self.back_buffer)
+            self.back_buffer.fill(Qt.transparent)
+            qp = QPainter()
+            qp.begin(self.back_buffer)
 
-        if self.paused_timestamp is None:
-            relative_time = current_time - self.last_note_time_played + self.last_note_timestamp
-        else:
-            relative_time = self.paused_timestamp - self.last_note_time_played + self.last_note_timestamp
-
-        sorted_notes = self.notes_queue.peekn(self.notes_queue.qsize())
-
-        yoffset = 0
-
-        if self.state == PlayingState.PAUSE:
-            yoffset = self.back_buffer.height() - self.height()
-
-        for i in range(len(sorted_notes)):
-            event = sorted_notes[i]
-
-            start_timestamp = event.timestamp
-            end_timestamp = event.timestamp + 0.5
-
-            if event.timestamp > relative_time + self.max_render_time:
-                break
-            elif event.event.type != "note_on" or event.event.velocity == 0:
-                # Fill in notes who's on_event already happened but are still playing (so we need to render)
-
-                # Make sure that the note isn't already playing
-                found = False
-                for j in range(i - 1, -1, -1):
-                    if sorted_notes[j].event.note == event.event.note:
-                        found = True
-                        break
-
-                if found:
-                    continue
-
-                end_timestamp = event.timestamp
-                start_timestamp = event.timestamp - self.max_render_time
+            if self.paused_timestamp is None:
+                relative_time = current_time - self.last_note_time_played + self.last_note_timestamp
             else:
-                # Find the note_off event so we know what the render
-                for j in range(i + 1, len(sorted_notes)):
-                    if (sorted_notes[j].event.type == "note_off" or sorted_notes[j].event.velocity == 0) and sorted_notes[j].event.note == event.event.note:
-                        end_timestamp = sorted_notes[j].timestamp
-                        break
+                relative_time = self.paused_timestamp - self.last_note_time_played + self.last_note_timestamp
 
-            # Figure out the positions of the rectangle to render for this note
-            key = event.event.note - 24
-            x = ((key // 12) * 7 + self.config.note_offsets[key % 12]) * self.config.key_width
-            y = self.back_buffer.height() * (1 - ((start_timestamp - relative_time) / self.max_render_time))
-            y2 = self.back_buffer.height() * (1 - ((end_timestamp - relative_time) / self.max_render_time))
+            sorted_notes = self.notes_queue.peekn(self.notes_queue.qsize())
 
-            qp.fillRect(
-                x + (self.config.key_width - self.config.get_note_width()) / 2,
-                y2 - yoffset,
-                self.config.get_note_width(),
-                y - y2,
-                self.config.left_hand_color if event.event.note < 60 else self.config.right_hand_color
-            )
+            yoffset = 0
 
-        qp.end()
-        self.last_rendered_time = time.time()
+            if self.state == PlayingState.PAUSE:
+                yoffset = self.back_buffer.height() - self.height()
 
-        # Swap buffers
-        with self.buffer_lock:
-            tmp = self.front_buffer
-            self.front_buffer = self.back_buffer
-            self.back_buffer = tmp
+            for i in range(len(sorted_notes)):
+                event = sorted_notes[i]
 
-        elapsed = time.time() - current_time
-        if elapsed > RENDER_RATE:
-            print("Warning: NotesWidget took too long to render ({:.1} ms).".format(elapsed * 1e3))
+                start_timestamp = event.timestamp
+                end_timestamp = event.timestamp + 0.5
 
-        Timer(max(0, RENDER_RATE - elapsed), self.paintSceneTimer).start()
+                if event.timestamp > relative_time + self.max_render_time:
+                    break
+                elif event.event.type != "note_on" or event.event.velocity == 0:
+                    # Fill in notes who's on_event already happened but are still playing (so we need to render)
+
+                    # Make sure that the note isn't already playing
+                    found = False
+                    for j in range(i - 1, -1, -1):
+                        if sorted_notes[j].event.note == event.event.note:
+                            found = True
+                            break
+
+                    if found:
+                        continue
+
+                    end_timestamp = event.timestamp
+                    start_timestamp = event.timestamp - self.max_render_time
+                else:
+                    # Find the note_off event so we know what the render
+                    for j in range(i + 1, len(sorted_notes)):
+                        if (sorted_notes[j].event.type == "note_off" or sorted_notes[j].event.velocity == 0) and sorted_notes[j].event.note == event.event.note:
+                            end_timestamp = sorted_notes[j].timestamp
+                            break
+
+                # Figure out the positions of the rectangle to render for this note
+                key = event.event.note - 24
+                x = ((key // 12) * 7 + self.config.note_offsets[key % 12]) * self.config.key_width
+                y = self.back_buffer.height() * (1 - ((start_timestamp - relative_time) / self.max_render_time))
+                y2 = self.back_buffer.height() * (1 - ((end_timestamp - relative_time) / self.max_render_time))
+
+                qp.fillRect(
+                    x + (self.config.key_width - self.config.get_note_width()) / 2,
+                    y2 - yoffset,
+                    self.config.get_note_width(),
+                    y - y2,
+                    self.config.left_hand_color if event.event.note < 60 else self.config.right_hand_color
+                )
+
+            qp.end()
+            self.last_rendered_time = time.time()
+
+            # Swap buffers
+            with self.buffer_lock:
+                tmp = self.front_buffer
+                self.front_buffer = self.back_buffer
+                self.back_buffer = tmp
+
+            elapsed = time.time() - current_time
+            if elapsed > RENDER_RATE:
+                print("Warning: NotesWidget took too long to render ({:.1} ms).".format(elapsed * 1e3))
 
     def play(self):
         self.paused_timestamp = None

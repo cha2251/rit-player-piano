@@ -6,6 +6,8 @@ from src.communication.messages import Message, MessageType
 
 from src.user_interface.ui_comm import UICommSystem
 
+UPDATE_INTERVAL = 0.1 # In seconds
+
 class SongWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -42,7 +44,7 @@ class SongWidget(QWidget):
         self.progressBar.setStyleSheet(styleSheet)
 
     def startTimer(self):
-        self.timer.start(1000)  # update every second
+        self.timer.start(int(1000 * UPDATE_INTERVAL))
 
     def stopTimer(self):
         self.timer.stop()
@@ -60,7 +62,7 @@ class SongWidget(QWidget):
 
     def updateTimer(self):
         with self.accessLock:
-            self.time += 1
+            self.time += UPDATE_INTERVAL
             self.progressBar.setValue(int(self.time))
             self.setLabel()
 
@@ -71,6 +73,5 @@ class SongWidget(QWidget):
         self.timeLabel.setText(timeStr)
 
     def time_change(self, message : Message):
-        with self.accessLock:
-            self.time += message.data
+        self.time = max(self.time + message.data, 0)
 
