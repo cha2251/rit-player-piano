@@ -96,7 +96,7 @@ class Mixing(Thread):
                 self.comm_system.send(Message(MessageType.OUTPUT_QUEUE_UPDATE,event))
             except queue.Empty:
                 pass # Expected if we dont have anything in the queue
-
+            
             if self.state == PlayingState.PLAY and self.file_input_queue.qsize() > 0:
                 try:
                     if self.file_input_queue.queue[0].timestamp <= self.relative_time + FUTURE_TIME_LIMIT:
