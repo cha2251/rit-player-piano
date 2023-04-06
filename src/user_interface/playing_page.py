@@ -5,11 +5,12 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHB
 from PyQt5.QtGui import QIcon, QShowEvent
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 import time
-from src.communication.messages import Message, MessageType, PlayingState
+from src.communication.messages import Message, MessageType, PlayingState, TimeSkipMessageType
 from src.user_interface.song_progress import SongWidget
 from src.user_interface.ui_comm import UICommSystem
 from src.user_interface.visualization.visualization import VisualizationWidget
 from src.user_interface.configPopup import ConfigPopup
+
 
 
 class PlayingPage(QWidget):
@@ -180,10 +181,10 @@ class PlayingPage(QWidget):
         self.songWidget.resetTimer()
 
     def on_click_rewind(self):
-        pass
+        self.comm_system.send(Message(MessageType.TIME_SKIP,TimeSkipMessageType.BACKWARD))
 
     def on_click_forward(self):
-        pass
+        self.comm_system.send(Message(MessageType.TIME_SKIP,TimeSkipMessageType.FORWARD))
 
     def on_click_configure_pop_up(self):
         self.config = ConfigPopup()
