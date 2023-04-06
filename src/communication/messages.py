@@ -14,7 +14,9 @@ class MessageType(Enum):
     TEMPO_MODE_UPDATE = 9
     SET_HAND_TO_PLAY = 10
     SET_DURATION = 11
-    SONG_TIME_SYNC = 12
+    TIME_SKIP = 12
+    TIME_CHANGE = 13
+    SONG_TIME_SYNC = 14
 
 class PianoAssistPlaying(Enum):
     LEFT = 1
@@ -33,6 +35,10 @@ class PlayingState(Enum):
 class TempoModeMessageType(Enum):
     HIT_NOTE = 1
     MISSED_NOTE = 2
+
+class TimeSkipMessageType(Enum):
+    FORWARD = 1
+    BACKWARD = 2
 
 class Message():
     def __init__(self, type, data = None):

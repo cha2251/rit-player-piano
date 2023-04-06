@@ -1,5 +1,5 @@
 import queue
-from threading import Thread
+from threading import Lock, Thread
 import time
 from src.button_input.button_input import ButtonInput
 from src.file_input.file_input import FileInput
@@ -9,7 +9,6 @@ import mido
 
 class Mixing(Thread):
     file_input_queue = queue.Queue()
-    file_output_queue = queue.Queue()
     button_input_queue = queue.Queue()
     holding_queue: queue.PriorityQueue = None
     active = False
@@ -24,7 +23,7 @@ class Mixing(Thread):
     
     def run(self):
         self.active = True
-        self.file_input = FileInput(self.file_input_queue, self.file_output_queue)
+        self.file_input = FileInput(self.file_input_queue)
         self.file_input.start()
         self.button_input = ButtonInput(self.button_input_queue)
         self.startup()
@@ -52,7 +51,7 @@ class Mixing(Thread):
         self.stop_pushed() # Mixing does not care about song name, but should stop current song
 
     def modeChanged(self, message : Message):
-        pass #TODO Implement when mutiple play modes are enabled
+        pass #TODO Implement when mutiple play modes are enabled    
 
     def syncTime(self, message : Message):
         self.relative_time = message.data
