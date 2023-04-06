@@ -258,6 +258,14 @@ class OutputQueue():
         for event in self.playing_notes.values():
             self._send_midi_event(event)
 
+    def stop_playing_notes(self):
+        for event in self.playing_notes.values():
+            self._send_midi_event(MidiEvent(mido.Message('note_off', note=event.note), 0))
+
+    def resume_playing_notes(self):
+        for event in self.playing_notes.values():
+            self._send_midi_event(event)
+
     def run(self):
         self.active = True
         self.select_device(None)

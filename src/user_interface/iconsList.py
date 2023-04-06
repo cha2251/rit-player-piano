@@ -123,3 +123,17 @@ class IconsList(QHBoxLayout):
         RS.setStyleSheet(self.tool)
         RS.setIconSize(QSize(60, 50))
         self.addWidget(RS)
+
+        select = DragButton("button-Select")
+        select.setIcon(
+            QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-select.svg")))
+        select.setStyleSheet(self.tool)
+        select.setIconSize(QSize(60, 50))
+        self.addWidget(select)
+
+        start = DragButton("button-start")
+        start.setIcon(
+            QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", "button-start.svg")))
+        start.setStyleSheet(self.tool)
+        start.setIconSize(QSize(60, 50))
+        self.addWidget(start)
