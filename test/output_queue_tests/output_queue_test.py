@@ -101,9 +101,8 @@ class TestRun:
         output_queue_process.comm_system.deactivate()
 
     def test_one_message(self, output_queue_process):
-        test_message = MidiEvent(mido.Message('note_on',note=60,), 42, play_note=True)
+        test_message = MidiEvent(mido.Message('note_on',note=60,), 42, play_note=True, from_user_input=True)
         output_queue_process.select_device(DUMMY_PORT_NAME)
-        output_queue_process.state = PlayingState.PLAY
 
         output_queue_process.queue.put(test_message)
         output_queue_process._check_priority_queue()
@@ -135,13 +134,14 @@ class TestRun:
         output_queue_process.comm_system.deactivate()
 
     def test_many_messages(self, output_queue_process):
+        output_queue_process.select_device(DUMMY_PORT_NAME)
+
         expected_past_messages = 5
         expected_future_messages = 3
         past_messages = []
-        output_queue_process.state = PlayingState.PLAY
 
         for i in range(expected_past_messages):
-            test_message = MidiEvent(mido.Message('note_on', note=60), 0, play_note=True)
+            test_message = MidiEvent(mido.Message('note_on', note=60), 0, play_note=True, from_user_input=True)
             past_messages += [test_message]
             output_queue_process.queue.put(test_message)
 
