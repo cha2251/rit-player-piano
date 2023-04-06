@@ -7,7 +7,7 @@ from multiprocessing import Lock, Process, Manager
 
 from src.common.midi_event import MidiEvent
 from src.common.shared_priority_queue import PeekingPriorityQueue
-from src.communication.messages import Message, MessageType, NoteOutputMessage, PlayingState, TimeSkipMessageType
+from src.communication.messages import Message, MessageType, NoteOutputMessage, PlayingState, TimeSkipMessageType, Song
 from src.output_queue.output_comm import OutputCommSystem
 from src.output_queue.synth import MIDISynthesizer, SYNTHESIZER_NAME
 from src.output_queue.tempo_mode import TempoMode
@@ -57,7 +57,8 @@ class OutputQueue():
         self.state = message.data
 
     def songChanged(self, message : Message):
-        self.current_song = message.data
+        if message.data != Song.RESTART:
+            self.current_song = message.data
 
     def timeSkip(self, message : Message):
         if message.data == TimeSkipMessageType.FORWARD:
@@ -166,7 +167,10 @@ class OutputQueue():
         now = time.time()
 
         # How many seconds into the song we are
-        relative_time = now - self.last_note_time_played + self.last_note_timestamp
+        if self.last_note_timestamp is not None:
+            relative_time = now - self.last_note_time_played + self.last_note_timestamp
+        else: # Last song was stopped
+            relative_time = now
 
         if self.state == PlayingState.PLAY and time.time() - self.last_time_sync_time > 0.25:
             self.last_time_sync_time = time.time()

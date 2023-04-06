@@ -46,15 +46,19 @@ class FileInput(Thread):
             time.sleep(0)
 
     def openFile(self,message : Message):
-        filename = message.data
         with self.accessLock:
             self.file_input_queue.queue.clear()
 
-            if filename == Song.FREEPLAY:
+            if message.data == Song.FREEPLAY:
                 self.filename = None
                 self.fileObject = None
                 return
 
+            if message.data == Song.RESTART:
+                self.fileObject = None # Delete all notes, but keep filename 
+                return
+
+            filename = message.data
             if not filename.endswith(".mid"):
                 filename += ".mid"
 
