@@ -1,8 +1,8 @@
 import threading
 from inputs import get_gamepad, UnpluggedError
-from enum import Enum
+from enum import IntEnum
 
-class ControllerButton(Enum):
+class ControllerButton(IntEnum):
     LeftJoystickY = 1
     LeftJoystickX = 2
     RightJoystickY = 3

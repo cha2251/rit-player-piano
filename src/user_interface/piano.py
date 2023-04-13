@@ -1,7 +1,12 @@
+import json
+import os
 from PyQt5.QtWidgets import QToolButton, QGridLayout
 from PyQt5.QtCore import Qt, QSize
+from src.button_input.controller import ControllerButton
+from src.communication.messages import Message, MessageType
 
 from src.user_interface.pianoKey import pianoKey
+from src.user_interface.ui_comm import UICommSystem
 
 
 class Piano(QGridLayout):
@@ -9,6 +14,7 @@ class Piano(QGridLayout):
         super().__init__()
         self.setAlignment(Qt.AlignTop)
         self.setSpacing(0)
+        self.comm_system = UICommSystem()
 
         self.piano_dict = {
             "c3": [],
@@ -23,19 +29,22 @@ class Piano(QGridLayout):
             "a3": [],
             "a#3": [],
             "b3": [],
-            "c4": [],
-            "c#4": [],
-            "d4": [],
-            "d#4": [],
-            "e4": [],
-            "f4": [],
-            "f#4": [],
-            "g4": [],
-            "g#4": [],
-            "a4": [],
-            "a#4": [],
-            "b4": []
+            "c4": [ControllerButton.RightTrigger],
+            "c#4": [ControllerButton.Y],
+            "d4": [ControllerButton.LeftTrigger],
+            "d#4": [ControllerButton.X],
+            "e4": [ControllerButton.LeftBumper],
+            "f4": [ControllerButton.RightDPad],
+            "f#4": [ControllerButton.B],
+            "g4": [ControllerButton.UpDPad],
+            "g#4": [ControllerButton.A],
+            "a4": [ControllerButton.RightThumb],
+            "a#4": [ControllerButton.RightBumper],
+            "b4": [ControllerButton.LeftThumb]
         }
+        self.load_button_mappings()
+        self.comm_system.send(Message(MessageType.BUTTON_CONFIG_UPDATE, self.piano_dict))
+
         white_notes = ["c3", "d3", "e3", "f3", "g3", "a3", "b3", "c4", "d4", "e4", "f4", "g4", "a4", "b4"]
         wi = 0
         black_notes = ["c#3", "d#3", "f#3", "g#3", "a#3", "c#4", "d#4", "f#4", "g#4", "a#4"]
@@ -150,3 +159,21 @@ class Piano(QGridLayout):
 
     def get_dict(self):
         return self.piano_dict
+    
+    def load_button_mappings(self):
+        filepath = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "buttons.json"
+        )
+
+        if not os.path.exists(filepath):
+            with open(filepath, "w") as f:
+                print("Creating new button mapping file")
+                json.dump(self.piano_dict, f)
+        else:
+            with open(filepath, "r") as f:
+                data = json.load(f)
+            for key in data:
+                self.piano_dict[key] = data[key]

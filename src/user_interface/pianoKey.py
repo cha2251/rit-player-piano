@@ -1,3 +1,4 @@
+import json
 import os
 
 from PyQt5.QtCore import Qt, QMimeData
@@ -41,6 +42,15 @@ class pianoKey(QToolButton):
         self.comm_system = UICommSystem()
         self.clicked.connect(self.onClick)
 
+        if self.piano_dict[self.key]:
+            file = None
+            for name in CONTROLLER_BUTTON_MAP:
+                if CONTROLLER_BUTTON_MAP[name] == self.piano_dict[self.key][0]:
+                    file = name
+                    break
+
+            self.setIconHelper(file)
+
     def dragEnterEvent(self, e):
         try:
             e.accept()
@@ -50,14 +60,41 @@ class pianoKey(QToolButton):
     def dropEvent(self, e):
         try:
             file = e.mimeData().text()
-            self.setIcon(
-                QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "settings", (file + ".svg")), ))
+            self.setIconHelper(file)
             self.piano_dict[self.key].append(CONTROLLER_BUTTON_MAP[file])
             self.comm_system.send(Message(MessageType.BUTTON_CONFIG_UPDATE, self.piano_dict))
+            self.save_button_mappings()
         except Exception as e:
             print("exception occurred in drop event: " + str(e))
 
     def onClick(self):
-        self.setIcon(QIcon())  # sets to empty icon
-        # update piano_dict
-        # send comm message
+        self.setIconHelper(None)
+        self.piano_dict[self.key] = []
+        self.comm_system.send(Message(MessageType.BUTTON_CONFIG_UPDATE, self.piano_dict))
+        self.save_button_mappings()
+
+    def setIconHelper(self, file):
+        if file is None:
+            self.setIcon(QIcon())
+            return
+
+        filepath = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "UI_Images",
+            "settings",
+            file + ".svg"
+        )
+        self.setIcon(QIcon(filepath))
+
+    def save_button_mappings(self):
+        filepath = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "buttons.json"
+        )
+
+        with open(filepath, "w") as f:
+            json.dump(self.piano_dict, f)
