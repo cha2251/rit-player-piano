@@ -129,3 +129,6 @@ dmypy.json
 
 # PyCharm
 .idea/
+
+# We don't need to share button mappings
+buttons.json
