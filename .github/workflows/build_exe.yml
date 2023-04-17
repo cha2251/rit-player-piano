@@ -25,7 +25,7 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: |
-            pyinstaller src/common/main.py --onefile --clean --icon=PlayerPianoIcon.ico
+            pyinstaller.exe --clean main.spec
       - name: Fix Directory Structure
         run: |
           mv dist/main PlayerPiano
@@ -36,6 +36,7 @@ jobs:
           path: |
             PlayerPiano
             MIDI_Files/*
+            UI_Images/*
   
   archive-windows-artifact:
     runs-on: windows-latest
@@ -58,7 +59,7 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: |
-            pyinstaller.exe src\common\main.py --onefile --clean --icon=PlayerPianoIcon.ico
+            pyinstaller --clean main.spec
       - name: Fix Directory Structure
         run: |
           mv dist\main.exe PlayerPiano.exe
@@ -69,3 +70,4 @@ jobs:
           path: |
             PlayerPiano.exe
             MIDI_Files\*
+            UI_Images\*
