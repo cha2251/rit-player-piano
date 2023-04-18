@@ -45,8 +45,8 @@ https://cha2251.github.io/rit-player-piano/
 # Building Executeable
 - Start virtual environment
 - Windows:
-    - In top level directory run: `pyinstaller.exe src\common\main.py --clean --onefile --add-data=".\MIDI_Files\*;.\MIDI_Files\"`
-        - Fix permission errors with: `chmod -R -c u+rwx .`
+    - In top level directory run: `pyinstaller.exe --clean main.spec`
+        - Fix permission errors by deleting build and dist
 - Linux:
-    - In top level directory run: `pyinstaller src\common\main.py --clean --onefile --add-data="/MIDI_Files/*:/MIDI_Files/"`
+    - In top level directory run: `pyinstaller --clean main.spec`
         - Fix permission errors with: `chmod -R -c u+rwx .`
