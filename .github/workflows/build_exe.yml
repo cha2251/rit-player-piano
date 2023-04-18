@@ -3,40 +3,40 @@ name: Build Executeable
 on: [push]
 
 jobs:
-  archive-linux-artifact:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8"]
+  # archive-linux-artifact:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       python-version: ["3.8"]
 
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y libasound2-dev portaudio19-dev
-          python -m pip install --upgrade pip
-          pip install flake8 pytest
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Build with Pyinstaller
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: |
-            pyinstaller --clean main.spec
-      - name: Fix Directory Structure
-        run: |
-          mv dist/main PlayerPiano
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with: 
-          name: PlayerPiano-linux
-          path: |
-            PlayerPiano
-            MIDI_Files/*
-            UI_Images/*
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Set up Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
+  #     - name: Install dependencies
+  #       run: |
+  #         sudo apt-get install -y libasound2-dev portaudio19-dev
+  #         python -m pip install --upgrade pip
+  #         pip install flake8 pytest
+  #         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  #     - name: Build with Pyinstaller
+  #       uses: GabrielBB/xvfb-action@v1
+  #       with:
+  #         run: |
+  #           pyinstaller --clean main.spec
+  #     - name: Fix Directory Structure
+  #       run: |
+  #         mv dist/main PlayerPiano
+  #     - name: Upload Artifact
+  #       uses: actions/upload-artifact@v3
+  #       with: 
+  #         name: PlayerPiano-linux
+  #         path: |
+  #           PlayerPiano
+  #           MIDI_Files/*
+  #           UI_Images/*
   
   archive-windows-artifact:
     runs-on: windows-latest
