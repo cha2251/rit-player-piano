@@ -49,7 +49,7 @@ class PianoWidget(QWidget):
         self.accessLock = Lock()
         self.button_icons = {}
 
-        self.update()
+        QTimer(self, timeout=self.update, interval=int(WIDGET_REFRESH_RATE * 1000)).start()
         self.comm_system.registerListener(MessageType.NOTE_OUTPUT, self.on_note_output)
         self.comm_system.registerListener(MessageType.BUTTON_CONFIG_UPDATE, self.button_config_update)
 
@@ -81,7 +81,6 @@ class PianoWidget(QWidget):
                     self.button_icons[midi_note] = icon
 
     def paintEvent(self, _event):
-        start_time = time.time()
         qp = QPainter(self)
 
         # Draw the white keys
@@ -173,12 +172,6 @@ class PianoWidget(QWidget):
                 )
 
         qp.end()
-
-        elapsed = time.time() - start_time
-        if elapsed >= WIDGET_REFRESH_RATE:
-            self.update()
-        else:
-            Timer(WIDGET_REFRESH_RATE - elapsed, self.update).start()
 
     def sizeHint(self):
         return QSize(self.config.octaves * 7 * self.config.key_width, self.config.get_key_height())
