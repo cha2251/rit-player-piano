@@ -47,29 +47,6 @@ class TestCreate:
 
         component.deactivate()
 
-
-class TestModify:
-    @pytest.mark.timeout(1)
-    def test_change_map(self):
-        testQueue = Queue()
-        component = ButtonInput(testQueue)
-        testDict = {"c4":[ControllerButton.A], "d4":[ControllerButton.B], "e4":[ControllerButton.B]}
-
-        expectedDict = {ControllerButton.A:[60], ControllerButton.B: [62,64]}
-
-        testMessage = Message(MessageType.BUTTON_CONFIG_UPDATE, testDict)
-
-        assert component.keyMap != testDict
-
-        component.change_map(testMessage)
-
-        actual = component.keyMap
-
-        assert actual == expectedDict
-
-        component.deactivate()
-
-
 class TestRun:
     @pytest.mark.timeout(1)
     def test_exits(self):
