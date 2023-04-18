@@ -30,6 +30,8 @@ class PlayingPage(QWidget):
             QIcon(os.path.join(os.path.dirname(__file__), "..", "..", "UI_Images", "navigation", "back-arrow.svg")))
         self.nav_home.setStyleSheet(button)  # it seems like the min-width is the important one
 
+        self.song_title = QLabel(song_name)
+
         self.configure = QToolButton()
         self.configure.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.configure.setIconSize(QSize(55, 55))
@@ -39,7 +41,6 @@ class PlayingPage(QWidget):
         self.configure.setStyleSheet(button)
         self.configure.clicked.connect(self.on_click_configure_pop_up)
 
-        self.song_name = song_name
         self.left = 100
         self.top = 50
         self.width = 320
@@ -118,6 +119,8 @@ class PlayingPage(QWidget):
 
         top = QHBoxLayout()
         top.addWidget(self.nav_home)
+        top.addSpacerItem(QSpacerItem(5, 5, QSizePolicy.Expanding))
+        top.addWidget(self.song_title)
         top.addSpacerItem(QSpacerItem(5, 5, QSizePolicy.Expanding))
         top.addWidget(self.configure)
         btn_ack_hbox = QHBoxLayout()
@@ -201,6 +204,7 @@ class PlayingPage(QWidget):
 
     def set_song(self, song):
         print("setting song: " + song)
+        self.song_title.setText(song)
         self.title = song
         ##self.nav_home.setText("SONG: " + song)
         self.setWindowTitle("Player Piano: " + song)
